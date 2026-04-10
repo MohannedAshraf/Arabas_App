@@ -6,6 +6,7 @@ import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:arabas_app/features/auth/data/models/register_model.dart';
 import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
+import 'package:arabas_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,6 +90,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              (route) => false,
+            );
           }
 
           if (state is RegisterError) {
