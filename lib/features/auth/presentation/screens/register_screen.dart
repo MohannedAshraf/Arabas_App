@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/helpers/device_helper.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:arabas_app/features/auth/data/models/register_model.dart';
+import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
+import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -213,20 +216,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 SizedBox(height: 20.h),
 
-                Text.rich(
-                  TextSpan(
-                    text: "Already have an account? ",
-                    style: TextStyle(color: AppColors.textGray),
-                    children: const [
-                      TextSpan(
-                        text: "Login",
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account? ",
+                      style: TextStyle(color: AppColors.textGray),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => BlocProvider(
+                                  create: (_) => sl<LoginCubit>(),
+                                  child: const LoginScreen(),
+                                ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Login",
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: 30.h),
