@@ -1,9 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/helpers/device_helper.dart';
+import 'package:arabas_app/features/auth/presentation/bloc/register_cubit.dart';
+import 'package:arabas_app/features/auth/presentation/screens/register_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../bloc/login_cubit.dart';
@@ -19,7 +23,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
   final formKey = GlobalKey<FormState>();
 
   bool rememberMe = false;
@@ -47,49 +50,51 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              width: size.width > 500 ? 400 : size.width * 0.9,
-              padding: const EdgeInsets.all(20),
+              width: size.width > 500 ? 400.w : size.width * 0.9,
+              padding: EdgeInsets.all(20.w),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20.r),
               ),
               child: Form(
                 key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Title
-                    const Text(
+                    Text(
                       "The Curator",
                       style: TextStyle(
                         color: AppColors.primary,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
 
-                    const Text(
+                    Text(
                       "Login",
                       style: TextStyle(
-                        fontSize: 26,
+                        fontSize: 26.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5.h),
 
-                    const Text(
+                    Text(
                       "Access your personalized dashboard.",
-                      style: TextStyle(color: AppColors.textGray),
+                      style: TextStyle(
+                        color: AppColors.textGray,
+                        fontSize: 14.sp,
+                      ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
 
                     /// Email
-                    const Text("Email"),
-                    const SizedBox(height: 6),
+                    Text("Email", style: TextStyle(fontSize: 14.sp)),
+                    SizedBox(height: 6.h),
 
                     TextFormField(
                       controller: emailController,
@@ -98,24 +103,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: _inputDecoration("name@example.com"),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
 
                     /// Password
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text("Password"),
+                      children: [
+                        Text("Password", style: TextStyle(fontSize: 12.sp)),
                         Text(
                           "FORGOT PASSWORD?",
                           style: TextStyle(
                             color: AppColors.primary,
-                            fontSize: 12,
+                            fontSize: 10.sp,
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6.h),
 
                     TextFormField(
                       controller: passwordController,
@@ -129,6 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
+                            size: 20.sp,
                           ),
                           onPressed: () {
                             setState(() {
@@ -139,24 +145,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
 
                     /// Remember me
                     Row(
                       children: [
                         Checkbox(
                           value: rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              rememberMe = value!;
-                            });
-                          },
+                          onChanged:
+                              (value) => setState(() => rememberMe = value!),
                         ),
-                        const Text("Remember me"),
+                        Text("Remember me", style: TextStyle(fontSize: 13.sp)),
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
 
                     /// Button
                     BlocBuilder<LoginCubit, LoginState>(
@@ -169,12 +172,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         return SizedBox(
                           width: double.infinity,
-                          height: 50,
+                          height: 50.h,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
                             ),
                             onPressed: () async {
@@ -189,11 +192,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               }
                             },
-                            child: const Text(
+                            child: Text(
                               "Login",
                               style: TextStyle(
                                 color: AppColors.white,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ),
@@ -201,18 +204,36 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
 
                     /// Create account
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text("New to The Curator? "),
+                      children: [
                         Text(
-                          "Create an account",
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w500,
+                          "New to The Curator? ",
+                          style: TextStyle(fontSize: 12.sp),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => BlocProvider(
+                                      create: (_) => sl<RegisterCubit>(),
+                                      child: const RegisterScreen(),
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "   Sign Up",
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12.sp,
+                            ),
                           ),
                         ),
                       ],
@@ -230,10 +251,11 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
+      hintStyle: TextStyle(fontSize: 13.sp),
       filled: true,
       fillColor: const Color(0xffE6ECF2),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
         borderSide: BorderSide.none,
       ),
     );

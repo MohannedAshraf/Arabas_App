@@ -1,7 +1,8 @@
 import 'package:arabas_app/features/home/presentation/screens/favourite_tab.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/my_courses_tab.dart';
-import 'package:arabas_app/features/home/presentation/screens/profile_tab.dart';
+import 'package:arabas_app/features/profile/presentation/screens/profile_screen.dart';
+import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeTab(),
     MyCoursesTab(),
     FavouritesTab(),
-    ProfileTab(),
+    ProfileWrapper(),
   ];
 
   @override

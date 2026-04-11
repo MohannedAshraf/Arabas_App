@@ -6,7 +6,6 @@ import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:arabas_app/features/auth/data/models/register_model.dart';
 import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
-import 'package:arabas_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,7 +31,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final formKey = GlobalKey<FormState>();
 
   Future<void> register() async {
-    /// التأكد ان الباسوردين متطابقين
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
         context,
@@ -40,12 +38,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    /// جلب بيانات الجهاز الحقيقية
     final deviceId = await DeviceHelper.getDeviceId();
     final deviceName = await DeviceHelper.getDeviceName();
     final platform = DeviceHelper.getPlatform();
 
-    /// تقسيم الاسم
     final fullNameParts = fullNameController.text.trim().split(" ");
     final firstName = fullNameParts.first;
     final lastName = fullNameParts.length > 1 ? fullNameParts.last : "";
@@ -58,10 +54,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       confirmPassword: confirmPasswordController.text.trim(),
       phoneNumber: phoneController.text.trim(),
       deviceId: deviceId,
-
       deviceName: deviceName,
       platform: platform,
     );
+
     print("Device ID: $deviceId");
     context.read<RegisterCubit>().register(model);
   }
@@ -93,7 +89,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(
+                builder:
+                    (_) => BlocProvider(
+                      create: (_) => sl<LoginCubit>(),
+                      child: const LoginScreen(),
+                    ),
+              ),
               (route) => false,
             );
           }
@@ -110,10 +112,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               children: [
                 SizedBox(height: 20.h),
-
                 SizedBox(height: 30.h),
 
-                /// Card
                 Container(
                   padding: EdgeInsets.all(20.w),
                   decoration: BoxDecoration(
@@ -122,8 +122,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
-                        blurRadius: 20,
-                        offset: const Offset(0, 5),
+                        blurRadius: 20.r,
+                        offset: Offset(0, 5.h),
                       ),
                     ],
                   ),
@@ -145,7 +145,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontSize: 13.sp,
                         ),
                       ),
-
                       SizedBox(height: 25.h),
 
                       AppTextField(
@@ -168,7 +167,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 15.h),
 
-                      /// Password
                       AppTextField(
                         hint: "Password",
                         controller: passwordController,
@@ -176,7 +174,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 15.h),
 
-                      /// Confirm Password
                       AppTextField(
                         hint: "Confirm Password",
                         controller: confirmPasswordController,
@@ -228,7 +225,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       "Already have an account? ",
-                      style: TextStyle(color: AppColors.textGray),
+                      style: TextStyle(
+                        color: AppColors.textGray,
+                        fontSize: 13.sp,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -243,11 +243,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Login",
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ),
