@@ -48,7 +48,7 @@ class _HomeTabState extends State<HomeTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "مرحبا يا دكتور 👋",
+                          " ًWelcome",
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          "جاهز لتطوير مهاراتك؟ ما نقدمه لك اليوم ..",
+                          "Ready to improve your skills? Here's what we offer today...",
                           style: TextStyle(
                             color: AppColors.textGray,
                             fontSize: 12.sp,
@@ -102,7 +102,7 @@ class _HomeTabState extends State<HomeTab> {
                     Icon(Icons.search, color: AppColors.textGray, size: 20.sp),
                     SizedBox(width: 10.w),
                     Text(
-                      "ابحث عن كورسات ، دبلومات",
+                      "Search for Courses, Diplomas",
                       style: TextStyle(
                         color: AppColors.textGray,
                         fontSize: 13.sp,
@@ -119,19 +119,19 @@ class _HomeTabState extends State<HomeTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _categoryItem(
-                    "الكورسات",
+                    "Courses",
                     "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
                   ),
                   _categoryItem(
-                    "التدريب العملي",
+                    "Practical Training ",
                     "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
                   ),
                   _categoryItem(
-                    "بنك الأسئلة",
+                    "Questions Bank",
                     "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
                   ),
                   _categoryItem(
-                    "الكتب",
+                    "Books",
                     "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
                   ),
                 ],
@@ -141,7 +141,7 @@ class _HomeTabState extends State<HomeTab> {
 
               /// CAROUSEL
               Text(
-                "دورات مميزة",
+                "Featured Courses",
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 15.h),
@@ -175,7 +175,7 @@ class _HomeTabState extends State<HomeTab> {
                       alignment: Alignment.bottomRight,
                       padding: EdgeInsets.all(16.w),
                       child: Text(
-                        "دبلومة الأطفال\nمتقدم - 8 أسابيع",
+                        "Pediatrics Diploma\nAdvanced-8 Weeks",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           color: Colors.white,
@@ -227,14 +227,14 @@ class _HomeTabState extends State<HomeTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "تابع التعلم",
+                    " Continue Learning",
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    "نحن الأفضل",
+                    "We are the best ",
                     style: TextStyle(
                       color: AppColors.textGray,
                       fontSize: 12.sp,
@@ -249,16 +249,16 @@ class _HomeTabState extends State<HomeTab> {
               SizedBox(height: 30.h),
 
               Text(
-                "الأقسام الرئيسية",
+                " Main Sections",
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 15.h),
 
               Row(
                 children: [
-                  Expanded(child: _smallCard("بنك الأسئلة")),
+                  Expanded(child: _smallCard("Questions Bank")),
                   SizedBox(width: 15.w),
-                  Expanded(child: _smallCard(" الكورسات")),
+                  Expanded(child: _smallCard(" Courses")),
                 ],
               ),
 
@@ -326,7 +326,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 Text(
-                  "الوحدة المركزة",
+                  "Intensive Care Unit ",
                   style: TextStyle(color: AppColors.textGray, fontSize: 12.sp),
                 ),
                 SizedBox(height: 6.h),
@@ -352,7 +352,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
               SizedBox(height: 5.h),
               Text(
-                "8 أسابيع",
+                "8 Weeks",
                 style: TextStyle(fontSize: 10.sp, color: AppColors.textGray),
               ),
             ],
@@ -426,7 +426,7 @@ class _HomeTabState extends State<HomeTab> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              "القسم المجاني",
+              "Free Section ",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
@@ -435,7 +435,7 @@ class _HomeTabState extends State<HomeTab> {
             ),
             SizedBox(height: 5.h),
             Text(
-              "استفد بمحتوى مجاني شامل",
+              "Enjoy comorehensive free content",
               style: TextStyle(color: Colors.white70, fontSize: 12.sp),
             ),
             SizedBox(height: 10.h),
@@ -446,7 +446,7 @@ class _HomeTabState extends State<HomeTab> {
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
-                "ابدأ الآن",
+                "Start Now",
                 style: TextStyle(color: Colors.white, fontSize: 12.sp),
               ),
             ),
