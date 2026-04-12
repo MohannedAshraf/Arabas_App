@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:arabas_app/config/di/di.dart';
-import 'package:arabas_app/features/auth/presentation/bloc/register_cubit.dart';
-import 'package:arabas_app/features/auth/presentation/screens/register_screen.dart';
+import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
+import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,8 +28,8 @@ class _SplashScreenState extends State<SplashScreen> {
         MaterialPageRoute(
           builder:
               (_) => BlocProvider(
-                create: (_) => sl<RegisterCubit>(),
-                child: const RegisterScreen(),
+                create: (_) => sl<LoginCubit>(),
+                child: const LoginScreen(),
               ),
         ),
       );
