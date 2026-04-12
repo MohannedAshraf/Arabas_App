@@ -184,11 +184,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (formKey.currentState!.validate()) {
                                 final deviceId =
                                     await DeviceHelper.getDeviceId();
+                                final platform = DeviceHelper.getPlatform();
 
                                 context.read<LoginCubit>().login(
                                   email: emailController.text.trim(),
                                   password: passwordController.text.trim(),
                                   deviceId: deviceId,
+                                  platform: platform,
                                 );
                               }
                             },

@@ -12,11 +12,26 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {
-    final response = await dio.post(
-      "https://arabas.runasp.net/api/Auth/login",
-      data: request.toJson(),
-    );
+    try {
+      final response = await dio.post(
+        "https://arabas.runasp.net/api/Auth/login",
+        data: request.toJson(),
+      );
 
-    return LoginResponseModel.fromJson(response.data);
+      final result = LoginResponseModel.fromJson(response.data);
+
+      if (!result.isSuccess) {
+        throw Exception(result.message);
+      }
+
+      return result;
+    } on DioException catch (e) {
+      final message =
+          e.response?.data?["message"] ??
+          e.response?.data?["Message"] ??
+          "حدث خطأ في الاتصال بالسيرفر";
+
+      throw Exception(message);
+    }
   }
 }

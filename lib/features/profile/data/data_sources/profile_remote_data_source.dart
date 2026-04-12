@@ -12,11 +12,23 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<ProfileResponseModel> getProfile(String token) async {
-    final response = await dio.get(
-      'https://arabas.runasp.net/api/Auth/Profile',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
+    try {
+      final response = await dio.get(
+        "https://arabas.runasp.net/api/Auth/Profile",
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
 
-    return ProfileResponseModel.fromJson(response.data);
+      return ProfileResponseModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception("SESSION_EXPIRED");
+      }
+
+      if (e.response?.statusCode == 500) {
+        throw Exception("SERVER_ERROR");
+      }
+
+      throw Exception("NETWORK_ERROR");
+    }
   }
 }

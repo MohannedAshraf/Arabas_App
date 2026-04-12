@@ -16,7 +16,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       final result = await registerUseCase(model);
       emit(RegisterSuccess(result.message));
     } catch (e) {
-      emit(RegisterError(e.toString()));
+      emit(RegisterError(e.toString().replaceAll("Exception: ", "")));
     }
   }
 }

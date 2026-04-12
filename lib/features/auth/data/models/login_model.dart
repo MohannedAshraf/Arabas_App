@@ -2,15 +2,25 @@ class LoginRequestModel {
   final String email;
   final String password;
   final String deviceId;
+  final String fingerprint;
+  final String platform;
 
   LoginRequestModel({
     required this.email,
     required this.password,
     required this.deviceId,
+    required this.fingerprint,
+    required this.platform,
   });
 
   Map<String, dynamic> toJson() {
-    return {"email": email, "password": password, "deviceId": deviceId};
+    return {
+      "email": email,
+      "password": password,
+      "deviceId": deviceId,
+      "fingerprint": fingerprint,
+      "platform": platform,
+    };
   }
 }
 
@@ -19,20 +29,26 @@ class LoginResponseModel {
   final int statusCode;
   final String message;
   final LoginDataModel? data;
+  final dynamic errors;
 
   LoginResponseModel({
     required this.isSuccess,
     required this.statusCode,
     required this.message,
     this.data,
+    this.errors,
   });
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      isSuccess: json['isSuccess'],
-      statusCode: json['statusCode'],
-      message: json['message'],
-      data: json['data'] != null ? LoginDataModel.fromJson(json['data']) : null,
+      isSuccess: json["isSuccess"] ?? json["IsSuccess"],
+      statusCode: json["statusCode"] ?? json["StatusCode"],
+      message: json["message"] ?? json["Message"],
+      data:
+          (json["data"] ?? json["Data"]) != null
+              ? LoginDataModel.fromJson(json["data"] ?? json["Data"])
+              : null,
+      errors: json["errors"] ?? json["Errors"],
     );
   }
 }

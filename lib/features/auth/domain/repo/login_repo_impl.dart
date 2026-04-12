@@ -1,30 +1,24 @@
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/features/auth/data/data_sources/login_remote_data_source.dart';
 import 'package:arabas_app/features/auth/data/models/login_model.dart';
+import 'package:arabas_app/features/auth/domain/entities/login_entity.dart';
 import 'package:arabas_app/features/auth/domain/repo/login_repo.dart';
-
-import '../../domain/entities/login_entity.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final LoginRemoteDataSource remoteDataSource;
-  final LocalStorageService localStorage; // 🔥 جديد
+  final LocalStorageService localStorage;
 
   LoginRepositoryImpl(this.remoteDataSource, this.localStorage);
 
   @override
-  Future<LoginEntity> login({
-    required String email,
-    required String password,
-    required String deviceId,
-  }) async {
-    final response = await remoteDataSource.login(
-      LoginRequestModel(email: email, password: password, deviceId: deviceId),
-    );
+  Future<LoginEntity> login(LoginRequestModel request) async {
+    final response = await remoteDataSource.login(request);
 
     final data = response.data!;
 
-    /// 🔥 أهم سطر في المشروع كله
-    await localStorage.saveToken(data.accessToken);
+    // 🔥 Save BOTH tokens
+    await localStorage.saveAccessToken(data.accessToken);
+    await localStorage.saveRefreshToken(data.refreshToken);
 
     return LoginEntity(
       accessToken: data.accessToken,

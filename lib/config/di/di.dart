@@ -102,5 +102,5 @@ Future<void> init() async {
   sl.registerFactory<LoginCubit>(() => LoginCubit(sl(), sl()));
 
   /// ✅ Profile Cubit
-  sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl()));
+  sl.registerFactory<ProfileCubit>(() => ProfileCubit(sl(), sl()));
 }

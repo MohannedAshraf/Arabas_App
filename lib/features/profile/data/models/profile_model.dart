@@ -25,19 +25,19 @@ class ProfileResponseModel extends ProfileEntity {
     final data = json['data'];
 
     return ProfileResponseModel(
-      isSuccess: json['isSuccess'],
-      statusCode: json['statusCode'],
-      message: json['message'],
-      id: data['id'],
-      fullName: data['fullName'],
-      email: data['email'],
-      phoneNumber: data['phoneNumber'],
-      role: data['role'],
-      imageUrl: data['imageUrl'],
-      phoneName: data['phoneName'],
-      platform: data['platform'],
-      totalCourses: data['totalCourses'],
-      totalExamSolve: data['totalExamSolve'],
+      isSuccess: json['isSuccess'] ?? false,
+      statusCode: json['statusCode'] ?? 500,
+      message: json['message'] ?? "",
+      id: data['id'] ?? "",
+      fullName: data['fullName'] ?? "",
+      email: data['email'] ?? "",
+      phoneNumber: data['phoneNumber'] ?? "",
+      role: data['role'] ?? "",
+      imageUrl: data['imageUrl'] ?? "",
+      phoneName: List<String>.from(data['phoneName'] ?? []),
+      platform: List<String>.from(data['platform'] ?? []),
+      totalCourses: data['totalCourses'] ?? 0,
+      totalExamSolve: data['totalExamSolve'] ?? 0,
     );
   }
 }

@@ -5,8 +5,8 @@ class ProfileEntity {
   final String phoneNumber;
   final String role;
   final String imageUrl;
-  final String phoneName;
-  final String platform;
+  final List<String> phoneName;
+  final List<String> platform;
   final int totalCourses;
   final int totalExamSolve;
 

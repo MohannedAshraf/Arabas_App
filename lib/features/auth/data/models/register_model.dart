@@ -8,6 +8,7 @@ class RegisterRequestModel {
   final String deviceId;
   final String deviceName;
   final String platform;
+  final String fingerprint;
 
   RegisterRequestModel({
     required this.firstName,
@@ -19,6 +20,7 @@ class RegisterRequestModel {
     required this.deviceId,
     required this.deviceName,
     required this.platform,
+    required this.fingerprint,
   });
 
   Map<String, dynamic> toJson() {
@@ -32,6 +34,7 @@ class RegisterRequestModel {
       "deviceId": deviceId,
       "deviceName": deviceName,
       "platform": platform,
+      "fingerprint": fingerprint,
     };
   }
 }
@@ -40,24 +43,24 @@ class RegisterResponseModel {
   final bool isSuccess;
   final int statusCode;
   final String message;
-  final String data;
+  final String? data;
   final dynamic errors;
 
   RegisterResponseModel({
     required this.isSuccess,
     required this.statusCode,
     required this.message,
-    required this.data,
-    required this.errors,
+    this.data,
+    this.errors,
   });
 
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
     return RegisterResponseModel(
-      isSuccess: json["isSuccess"],
-      statusCode: json["statusCode"],
-      message: json["message"],
-      data: json["data"],
-      errors: json["errors"],
+      isSuccess: json["isSuccess"] ?? json["IsSuccess"],
+      statusCode: json["statusCode"] ?? json["StatusCode"],
+      message: json["message"] ?? json["Message"],
+      data: json["data"] ?? json["Data"],
+      errors: json["errors"] ?? json["Errors"],
     );
   }
 }

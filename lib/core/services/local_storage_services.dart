@@ -5,15 +5,29 @@ class LocalStorageService {
 
   LocalStorageService(this.prefs);
 
-  String getToken() {
-    return prefs.getString('token') ?? '';
+  // ======================
+  // Access Token
+  // ======================
+  String getAccessToken() => prefs.getString('access') ?? '';
+
+  Future<void> saveAccessToken(String token) async {
+    await prefs.setString('access', token);
   }
 
-  Future<void> saveToken(String token) async {
-    await prefs.setString('token', token);
+  // ======================
+  // Refresh Token
+  // ======================
+  String getRefreshToken() => prefs.getString('refresh') ?? '';
+
+  Future<void> saveRefreshToken(String token) async {
+    await prefs.setString('refresh', token);
   }
 
-  Future<void> clearToken() async {
-    await prefs.remove('token');
+  // ======================
+  // Clear all
+  // ======================
+  Future<void> clear() async {
+    await prefs.remove('access');
+    await prefs.remove('refresh');
   }
 }

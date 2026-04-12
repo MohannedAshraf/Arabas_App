@@ -15,7 +15,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<RegisterResponseModel> register(RegisterRequestModel model) async {
     try {
       final response = await apiService.register(model.toJson());
-      return RegisterResponseModel.fromJson(response.data);
+      final result = RegisterResponseModel.fromJson(response.data);
+
+      if (!result.isSuccess) {
+        throw Exception(result.message);
+      }
+
+      return result;
     } on DioException catch (e) {
       throw Exception(e.response?.data["message"] ?? "Server Error");
     }

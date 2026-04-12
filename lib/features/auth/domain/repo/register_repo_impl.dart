@@ -13,6 +13,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<RegisterEntity> register(RegisterRequestModel model) async {
     final response = await remoteDataSource.register(model);
 
-    return RegisterEntity(userId: response.data, message: response.message);
+    return RegisterEntity(
+      userId: response.data ?? '',
+      message: response.message,
+    );
   }
 }
