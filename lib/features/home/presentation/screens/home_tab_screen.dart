@@ -21,6 +21,44 @@ class _HomeTabState extends State<HomeTab> {
     "https://img.freepik.com/free-vector/pediatrician-concept-illustration_114360-1676.jpg",
   ];
 
+  /// 🔥 categories list (متكرر علشان يعمل scroll)
+  final List<Map<String, String>> categories = [
+    {
+      "title": "Courses",
+      "img": "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
+    },
+    {
+      "title": "Practical Training",
+      "img": "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
+    },
+    {
+      "title": "Question Bank",
+      "img": "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
+    },
+    {
+      "title": "Books",
+      "img": "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
+    },
+
+    /// تكرار
+    {
+      "title": "Courses",
+      "img": "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
+    },
+    {
+      "title": "Practical Training",
+      "img": "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
+    },
+    {
+      "title": "Question Bank",
+      "img": "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
+    },
+    {
+      "title": "Books",
+      "img": "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -50,16 +88,16 @@ class _HomeTabState extends State<HomeTab> {
                         Text(
                           " ًWelcome",
                           style: TextStyle(
-                            fontSize: 18.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          "Ready to improve your skills? Here's what we offer today...",
+                          "Ready to improve your skills? \nHere's what we offer today...",
                           style: TextStyle(
                             color: AppColors.textGray,
-                            fontSize: 12.sp,
+                            fontSize: 11.sp,
                           ),
                         ),
                       ],
@@ -105,7 +143,7 @@ class _HomeTabState extends State<HomeTab> {
                       "Search for Courses, Diplomas",
                       style: TextStyle(
                         color: AppColors.textGray,
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -115,26 +153,20 @@ class _HomeTabState extends State<HomeTab> {
               SizedBox(height: 25.h),
 
               /// CATEGORIES
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _categoryItem(
-                    "Courses",
-                    "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
-                  ),
-                  _categoryItem(
-                    "Practical Training ",
-                    "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
-                  ),
-                  _categoryItem(
-                    "Questions Bank",
-                    "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
-                  ),
-                  _categoryItem(
-                    "Books",
-                    "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
-                  ),
-                ],
+              SizedBox(
+                height: 120.h, // 🔥 زودنا الارتفاع عشان مفيش overflow
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                  itemBuilder: (context, index) {
+                    return _categoryItem(
+                      categories[index]['title']!,
+                      categories[index]['img']!,
+                    );
+                  },
+                ),
               ),
 
               SizedBox(height: 30.h),
@@ -142,7 +174,7 @@ class _HomeTabState extends State<HomeTab> {
               /// CAROUSEL
               Text(
                 "Featured Courses",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 15.h),
 
@@ -179,7 +211,7 @@ class _HomeTabState extends State<HomeTab> {
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -223,24 +255,9 @@ class _HomeTabState extends State<HomeTab> {
               SizedBox(height: 30.h),
 
               /// CONTINUE LEARNING
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    " Continue Learning",
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "We are the best ",
-                    style: TextStyle(
-                      color: AppColors.textGray,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ],
+              Text(
+                " Continue Learning",
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
 
               SizedBox(height: 15.h),
@@ -250,7 +267,7 @@ class _HomeTabState extends State<HomeTab> {
 
               Text(
                 " Main Sections",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 15.h),
 
@@ -273,27 +290,40 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _categoryItem(String title, String img) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(15.w),
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return SizedBox(
+      width: 80.w, // 🔥 زودنا العرض شوية
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(15.w),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(16.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Image.network(img, height: 35.h),
+            // Image.asset("assets/images/category.png")
           ),
-          child: Image.network(img, height: 35.h),
-          // Image.asset("assets/images/category.png")
-        ),
-        SizedBox(height: 6.h),
-        Text(title, style: TextStyle(fontSize: 12.sp)),
-      ],
+          SizedBox(height: 6.h),
+
+          Flexible(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 11.sp),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -322,12 +352,12 @@ class _HomeTabState extends State<HomeTab> {
                   "ICU",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
+                    fontSize: 12.sp,
                   ),
                 ),
                 Text(
                   "Intensive Care Unit ",
-                  style: TextStyle(color: AppColors.textGray, fontSize: 12.sp),
+                  style: TextStyle(color: AppColors.textGray, fontSize: 11.sp),
                 ),
                 SizedBox(height: 6.h),
                 ClipRRect(
@@ -360,7 +390,7 @@ class _HomeTabState extends State<HomeTab> {
           SizedBox(width: 8.w),
           Text(
             "60%",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp),
           ),
         ],
       ),
@@ -388,7 +418,7 @@ class _HomeTabState extends State<HomeTab> {
             height: 40.h,
           ),
           SizedBox(width: 10.w),
-          Expanded(child: Text(title, style: TextStyle(fontSize: 13.sp))),
+          Expanded(child: Text(title, style: TextStyle(fontSize: 11.sp))),
         ],
       ),
     );
@@ -429,14 +459,14 @@ class _HomeTabState extends State<HomeTab> {
               "Free Section ",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18.sp,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 5.h),
             Text(
               "Enjoy comorehensive free content",
-              style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+              style: TextStyle(color: Colors.white70, fontSize: 11.sp),
             ),
             SizedBox(height: 10.h),
             Container(
@@ -447,7 +477,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
               child: Text(
                 "Start Now",
-                style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                style: TextStyle(color: Colors.white, fontSize: 11.sp),
               ),
             ),
           ],
