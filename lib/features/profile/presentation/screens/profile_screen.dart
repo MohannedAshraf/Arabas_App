@@ -159,7 +159,7 @@ class ProfileScreen extends StatelessWidget {
                             minimumSize: Size(double.infinity, 50.h),
                           ),
                           onPressed: () {
-                            Navigator.pushReplacement(
+                            Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                 builder:
@@ -168,6 +168,7 @@ class ProfileScreen extends StatelessWidget {
                                       child: const LoginScreen(),
                                     ),
                               ),
+                              (route) => false,
                             );
                           },
                           child: Text(
