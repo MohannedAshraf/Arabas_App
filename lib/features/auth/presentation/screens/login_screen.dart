@@ -28,6 +28,30 @@ class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = false;
   bool obscurePassword = true;
 
+  /// validation helpers
+  String? validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Email is required";
+    }
+    if (value.contains(" ")) {
+      return "Email cannot contain spaces";
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Password is required";
+    }
+    if (value.contains(" ")) {
+      return "Password cannot contain spaces";
+    }
+    if (value.length < 6) {
+      return "Password must be at least 6 characters";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -80,16 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 5.h),
-
-                    Text(
-                      "Access your personalized dashboard.",
-                      style: TextStyle(
-                        color: AppColors.textGray,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-
                     SizedBox(height: 20.h),
 
                     /// Email
@@ -98,36 +112,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFormField(
                       controller: emailController,
-                      validator:
-                          (value) => value!.isEmpty ? "Enter your email" : null,
+                      validator: validateEmail,
                       decoration: _inputDecoration("name@example.com"),
                     ),
 
                     SizedBox(height: 16.h),
 
                     /// Password
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Password", style: TextStyle(fontSize: 12.sp)),
-                        Text(
-                          "FORGOT PASSWORD?",
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 10.sp,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Text("Password", style: TextStyle(fontSize: 12.sp)),
 
                     SizedBox(height: 6.h),
 
                     TextFormField(
                       controller: passwordController,
                       obscureText: obscurePassword,
-                      validator:
-                          (value) =>
-                              value!.isEmpty ? "Enter your password" : null,
+                      validator: validatePassword,
                       decoration: _inputDecoration("********").copyWith(
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -147,7 +146,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: 12.h),
 
-                    /// Remember me
                     Row(
                       children: [
                         Checkbox(
@@ -156,12 +154,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               (value) => setState(() => rememberMe = value!),
                         ),
                         Text("Remember me", style: TextStyle(fontSize: 13.sp)),
+                        SizedBox(width: 42.w),
+                        Text(
+                          "FORGOT PASSWORD?",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 12.sp,
+                          ),
+                        ),
                       ],
                     ),
 
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 8.h),
 
-                    /// Button
                     BlocBuilder<LoginCubit, LoginState>(
                       builder: (context, state) {
                         if (state is LoginLoading) {
@@ -208,14 +213,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: 16.h),
 
-                    /// Create account
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "New to The Curator? ",
-                          style: TextStyle(fontSize: 12.sp),
+                          style: TextStyle(fontSize: 16.sp),
                         ),
+                        SizedBox(width: 50.w),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
@@ -230,11 +234,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                           child: Text(
-                            "   Sign Up",
+                            "Sign Up",
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w500,
-                              fontSize: 12.sp,
+                              fontSize: 16.sp,
                             ),
                           ),
                         ),

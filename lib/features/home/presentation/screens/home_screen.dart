@@ -3,6 +3,7 @@ import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.da
 import 'package:arabas_app/features/home/presentation/screens/my_courses_tab.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: tabs[currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
+        iconSize: 22.sp,
         currentIndex: currentIndex,
         onTap: (index) {
           setState(() {
@@ -47,17 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
         },
 
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
+        backgroundColor: AppColors.primary,
+        selectedItemColor: AppColors.white,
         unselectedItemColor: Colors.grey,
 
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "My Courses"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "المفضلة"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: "Favourites",
+            icon: Icon(Icons.person),
+            label: "الملف الشخصي",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
     );

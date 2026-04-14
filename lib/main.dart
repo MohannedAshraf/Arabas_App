@@ -1,4 +1,4 @@
-import 'package:arabas_app/features/splash_onboarding/presentation/splash_screen.dart';
+import 'package:arabas_app/features/splash_onboarding/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

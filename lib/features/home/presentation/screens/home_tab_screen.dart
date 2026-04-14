@@ -1,63 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:arabas_app/core/constants/app_images.dart';
+import 'package:arabas_app/features/home/presentation/screens/announcement_screen.dart';
+import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
-
-  @override
-  State<HomeTab> createState() => _HomeTabState();
-}
-
-class _HomeTabState extends State<HomeTab> {
-  int currentIndex = 0;
-
-  final List<String> images = [
-    "https://img.freepik.com/free-vector/doctor-concept-illustration_114360-1516.jpg",
-    "https://img.freepik.com/free-vector/medical-team-concept-illustration_114360-1515.jpg",
-    "https://img.freepik.com/free-vector/pediatrician-concept-illustration_114360-1676.jpg",
-  ];
-
-  /// 🔥 categories list (متكرر علشان يعمل scroll)
-  final List<Map<String, String>> categories = [
-    {
-      "title": "Courses",
-      "img": "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
-    },
-    {
-      "title": "Practical Training",
-      "img": "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
-    },
-    {
-      "title": "Question Bank",
-      "img": "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
-    },
-    {
-      "title": "Books",
-      "img": "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
-    },
-
-    /// تكرار
-    {
-      "title": "Courses",
-      "img": "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
-    },
-    {
-      "title": "Practical Training",
-      "img": "https://cdn-icons-png.flaticon.com/512/4320/4320337.png",
-    },
-    {
-      "title": "Question Bank",
-      "img": "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
-    },
-    {
-      "title": "Books",
-      "img": "https://cdn-icons-png.flaticon.com/512/2232/2232688.png",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -65,223 +16,85 @@ class _HomeTabState extends State<HomeTab> {
       child: Container(
         color: const Color(0xffF7F5FA),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// HEADER
+              _header(),
+
+              SizedBox(height: 5.h),
+
+              _mainCard(
+                title: "تعرف على المؤسسة",
+                desc: "نبذة عن المؤسسه وأهدافها والخدمات المقدمه",
+                image: AppImages.aboutOrg,
+                onTap: () {},
+              ),
+
+              _mainCard(
+                title: "أهم البرامج التدريبية",
+                desc: "الدبلومة المتقدمه في أطفال الأنابيب والعقم",
+                image: AppImages.bestProg,
+                onTap: () {},
+              ),
+
+              _mainCard(
+                title: "كورسات مسجلة",
+                desc: "كورسات مسجله جاهزة للمشاهدة في اي وقت واي  مكان",
+                image: AppImages.recordedCourses,
+                onTap: () {},
+              ),
+
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 26.r,
-                    backgroundImage: const NetworkImage(
-                      "https://i.pravatar.cc/150?img=12",
-                    ),
-                    // backgroundImage: AssetImage("assets/images/profile.png"),
-                  ),
-                  SizedBox(width: 12.w),
-
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          " ًWelcome",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                    child: _smallCard(
+                      title: "بنك الأسئلة",
+                      desc: "تدرب علي ألاف الأسئلة الطبية",
+                      image: AppImages.questionBank,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => QuestionBankScreen(),
                           ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          "Ready to improve your skills? \nHere's what we offer today...",
-                          style: TextStyle(
-                            color: AppColors.textGray,
-                            fontSize: 11.sp,
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
-
-                  /// 🔔 Notification with badge
-                  Stack(
-                    children: [
-                      Icon(Icons.notifications_none, size: 26.sp),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          width: 8.w,
-                          height: 8.h,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: _smallCard1(
+                      title: "التدريب العملي",
+                      desc: "فرص تدريب عملي ",
+                      image: AppImages.training,
+                      onTap: () {},
+                    ),
                   ),
                 ],
               ),
-
-              SizedBox(height: 25.h),
-
-              /// SEARCH
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 15.w),
-                height: 50.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xffEEF1F6),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, color: AppColors.textGray, size: 20.sp),
-                    SizedBox(width: 10.w),
-                    Text(
-                      "Search for Courses, Diplomas",
-                      style: TextStyle(
-                        color: AppColors.textGray,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 25.h),
-
-              /// CATEGORIES
-              SizedBox(
-                height: 120.h, // 🔥 زودنا الارتفاع عشان مفيش overflow
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: categories.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 12.w),
-                  itemBuilder: (context, index) {
-                    return _categoryItem(
-                      categories[index]['title']!,
-                      categories[index]['img']!,
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: 30.h),
-
-              /// CAROUSEL
-              Text(
-                "Featured Courses",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15.h),
-
-              CarouselSlider.builder(
-                itemCount: images.length,
-                itemBuilder: (context, index, realIndex) {
-                  return Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 6.w),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.r),
-                      image: DecorationImage(
-                        image: NetworkImage(images[index]),
-                        fit: BoxFit.cover,
-                      ),
-                      // image: DecorationImage(image: AssetImage("assets/images/course.png"), fit: BoxFit.cover),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.r),
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withOpacity(0.1),
-                            const Color(0xff6A1B3F).withOpacity(0.7),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                      alignment: Alignment.bottomRight,
-                      padding: EdgeInsets.all(16.w),
-                      child: Text(
-                        "Pediatrics Diploma\nAdvanced-8 Weeks",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                options: CarouselOptions(
-                  height: 160.h,
-                  autoPlay: true,
-                  viewportFraction: 0.9,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) {
-                    setState(() => currentIndex = index);
-                  },
-                ),
-              ),
-
-              SizedBox(height: 12.h),
-
-              /// 🔥 DOTS INDICATOR
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  images.length,
-                  (index) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 4.w),
-                    width: currentIndex == index ? 20.w : 8.w,
-                    height: 8.h,
-                    decoration: BoxDecoration(
-                      color:
-                          currentIndex == index
-                              ? AppColors.primary
-                              : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 30.h),
-
-              /// CONTINUE LEARNING
-              Text(
-                " Continue Learning",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-              ),
-
-              SizedBox(height: 15.h),
-              _continueCard(),
-
-              SizedBox(height: 30.h),
-
-              Text(
-                " Main Sections",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15.h),
 
               Row(
                 children: [
-                  Expanded(child: _smallCard("Questions Bank")),
-                  SizedBox(width: 15.w),
-                  Expanded(child: _smallCard(" Courses")),
+                  Expanded(
+                    child: _smallCard(
+                      title: "برنامج إدارة العيادة",
+                      desc: "نظام متكامل لإدارة العيادات ",
+                      image: AppImages.clinic,
+                      onTap: () {},
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: _smallCard1(
+                      title: "كتب طبية",
+                      desc: "مجموعة مختارة من أفضل الكتب",
+                      image: AppImages.medicalBooks,
+                      onTap: () {},
+                    ),
+                  ),
                 ],
               ),
 
-              SizedBox(height: 20.h),
-              _freeSection(),
-              SizedBox(height: 30.h),
+              _freeSection(onTap: () {}),
             ],
           ),
         ),
@@ -289,199 +102,386 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _categoryItem(String title, String img) {
-    return SizedBox(
-      width: 80.w, // 🔥 زودنا العرض شوية
+  /// HEADER
+  Widget _header() {
+    return Container(
+      color: AppColors.primary,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: EdgeInsets.all(15.w),
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 10.w),
+              _logoCircle(AppImages.logo),
+              SizedBox(width: 12.w),
+              _logoCircle(AppImages.logo2),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            "المؤسسة العربية للتعليم والتدريب",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: AppColors.white,
+            ),
+          ),
+          SizedBox(height: 5.h),
+          Text(
+            "(ARABAS) - CPD 20960",
+            style: TextStyle(fontSize: 12.sp, color: AppColors.white),
+          ),
+          SizedBox(height: 5.h),
+          Text(
+            " السلام عليكم يا دكتور",
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: AppColors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 5.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: _announcement(),
+          ),
+          SizedBox(height: 15.h),
+        ],
+      ),
+    );
+  }
+
+  /// ANNOUNCEMENT
+  Widget _announcement() {
+    return Builder(
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AnnouncementScreen()),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black12.withOpacity(.05),
                   blurRadius: 10,
-                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Image.network(img, height: 35.h),
-            // Image.asset("assets/images/category.png")
-          ),
-          SizedBox(height: 6.h),
-
-          Flexible(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11.sp),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _continueCard() {
-    return Container(
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [
-          BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
-        ],
-      ),
-      child: Row(
-        children: [
-          Image.network(
-            "https://cdn-icons-png.flaticon.com/512/3209/3209265.png",
-            height: 45.h,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  "ICU",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12.sp,
+                Icon(Icons.campaign, color: AppColors.primary),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Text(
+                    "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل.",
+                    style: TextStyle(fontSize: 14.sp),
                   ),
                 ),
-                Text(
-                  "Intensive Care Unit ",
-                  style: TextStyle(color: AppColors.textGray, fontSize: 11.sp),
-                ),
-                SizedBox(height: 6.h),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: const LinearProgressIndicator(
-                    value: 0.6,
-                    minHeight: 6,
-                    color: AppColors.green,
-                    backgroundColor: Color(0xffE5E5E5),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    "إعلانات",
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ),
               ],
             ),
           ),
-          Column(
-            children: [
-              CircleAvatar(
-                radius: 16.r,
-                backgroundImage: NetworkImage(
-                  "https://i.pravatar.cc/100?img=12",
-                ),
-              ),
-              SizedBox(height: 5.h),
-              Text(
-                "8 Weeks",
-                style: TextStyle(fontSize: 10.sp, color: AppColors.textGray),
-              ),
-            ],
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            "60%",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _smallCard(String title) {
-    return Container(
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Image.network(
-            "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-            height: 40.h,
-          ),
-          SizedBox(width: 10.w),
-          Expanded(child: Text(title, style: TextStyle(fontSize: 11.sp))),
-        ],
-      ),
-    );
-  }
-
-  Widget _freeSection() {
-    return Container(
-      height: 170.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.r),
-        image: const DecorationImage(
-          image: NetworkImage(
-            "https://img.freepik.com/free-vector/gift-box-concept-illustration_114360-1276.jpg",
-          ),
-          fit: BoxFit.cover,
-        ),
-        // DecorationImage(image: AssetImage("assets/images/free.png"))
-      ),
+  /// MAIN CARD
+  Widget _mainCard({
+    required String title,
+    required String desc,
+    required String image,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(bottom: 12.h, left: 8.w, right: 8.w),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.r),
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withOpacity(0.1),
-              const Color(0xff6A1B3F).withOpacity(0.7),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+          ],
         ),
-        alignment: Alignment.bottomRight,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: Row(
           children: [
-            Text(
-              "Free Section ",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 5.h),
-            Text(
-              "Enjoy comorehensive free content",
-              style: TextStyle(color: Colors.white70, fontSize: 11.sp),
-            ),
-            SizedBox(height: 10.h),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: const Color(0xff6A1B3F),
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text(
-                "Start Now",
-                style: TextStyle(color: Colors.white, fontSize: 11.sp),
+            Image.asset(image, height: 70.h, width: 100.w),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    desc,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textGray,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// SMALL CARD
+  Widget _smallCard({
+    required String title,
+    required String image,
+    required String desc,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 100.h,
+
+        margin: EdgeInsets.only(bottom: 12.h, left: 8.w),
+        padding: EdgeInsets.only(
+          left: 8.w,
+          right: 8.w,
+          top: 15.h,
+          bottom: 15.h,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+          ],
+        ),
+        child: Row(
+          children: [
+            Image.asset(image, height: 70.h, width: 50.w),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+
+                  Text(
+                    desc,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textGray,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _smallCard1({
+    required String title,
+    required String image,
+    required String desc,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 100.h,
+
+        margin: EdgeInsets.only(bottom: 12.h, right: 8.w),
+        padding: EdgeInsets.only(
+          left: 8.w,
+          right: 8.w,
+          top: 15.h,
+          bottom: 15.h,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+          ],
+        ),
+        child: Row(
+          children: [
+            Image.asset(image, height: 70.h, width: 55.w),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+
+                  Text(
+                    desc,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textGray,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// FREE SECTION
+  Widget _freeSection({required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: Image.asset(
+                AppImages.free,
+                height: 80.h,
+                width: 100.w,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            SizedBox(width: 10.w),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "القسم المجاني",
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+
+                  SizedBox(height: 5.h),
+
+                  Text(
+                    "محتوى مجاني شامل ومفيد",
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.textGray,
+                    ),
+                  ),
+
+                  SizedBox(height: 10.h),
+
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "اعرف المزيد",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _logoCircle(String image) {
+    return Container(
+      padding: EdgeInsets.all(3.w),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: CircleAvatar(
+        radius: 35.r,
+        backgroundImage: AssetImage(image),
+        backgroundColor: Colors.white,
       ),
     );
   }

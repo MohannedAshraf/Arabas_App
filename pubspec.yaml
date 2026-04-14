@@ -48,6 +48,7 @@ dependencies:
   uuid: ^4.4.0
   shared_preferences: 
   carousel_slider: 5.0.0
+  video_player:
 
 
 dev_dependencies:
