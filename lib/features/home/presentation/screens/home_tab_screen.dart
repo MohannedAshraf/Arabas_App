@@ -2,6 +2,7 @@
 
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/home/presentation/screens/announcement_screen.dart';
+import 'package:arabas_app/features/home/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,7 +89,14 @@ class HomeTab extends StatelessWidget {
                       title: "كتب طبية",
                       desc: "مجموعة مختارة من أفضل الكتب",
                       image: AppImages.medicalBooks,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MedicalBooksScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -178,11 +186,11 @@ class HomeTab extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.campaign, color: AppColors.primary),
+                Icon(Icons.campaign, color: AppColors.primary, size: 28.sp),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
-                    "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل.",
+                    "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
                     style: TextStyle(fontSize: 14.sp),
                   ),
                 ),

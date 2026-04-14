@@ -14,4 +14,8 @@ class AppImages {
   static const String eye = "${_baseUrl}eye.png";
   static const String nose = "${_baseUrl}nose.png";
   static const String free = "${_baseUrl}free.png";
+  static const String book1 = "${_baseUrl}book1.png";
+  static const String book2 = "${_baseUrl}book2.png";
+  static const String book3 = "${_baseUrl}book3.png";
+  static const String book4 = "${_baseUrl}book4.png";
 }
