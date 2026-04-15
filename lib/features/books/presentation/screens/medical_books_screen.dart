@@ -152,39 +152,18 @@ class MedicalBooksScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(.1),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            color: AppColors.primary,
-                          ),
-                        ),
+                  Expanded(
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
                       ),
-                      Expanded(
-                        child: Text(
-                          title,
-                          textAlign: TextAlign.right,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
 
                   SizedBox(height: 6.h),

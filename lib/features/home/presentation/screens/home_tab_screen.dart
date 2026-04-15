@@ -4,6 +4,7 @@ import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/course_list/presentation/screens/course_category_screen.dart';
+import 'package:arabas_app/features/free_lectures/presentation/screens/free_lectures_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -108,7 +109,16 @@ class HomeTab extends StatelessWidget {
                 ],
               ),
 
-              _freeSection(onTap: () {}),
+              _freeSection(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const FreeLecturesScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -151,7 +161,7 @@ class HomeTab extends StatelessWidget {
           Text(
             " السلام عليكم يا دكتور",
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 12.sp,
               color: AppColors.white,
               fontWeight: FontWeight.w600,
             ),
@@ -192,12 +202,12 @@ class HomeTab extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.campaign, color: AppColors.primary, size: 28.sp),
+                Icon(Icons.campaign, color: AppColors.primary, size: 24.sp),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
                     "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
-                    style: TextStyle(fontSize: 14.sp),
+                    style: TextStyle(fontSize: 11.sp),
                   ),
                 ),
                 Container(
@@ -211,7 +221,7 @@ class HomeTab extends StatelessWidget {
                   ),
                   child: Text(
                     "إعلانات",
-                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
                   ),
                 ),
               ],
@@ -253,7 +263,7 @@ class HomeTab extends StatelessWidget {
                     title,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),
@@ -263,7 +273,7 @@ class HomeTab extends StatelessWidget {
                     desc,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       color: AppColors.textGray,
                     ),
                   ),
@@ -286,8 +296,6 @@ class HomeTab extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 100.h,
-
         margin: EdgeInsets.only(bottom: 12.h, left: 8.w),
         padding: EdgeInsets.only(
           left: 8.w,
@@ -312,9 +320,9 @@ class HomeTab extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.primary,
                     ),
@@ -324,7 +332,7 @@ class HomeTab extends StatelessWidget {
                     desc,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       color: AppColors.textGray,
                     ),
                   ),
@@ -346,8 +354,6 @@ class HomeTab extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 100.h,
-
         margin: EdgeInsets.only(bottom: 12.h, right: 8.w),
         padding: EdgeInsets.only(
           left: 8.w,
@@ -372,9 +378,9 @@ class HomeTab extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.primary,
                     ),
@@ -384,7 +390,7 @@ class HomeTab extends StatelessWidget {
                     desc,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       color: AppColors.textGray,
                     ),
                   ),
@@ -433,7 +439,7 @@ class HomeTab extends StatelessWidget {
                     "القسم المجاني",
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 18.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),
@@ -445,7 +451,7 @@ class HomeTab extends StatelessWidget {
                     "محتوى مجاني شامل ومفيد",
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                       color: AppColors.textGray,
                     ),
                   ),
@@ -465,7 +471,7 @@ class HomeTab extends StatelessWidget {
                       ),
                       child: Text(
                         "اعرف المزيد",
-                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       ),
                     ),
                   ),

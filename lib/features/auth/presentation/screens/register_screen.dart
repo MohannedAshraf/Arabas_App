@@ -253,7 +253,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
 
-                        SizedBox(height: 25.h),
+                        SizedBox(height: 15.h),
 
                         BlocBuilder<RegisterCubit, RegisterState>(
                           builder: (context, state) {
@@ -264,18 +264,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             );
                           },
                         ),
-                        SizedBox(height: 20.h),
+                        SizedBox(height: 10.h),
 
                         Row(
                           children: [
                             Text(
-                              " have an account?   ",
+                              " have an account?",
                               style: TextStyle(
                                 color: AppColors.textGray,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                               ),
                             ),
-                            SizedBox(width: 50.w),
+                            SizedBox(width: 20.w),
                             GestureDetector(
                               onTap: () {
                                 Navigator.pushReplacement(
@@ -294,7 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
+                                  fontSize: 14.sp,
                                 ),
                               ),
                             ),

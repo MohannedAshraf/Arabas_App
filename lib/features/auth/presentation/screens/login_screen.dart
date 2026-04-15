@@ -153,15 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged:
                               (value) => setState(() => rememberMe = value!),
                         ),
-                        Text("Remember me", style: TextStyle(fontSize: 13.sp)),
-                        SizedBox(width: 42.w),
-                        Text(
-                          "FORGOT PASSWORD?",
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 12.sp,
-                          ),
-                        ),
+                        Text("Remember me", style: TextStyle(fontSize: 10.sp)),
                       ],
                     ),
 
@@ -203,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Login",
                               style: TextStyle(
                                 color: AppColors.white,
-                                fontSize: 16.sp,
+                                fontSize: 12.sp,
                               ),
                             ),
                           ),
@@ -217,9 +209,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Text(
                           "New to The Curator? ",
-                          style: TextStyle(fontSize: 16.sp),
+                          style: TextStyle(fontSize: 12.sp),
                         ),
-                        SizedBox(width: 50.w),
+                        SizedBox(width: 20.w),
+
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
@@ -238,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w500,
-                              fontSize: 16.sp,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
