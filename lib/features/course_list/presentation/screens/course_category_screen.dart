@@ -2,12 +2,12 @@
 
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
-import 'package:arabas_app/features/question_bank/presentation/screens/question_type_screen.dart';
+import 'package:arabas_app/features/course_list/presentation/screens/subcategory_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class QuestionBankScreen extends StatelessWidget {
-  const QuestionBankScreen({super.key});
+class CourseCategoryScreen extends StatelessWidget {
+  const CourseCategoryScreen({super.key});
 
   final List<Map<String, String>> sections = const [
     {"title": "أنف وأذن وحنجرة", "image": AppImages.nose},
@@ -32,7 +32,7 @@ class QuestionBankScreen extends StatelessWidget {
 
       appBar: AppBar(
         title: Text(
-          "بنك الأسئلة",
+          "الكورسات",
           style: TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
@@ -55,7 +55,9 @@ class QuestionBankScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => QuestionTypeScreen(title: item["title"]!),
+                  builder:
+                      (_) =>
+                          SubCategoryListScreen(categoryName: item["title"]!),
                 ),
               );
             },
@@ -101,7 +103,7 @@ class QuestionBankScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          "اضغط لعرض الأسئلة",
+                          "اضغط لعرض الكورسات",
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 16.sp,

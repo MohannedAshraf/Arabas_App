@@ -1,8 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:arabas_app/core/constants/app_images.dart';
-import 'package:arabas_app/features/home/presentation/screens/announcement_screen.dart';
-import 'package:arabas_app/features/home/presentation/screens/medical_books_screen.dart';
+import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
+import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
+import 'package:arabas_app/features/course_list/presentation/screens/course_category_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,7 +42,12 @@ class HomeTab extends StatelessWidget {
                 title: "كورسات مسجلة",
                 desc: "كورسات مسجله جاهزة للمشاهدة في اي وقت واي  مكان",
                 image: AppImages.recordedCourses,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => CourseCategoryScreen()),
+                  );
+                },
               ),
 
               Row(

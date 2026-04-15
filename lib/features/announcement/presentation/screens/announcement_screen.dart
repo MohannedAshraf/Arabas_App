@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:arabas_app/core/theme/app_colors.dart';
-import 'package:arabas_app/features/home/presentation/screens/full_video_screen.dart';
+import 'package:arabas_app/features/announcement/presentation/screens/full_video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';

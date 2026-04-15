@@ -12,4 +12,5 @@ class AppColors {
   static const lightGray = Color(0xffB0B0B0);
 
   static const white = Color(0xffffffff);
+  static const black = Color(0xff000000);
 }
