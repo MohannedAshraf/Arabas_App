@@ -567,7 +567,7 @@ class SubCategoryListScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        price.toString(),
+                        "${price.toString()} EGP",
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -591,7 +591,7 @@ class SubCategoryListScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 15.w),
                       Text(
-                        courseTime.toString(), // متغير عدد الساعات
+                        courseTime.toString(),
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: AppColors.primaryLight,
@@ -605,7 +605,43 @@ class SubCategoryListScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 20.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // Container(
+                      //   margin: EdgeInsets.only(left: 15.w),
+                      //   width: 44.w,
+                      //   height: 44.h,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(12.r),
+                      //     color: Color(0xffDCEAFA),
+                      //   ),
+                      //   child: Center(
+                      //     child: Icon(
+                      //       Icons.shopping_cart_outlined,
+                      //       size: 18.sp,
+                      //       color: AppColors.primary,
+                      //     ),
+                      //   ),
+                      // ),
+                      Spacer(),
+                      Icon(
+                        Icons.arrow_back,
+                        color: AppColors.primary,
+                        size: 24.sp,
+                      ),
+                      Text(
+                        " اشترك الآن",
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 25.h),
                 ],
               ),
             ),

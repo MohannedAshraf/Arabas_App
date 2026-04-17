@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
 class FullScreenVideo extends StatefulWidget {
@@ -13,57 +14,64 @@ class FullScreenVideo extends StatefulWidget {
 class _FullScreenVideoState extends State<FullScreenVideo> {
   bool showControls = true;
   bool showReplay = false;
+  bool isVideoEnded = false; // 👈 مهم جدا
 
   @override
   void initState() {
     super.initState();
 
-    widget.controller.addListener(() {
-      if (!mounted) return;
-      final value = widget.controller.value;
+    widget.controller.addListener(videoListener);
+  }
 
-      if (!value.isInitialized) return;
+  void videoListener() {
+    if (!mounted) return;
+    final value = widget.controller.value;
+    if (!value.isInitialized) return;
 
-      if (value.position >= value.duration && !value.isPlaying) {
-        setState(() {
-          showReplay = true;
-        });
-      }
-    });
+    /// لما الفيديو يخلص نظهر replay مرة واحدة فقط
+    if (value.position >= value.duration && !value.isPlaying && !isVideoEnded) {
+      isVideoEnded = true;
+      setState(() {
+        showReplay = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(videoListener);
+    super.dispose();
   }
 
   void togglePlay() {
-    setState(() {
-      if (widget.controller.value.isPlaying) {
-        widget.controller.pause();
-      } else {
-        widget.controller.play();
-        showReplay = false;
-      }
-    });
+    if (widget.controller.value.isPlaying) {
+      widget.controller.pause();
+    } else {
+      widget.controller.play();
+      isVideoEnded = false;
+      showReplay = false;
+    }
+    setState(() {});
   }
 
-  void replay() {
-    setState(() {
-      showReplay = false;
-    });
+  void replay() async {
+    isVideoEnded = false;
+    showReplay = false;
 
-    widget.controller
-      ..seekTo(Duration.zero)
-      ..play();
+    await widget.controller.seekTo(Duration.zero);
+    await widget.controller.play();
+
+    setState(() {});
   }
 
   void toggleControls() {
-    setState(() {
-      showControls = !showControls;
-    });
+    setState(() => showControls = !showControls);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
       body: GestureDetector(
         onTap: toggleControls,
         child: Center(
@@ -76,43 +84,42 @@ class _FullScreenVideoState extends State<FullScreenVideo> {
                 ),
               ),
 
-              /// ▶️ Play icon
               if (showControls &&
                   !widget.controller.value.isPlaying &&
                   !showReplay)
-                const Center(
-                  child: Icon(Icons.play_arrow, size: 80, color: Colors.white),
+                Center(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.play_arrow,
+                      size: 80.sp,
+                      color: Colors.white,
+                    ),
+                    onPressed: togglePlay,
+                  ),
                 ),
 
-              /// 🔄 Replay
               if (showReplay)
                 Center(
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.replay,
-                      size: 80,
-                      color: Colors.white,
-                    ),
+                    icon: Icon(Icons.replay, size: 80.sp, color: Colors.white),
                     onPressed: replay,
                   ),
                 ),
 
-              /// 🔙 Back
               if (showControls)
                 Positioned(
                   top: 40,
                   left: 20,
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back,
                       color: Colors.white,
-                      size: 30,
+                      size: 30.sp,
                     ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
 
-              /// ⏯ Play/Pause
               if (showControls)
                 Positioned(
                   bottom: 40,
@@ -125,7 +132,7 @@ class _FullScreenVideoState extends State<FullScreenVideo> {
                             ? Icons.pause
                             : Icons.play_arrow,
                         color: Colors.white,
-                        size: 40,
+                        size: 40.sp,
                       ),
                       onPressed: togglePlay,
                     ),

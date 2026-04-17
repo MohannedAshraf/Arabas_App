@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unnecessary_to_list_in_spreads
 
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
@@ -17,60 +17,28 @@ class MedicalBooksScreen extends StatelessWidget {
         "category": "تشريح",
         "price": "350",
         "image": AppImages.book1,
+        "doctor": "د. أحمد سامي",
       },
       {
         "title": "تشريح جراي",
         "category": "تشريح",
         "price": "400",
         "image": AppImages.book2,
+        "doctor": "د. محمد علي",
       },
       {
         "title": "دليل الجراحة السريرية",
         "category": "جراحة",
         "price": "300",
         "image": AppImages.book3,
+        "doctor": "د. كريم حسن",
       },
       {
         "title": "أساسيات الطب الباطني",
         "category": "باطنة",
         "price": "280",
         "image": AppImages.book4,
-      },
-      {
-        "title": "أساسيات طب الأطفال",
-        "category": "أطفال",
-        "price": "260",
-        "image": AppImages.book1,
-      },
-      {
-        "title": "دليل أمراض القلب",
-        "category": "قلب",
-        "price": "320",
-        "image": AppImages.book2,
-      },
-      {
-        "title": "مراجعة علم الأدوية",
-        "category": "أدوية",
-        "price": "240",
-        "image": AppImages.book3,
-      },
-      {
-        "title": "تبسيط علم الأعصاب",
-        "category": "مخ وأعصاب",
-        "price": "310",
-        "image": AppImages.book4,
-      },
-      {
-        "title": "دليل الأمراض الجلدية",
-        "category": "جلدية",
-        "price": "220",
-        "image": AppImages.book1,
-      },
-      {
-        "title": "طب الطوارئ",
-        "category": "طوارئ",
-        "price": "330",
-        "image": AppImages.book2,
+        "doctor": "د. محمود طارق",
       },
     ];
 
@@ -84,99 +52,231 @@ class MedicalBooksScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: AppColors.primary),
       ),
 
-      body: ListView.builder(
-        padding: EdgeInsets.only(top: 12.h),
-        itemCount: books.length,
-        itemBuilder: (context, index) {
-          final book = books[index];
+      // ⭐️ الصفحة كلها Scroll
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(height: 20.h),
 
-          return _bookCard(
-            title: book["title"]!,
-            category: book["category"]!,
-            price: book["price"]!,
-            image: book["image"]!,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (_) => BookDetailsScreen(
-                        title: book["title"]!,
-                        category: book["category"]!,
-                        price: int.parse(book["price"]!),
-                        image: book["image"]!,
-                      ),
+              // 🔎 Search Bar
+              Container(
+                height: 60.h,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xffE1E3E4),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-              );
-            },
-          );
-        },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(Icons.mic_none_outlined),
+                    Text(
+                      "ابحث عن الكتب الطبية",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.textGray,
+                      ),
+                    ),
+                    Icon(Icons.search_outlined),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 25.h),
+
+              Text(
+                "الاصدارات الجديدة",
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+
+              SizedBox(height: 6.h),
+
+              Text(
+                "المؤلفات الطبية المختارة",
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  color: AppColors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              ...books.map((book) {
+                return _bookCard1(
+                  title: book["title"]!,
+                  category: book["category"]!,
+                  price: book["price"]!,
+                  image: book["image"]!,
+                  bookDoctor: book["doctor"]!,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) => BookDetailsScreen(
+                              title: book["title"]!,
+                              category: book["category"]!,
+                              price: int.parse(book["price"]!),
+                              image: book["image"]!,
+                              doctor: book["doctor"]!,
+                            ),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+
+              SizedBox(height: 40.h),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _bookCard({
+  Widget _bookCard1({
     required String title,
     required String category,
     required String price,
     required String image,
     required VoidCallback? onTap,
+    required String bookDoctor,
   }) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 12.h, left: 8.w, right: 8.w),
-        padding: EdgeInsets.all(10.w),
+        margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
           ],
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.r),
-              child: Image.asset(
-                image,
-                height: 80.h,
-                width: 100.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            SizedBox(width: 12.w),
-
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Text(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
                       title,
                       textAlign: TextAlign.right,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 15.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.black,
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 6.h),
+                    SizedBox(height: 10.h),
 
-                  Text(
-                    price,
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      color: Colors.green,
-                      fontWeight: FontWeight.w600,
+                    Text(
+                      bookDoctor,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.textGray,
+                      ),
                     ),
-                  ),
-                ],
+
+                    SizedBox(height: 20.h),
+
+                    Text(
+                      "$price جنيه",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          height: 50.h,
+                          width: 100.w,
+                          margin: EdgeInsets.only(left: 8.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "أضف للسلة",
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          height: 50.h,
+
+                          decoration: BoxDecoration(
+                            color: Color(0xffCBE7F5),
+                            borderRadius: BorderRadius.circular(50.r),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.remove,
+                                  color: Color(0xff4E6874),
+                                  size: 18.sp,
+                                ),
+                              ),
+                              Text(
+                                "1",
+                                style: TextStyle(
+                                  fontSize: 20.sp,
+                                  color: Color(0xff4E6874),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Color(0xff4E6874),
+                                  size: 18.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 15.w),
+            Container(
+              height: 200.h,
+              width: 120.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(24.r),
+                  bottomRight: Radius.circular(24.r),
+                ),
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ],
