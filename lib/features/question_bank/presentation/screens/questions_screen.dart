@@ -4,177 +4,282 @@ import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class QuestionsScreen extends StatelessWidget {
-  final String type;
+class QuestionsScreen extends StatefulWidget {
   final String section;
 
-  QuestionsScreen({super.key, required this.type, required this.section});
+  const QuestionsScreen({super.key, required this.section});
 
-  /// 🔥 DATA FULL
+  @override
+  State<QuestionsScreen> createState() => _QuestionsScreenState();
+}
+
+class _QuestionsScreenState extends State<QuestionsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final List<String> types = ["اختياري", "صح وغلط", "مقالي"];
+
   final Map<String, Map<String, List<Map<String, dynamic>>>> data = {
-    /// ================= ENT =================
-    "أنف وأذن وحنجرة": {
-      "صح وغلط": [
-        {"q": "اللوزتين جزء من الجهاز المناعي", "a": "صح"},
-        {"q": "التهاب الأذن لا يسبب ألم", "a": "خطأ"},
-        {"q": "الجيوب الأنفية في الجمجمة", "a": "صح"},
-        {"q": "فقدان السمع دائم", "a": "خطأ"},
-      ],
-      "اختياري": [
-        {
-          "q": "عضو السمع هو؟",
-          "options": ["العين", "الأذن", "القلب", "الأنف"],
-          "a": "الأذن",
-        },
-        {
-          "q": "سبب التهاب الحلق؟",
-          "options": ["فيروس", "كسر", "حرق", "نزيف"],
-          "a": "فيروس",
-        },
-        {
-          "q": "احتقان الأنف يحدث بسبب؟",
-          "options": ["حساسية", "كسر", "جلطة", "نزيف"],
-          "a": "حساسية",
-        },
-        {
-          "q": "طبلة الأذن مسؤولة عن؟",
-          "options": ["الرؤية", "السمع", "الشم", "التذوق"],
-          "a": "السمع",
-        },
-      ],
-      "مقالي": [
-        {"q": "اشرح وظيفة اللوزتين", "a": "جزء من الجهاز المناعي"},
-        {"q": "ما أسباب التهاب الأذن؟", "a": "عدوى بكتيرية أو فيروسية"},
-        {"q": "ما وظيفة الجيوب الأنفية؟", "a": "تخفيف وزن الجمجمة"},
-        {"q": "كيف يتم علاج احتقان الأنف؟", "a": "باستخدام بخاخات وأدوية"},
-      ],
-    },
-
-    /// ================= HEART =================
+    /// ================= القلب =================
     "قلب": {
-      "صح وغلط": [
-        {"q": "القلب يضخ الدم", "a": "صح"},
-        {"q": "الشرايين تحمل دم غير مؤكسج", "a": "خطأ"},
-        {"q": "الجلطة تحدث بسبب انسداد", "a": "صح"},
-        {"q": "القلب غير مهم", "a": "خطأ"},
-      ],
-      "اختياري": [
-        {
-          "q": "عدد حجرات القلب؟",
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "القلب يضخ الدم (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "عدد حجرات القلب؟ (س${i + 1})",
           "options": ["2", "3", "4", "5"],
           "a": "4",
         },
-        {
-          "q": "أكبر شريان في الجسم؟",
-          "options": ["الأورطي", "الرئوي", "التاجي", "الوريد"],
-          "a": "الأورطي",
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {
+          "q": "كيف نحافظ على صحة القلب؟ (س${i + 1})",
+          "a": "رياضة وغذاء صحي",
         },
-        {
-          "q": "ضغط الدم الطبيعي؟",
-          "options": ["120/80", "200/100", "50/30", "300/200"],
-          "a": "120/80",
-        },
-        {
-          "q": "معدل النبض الطبيعي؟",
-          "options": ["60-100", "10-20", "200", "300"],
-          "a": "60-100",
-        },
-      ],
-      "مقالي": [
-        {"q": "ما وظيفة القلب؟", "a": "ضخ الدم إلى الجسم"},
-        {"q": "ما أسباب الجلطات؟", "a": "انسداد الأوعية الدموية"},
-        {"q": "الفرق بين الشريان والوريد؟", "a": "الشريان يحمل دم مؤكسج"},
-        {"q": "كيف نحافظ على صحة القلب؟", "a": "الرياضة والتغذية الصحية"},
-      ],
+      ),
     },
 
-    /// ================= EYES =================
+    /// ================= عيون =================
     "عيون": {
-      "صح وغلط": [
-        {"q": "الشبكية مسؤولة عن الرؤية", "a": "صح"},
-        {"q": "المياه البيضاء مرض في القلب", "a": "خطأ"},
-        {"q": "قصر النظر يعني رؤية القريب", "a": "صح"},
-        {"q": "العمى دائم دائمًا", "a": "خطأ"},
-      ],
-      "اختياري": [
-        {
-          "q": "جزء مسؤول عن التركيز؟",
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "الشبكية مسؤولة عن الرؤية (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "جزء مسؤول عن التركيز؟ (س${i + 1})",
           "options": ["القرنية", "الشبكية", "العدسة", "العصب"],
           "a": "العدسة",
         },
-        {
-          "q": "قصر النظر يعني؟",
-          "options": ["رؤية بعيد", "رؤية قريب", "عدم رؤية", "ألم"],
-          "a": "رؤية قريب",
-        },
-        {
-          "q": "مرض يصيب الشبكية؟",
-          "options": ["سكري", "ضغط", "شبكية", "التهاب"],
-          "a": "شبكية",
-        },
-        {
-          "q": "العصب البصري وظيفته؟",
-          "options": ["نقل الإشارة", "ضخ الدم", "الهضم", "التنفس"],
-          "a": "نقل الإشارة",
-        },
-      ],
-      "مقالي": [
-        {"q": "اشرح وظيفة الشبكية", "a": "استقبال الضوء"},
-        {"q": "ما هو قصر النظر؟", "a": "رؤية القريب بوضوح"},
-        {"q": "أسباب ضعف النظر؟", "a": "وراثة أو إجهاد"},
-        {"q": "كيف نحافظ على العين؟", "a": "راحة وتقليل الشاشات"},
-      ],
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "كيف نحافظ على العين؟ (س${i + 1})", "a": "تقليل الشاشات"},
+      ),
     },
 
-    /// ================= DENTAL =================
-    "أسنان": {
-      "صح وغلط": [
-        {"q": "الأسنان تساعد في الهضم", "a": "صح"},
-        {"q": "تسوس الأسنان غير مؤلم", "a": "خطأ"},
-        {"q": "الفلورايد مفيد", "a": "صح"},
-        {"q": "لا يجب تنظيف الأسنان", "a": "خطأ"},
-      ],
-      "اختياري": [
-        {
-          "q": "سبب التسوس؟",
-          "options": ["بكتيريا", "هواء", "ماء", "ضوء"],
-          "a": "بكتيريا",
+    /// ================= ENT =================
+    "أنف وأذن وحنجرة": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "اللوزتين جزء من المناعة (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "عضو السمع هو؟ (س${i + 1})",
+          "options": ["العين", "الأذن", "القلب", "الأنف"],
+          "a": "الأذن",
         },
-        {
-          "q": "عدد الأسنان عند البالغ؟",
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "ما أسباب التهاب الأذن؟ (س${i + 1})", "a": "عدوى"},
+      ),
+    },
+
+    /// ================= أسنان =================
+    "أسنان": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "الفلورايد مفيد للأسنان (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "عدد الأسنان عند البالغ؟ (س${i + 1})",
           "options": ["20", "28", "32", "40"],
           "a": "32",
         },
-        {
-          "q": "أفضل وقت للتنظيف؟",
-          "options": ["مرة", "مرتين", "3", "لا"],
-          "a": "مرتين",
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "كيف نحمي الأسنان؟ (س${i + 1})", "a": "تنظيف يومي"},
+      ),
+    },
+
+    /// ================= باطنة =================
+    "باطنة": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "الضغط مرض مزمن (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "السكري يؤثر على؟ (س${i + 1})",
+          "options": ["العين", "الكلى", "الأعصاب", "كل ما سبق"],
+          "a": "كل ما سبق",
         },
-        {
-          "q": "وظيفة الأسنان؟",
-          "options": ["الهضم", "الرؤية", "السمع", "التنفس"],
-          "a": "الهضم",
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "ما هو السكري؟ (س${i + 1})", "a": "ارتفاع سكر الدم"},
+      ),
+    },
+
+    /// ================= أطفال =================
+    "أطفال": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "التطعيمات مهمة (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "مدة الرضاعة الطبيعية؟ (س${i + 1})",
+          "options": ["6 شهور", "سنة", "3", "يوم"],
+          "a": "6 شهور",
         },
-      ],
-      "مقالي": [
-        {"q": "ما هو تسوس الأسنان؟", "a": "تآكل بسبب البكتيريا"},
-        {"q": "كيف نحمي الأسنان؟", "a": "تنظيف مستمر"},
-        {"q": "أهمية الفلورايد؟", "a": "تقوية الأسنان"},
-        {"q": "أسباب ألم الأسنان؟", "a": "التسوس أو التهاب"},
-      ],
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "أهمية التطعيم؟ (س${i + 1})", "a": "وقاية"},
+      ),
+    },
+
+    /// ================= نساء وتوليد =================
+    "نساء وتوليد": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "حمض الفوليك مهم للحمل (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "مدة الحمل؟ (س${i + 1})",
+          "options": ["9 شهور", "6", "12", "3"],
+          "a": "9 شهور",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "أهمية متابعة الحمل؟ (س${i + 1})", "a": "سلامة الأم"},
+      ),
+    },
+
+    /// ================= عظام =================
+    "عظام": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "الجبس يعالج الكسور (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "أقوى عظمة؟ (س${i + 1})",
+          "options": ["الفخذ", "الذراع", "الجمجمة", "اليد"],
+          "a": "الفخذ",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "علاج الكسور؟ (س${i + 1})", "a": "تثبيت"},
+      ),
+    },
+
+    /// ================= مخ وأعصاب =================
+    "مخ وأعصاب": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "المخ يتحكم بالجسم (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "سبب الجلطة؟ (س${i + 1})",
+          "options": ["نزيف", "انسداد", "هواء", "ماء"],
+          "a": "انسداد",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "أعراض الجلطة؟ (س${i + 1})", "a": "شلل مفاجئ"},
+      ),
+    },
+
+    /// ================= جلدية =================
+    "جلدية": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "الشمس تؤذي الجلد (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "سبب حب الشباب؟ (س${i + 1})",
+          "options": ["هرمونات", "كسر", "نزيف", "برد"],
+          "a": "هرمونات",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "الوقاية من الشمس؟ (س${i + 1})", "a": "واقي شمسي"},
+      ),
+    },
+
+    /// ================= طوارئ =================
+    "طوارئ": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "النزيف الحاد خطر (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "CPR يعني؟ (س${i + 1})",
+          "options": ["إنعاش قلبي", "تنفس", "دواء", "عملية"],
+          "a": "إنعاش قلبي",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "خطوات الإسعاف؟ (س${i + 1})", "a": "تأمين مجرى الهواء"},
+      ),
+    },
+
+    /// ================= جراحة =================
+    "جراحة عامة": {
+      "صح وغلط": List.generate(
+        5,
+        (i) => {"q": "التخدير ضروري (س${i + 1})", "a": "صح"},
+      ),
+      "اختياري": List.generate(
+        5,
+        (i) => {
+          "q": "الزائدة تقع؟ (س${i + 1})",
+          "options": ["يمين أسفل", "يسار", "صدر", "ظهر"],
+          "a": "يمين أسفل",
+        },
+      ),
+      "مقالي": List.generate(
+        5,
+        (i) => {"q": "ما هو البطن الحاد؟ (س${i + 1})", "a": "ألم مفاجئ"},
+      ),
     },
   };
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: types.length, vsync: this);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final questions = data[section]?[type] ?? [];
+    final currentType = types[_tabController.index];
+    final questions = data[widget.section]?[currentType] ?? [];
 
     return Scaffold(
       backgroundColor: const Color(0xffF6F7FB),
 
       appBar: AppBar(
         title: Text(
-          "$section - $type",
+          widget.section,
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 22.sp,
@@ -183,6 +288,20 @@ class QuestionsScreen extends StatelessWidget {
         ),
         centerTitle: true,
         iconTheme: IconThemeData(color: AppColors.primary),
+
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.primary,
+          labelColor: AppColors.primary,
+          unselectedLabelColor: Colors.grey,
+          onTap: (_) => setState(() {}),
+
+          tabs: const [
+            Tab(text: "اختياري"),
+            Tab(text: "صح وغلط"),
+            Tab(text: "مقالي"),
+          ],
+        ),
       ),
 
       body: ListView.builder(
@@ -191,76 +310,248 @@ class QuestionsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final q = questions[index];
 
-          return Container(
-            margin: EdgeInsets.only(bottom: 12.h),
-            padding: EdgeInsets.all(14.w),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(16.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12.withOpacity(.05),
-                  blurRadius: 8,
+          if (currentType == "اختياري") {
+            return McqQuestionCard(q: q);
+          }
+
+          if (currentType == "صح وغلط") {
+            return TrueFalseQuestionCard(q: q);
+          }
+
+          return EssayQuestionCard(q: q);
+        },
+      ),
+    );
+  }
+}
+
+class McqQuestionCard extends StatelessWidget {
+  final Map<String, dynamic> q;
+
+  const McqQuestionCard({super.key, required this.q});
+
+  @override
+  Widget build(BuildContext context) {
+    int correctIndex = q["options"].indexOf(q["a"]);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Question
+          Text(
+            q["q"],
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+          ),
+
+          SizedBox(height: 12.h),
+
+          /// Options
+          ...List.generate(q["options"].length, (i) {
+            bool isCorrect = i == correctIndex;
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color:
+                    isCorrect
+                        ? AppColors.primary.withOpacity(0.1)
+                        : Color(0xFFEDF4FF),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: isCorrect ? AppColors.primary : Colors.transparent,
+                  width: 1.5,
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                /// السؤال
-                Text(
-                  q["q"],
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              ),
+              child: Row(
+                children: [
+                  /// Circle / Check
+                  Container(
+                    width: 20.w,
+                    height: 20.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isCorrect ? AppColors.primary : Colors.transparent,
+                      border: Border.all(
+                        color: isCorrect ? AppColors.primary : Colors.grey,
+                      ),
+                    ),
+                    child:
+                        isCorrect
+                            ? Icon(
+                              Icons.check,
+                              size: 14.sp,
+                              color: Colors.white,
+                            )
+                            : null,
                   ),
-                ),
 
-                SizedBox(height: 10.h),
+                  SizedBox(width: 10.w),
 
-                /// اختيارات
-                if (q["options"] != null)
-                  Column(
-                    children: List.generate(
-                      q["options"].length,
-                      (i) => Container(
-                        margin: EdgeInsets.only(bottom: 5.h),
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            q["options"][i],
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                  /// Text
+                  Expanded(
+                    child: Text(
+                      q["options"][i],
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: isCorrect ? AppColors.primary : Colors.black,
                       ),
                     ),
                   ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
 
-                SizedBox(height: 5.h),
+class TrueFalseQuestionCard extends StatelessWidget {
+  final Map<String, dynamic> q;
 
-                /// الإجابة
-                Text(
-                  "الإجابة: ${q["a"]}",
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+  const TrueFalseQuestionCard({super.key, required this.q});
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> options = ["صح", "غلط"];
+    int correctIndex = options.indexOf(q["a"]);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// السؤال
+          Text(
+            q["q"],
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+          ),
+
+          SizedBox(height: 12.h),
+
+          /// الاختيارات (صح / غلط)
+          ...List.generate(options.length, (i) {
+            bool isCorrect = i == correctIndex;
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color:
+                    isCorrect
+                        ? AppColors.primary.withOpacity(0.1)
+                        : const Color(0xFFEDF4FF),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: isCorrect ? AppColors.primary : Colors.transparent,
+                  width: 1.5,
                 ),
-              ],
+              ),
+              child: Row(
+                children: [
+                  /// circle + check
+                  Container(
+                    width: 20.w,
+                    height: 20.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isCorrect ? AppColors.primary : Colors.transparent,
+                      border: Border.all(
+                        color: isCorrect ? AppColors.primary : Colors.grey,
+                      ),
+                    ),
+                    child:
+                        isCorrect
+                            ? Icon(
+                              Icons.check,
+                              size: 14.sp,
+                              color: Colors.white,
+                            )
+                            : null,
+                  ),
+
+                  SizedBox(width: 10.w),
+
+                  /// النص
+                  Expanded(
+                    child: Text(
+                      options[i],
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: isCorrect ? AppColors.primary : Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class EssayQuestionCard extends StatelessWidget {
+  final Map<String, dynamic> q;
+
+  const EssayQuestionCard({super.key, required this.q});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// السؤال
+          Text(
+            q["q"],
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+          ),
+
+          SizedBox(height: 12.h),
+
+          /// بوكس الإجابة (نفس شكل الـ TextField)
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(color: Colors.grey.shade300),
             ),
-          );
-        },
+            child: Text(
+              q["a"], // 👈 الإجابة بتظهر هنا
+              style: TextStyle(
+                fontSize: 14.sp,
+                height: 1.5,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
