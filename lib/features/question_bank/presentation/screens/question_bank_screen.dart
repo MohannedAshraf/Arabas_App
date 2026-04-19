@@ -36,8 +36,6 @@ class QuestionBankScreen extends StatelessWidget {
       "desc": "العمليات والبطن الحاد",
       "questions": "610",
     },
-
-    
   ];
 
   @override
@@ -176,7 +174,7 @@ class _NewSectionCard extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 16.h),
         padding: EdgeInsets.all(18.w),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: Color(0xffE2EFFF),
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
@@ -191,12 +189,11 @@ class _NewSectionCard extends StatelessWidget {
           children: [
             SizedBox(height: 10.h),
 
-            /// العنوان
             Text(
               "$title ",
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.primary,
                 fontSize: 26.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -209,7 +206,7 @@ class _NewSectionCard extends StatelessWidget {
               description,
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: Colors.white.withOpacity(.9),
+                color: AppColors.textGray,
                 fontSize: 15.sp,
                 height: 1.5,
               ),
@@ -220,7 +217,7 @@ class _NewSectionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.open_in_new, color: Colors.white),
+                const Icon(Icons.open_in_new, color: AppColors.primary),
 
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -228,7 +225,7 @@ class _NewSectionCard extends StatelessWidget {
                     vertical: 10.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.2),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   child: Column(
@@ -236,7 +233,7 @@ class _NewSectionCard extends StatelessWidget {
                       Text(
                         "عدد الأسئلة",
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.primary,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -244,7 +241,7 @@ class _NewSectionCard extends StatelessWidget {
                       Text(
                         questions,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textGray,
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
