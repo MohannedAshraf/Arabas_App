@@ -56,7 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "المفضلة"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_lesson),
+            label: "دوراتي",
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "الملف الشخصي",
