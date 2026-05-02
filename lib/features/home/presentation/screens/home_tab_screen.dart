@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, must_be_immutable
 
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class HomeTab extends StatelessWidget {
-  const HomeTab({super.key});
+  HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,13 @@ class HomeTab extends StatelessWidget {
             children: [
               _header(),
 
-              SizedBox(height: 5.h),
+              SizedBox(height: 10.h),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: _announcement(),
+              ),
+              SizedBox(height: 10.h),
 
               _mainCard(
                 title: "تعرف على المؤسسة",
@@ -126,20 +132,77 @@ class HomeTab extends StatelessWidget {
     );
   }
 
+  int notificationCount = 3;
+
   /// HEADER
   Widget _header() {
     return Container(
-      color: AppColors.primary,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF4A2038), Color(0xFF75345C), Color(0xFF8C4A71)],
+        ),
+      ),
       child: Column(
         children: [
           SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 10.w),
+              SizedBox(width: 130.w),
               _logoCircle(AppImages.logo),
               SizedBox(width: 12.w),
               _logoCircle(AppImages.logo2),
+              Spacer(),
+              InkWell(
+                onTap: () {
+                  // TODO: Navigate to Notifications Screen
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => const NotificationsScreen(),
+                  //   ),
+                  // );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(right: 12.w),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.white,
+                        size: 26.sp,
+                      ),
+                      if (notificationCount > 0)
+                        Positioned(
+                          right: 2,
+                          top: 2,
+                          child: Container(
+                            width: 10.w,
+                            height: 10.w,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(50.r),
+                            ),
+
+                            child: Center(
+                              child: Text(
+                                notificationCount.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 10.h),
@@ -158,19 +221,7 @@ class HomeTab extends StatelessWidget {
             style: TextStyle(fontSize: 12.sp, color: AppColors.white),
           ),
           SizedBox(height: 5.h),
-          Text(
-            " السلام عليكم يا دكتور",
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: AppColors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 5.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            child: _announcement(),
-          ),
+
           SizedBox(height: 15.h),
         ],
       ),
@@ -181,36 +232,35 @@ class HomeTab extends StatelessWidget {
   Widget _announcement() {
     return Builder(
       builder: (context) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const AnnouncementScreen()),
-            );
-          },
-          child: Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12.withOpacity(.05),
-                  blurRadius: 10,
+        return Container(
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.campaign, color: AppColors.primary, size: 24.sp),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Text(
+                  "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
+                  style: TextStyle(fontSize: 11.sp),
                 ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.campaign, color: AppColors.primary, size: 24.sp),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Text(
-                    "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
-                    style: TextStyle(fontSize: 11.sp),
-                  ),
-                ),
-                Container(
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AnnouncementScreen(),
+                    ),
+                  );
+                },
+                child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 14.w,
                     vertical: 6.h,
@@ -224,8 +274,8 @@ class HomeTab extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 12.sp),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

@@ -284,7 +284,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   SizedBox(height: 15.h),
 
                   SizedBox(
-                    height: 260.h,
+                    height: 350.h,
                     child: ListView.separated(
                       reverse: true,
                       scrollDirection: Axis.horizontal,

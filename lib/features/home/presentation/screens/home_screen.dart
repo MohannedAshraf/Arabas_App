@@ -19,11 +19,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late int currentIndex;
 
-  final List<Widget> tabs = const [
+  final List<Widget> tabs = [
     HomeTab(),
-    MyCoursesTab(),
-    FavouritesTab(),
-    ProfileWrapper(),
+    const MyCoursesTab(),
+    const FavouritesTab(),
+    const ProfileWrapper(),
   ];
 
   @override

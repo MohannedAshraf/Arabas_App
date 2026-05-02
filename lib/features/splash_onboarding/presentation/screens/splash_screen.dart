@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> navigate() async {
     // ⏳ Splash delay
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 10));
 
     final localStorage = sl<LocalStorageService>();
 
@@ -58,8 +58,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(child: Image.asset(AppImages.logo, width: 180.w)),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0, 0.25, 0.5, 0.75, 1], // عدلنا الـ stops بعد الحذف
+            colors: [
+              Color(0xFF2D1522),
+              Color(0xFF5A2D46),
+              Color(0xFF75345C),
+              Color(0xFF8C4A71),
+              Color(0xFFA05D84),
+            ],
+          ),
+        ),
+        child: Center(
+          child: ClipOval(
+            child: Container(
+              width: 200.w,
+              height: 200.w,
+              color: Colors.transparent,
+              child: Image.asset(AppImages.logo, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
