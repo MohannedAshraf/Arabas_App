@@ -1,6 +1,6 @@
-import 'package:arabas_app/features/home/presentation/screens/favourite_tab.dart';
+import 'package:arabas_app/features/home/presentation/screens/Courses_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
-import 'package:arabas_app/features/home/presentation/screens/my_courses_tab.dart';
+import 'package:arabas_app/features/home/presentation/screens/my_courses_tab_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,8 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> tabs = [
     HomeTab(),
-    const MyCoursesTab(),
-    const FavouritesTab(),
+    const CoursesTabScreen(),
+    const MyCoursesTabScreen(),
+
     const ProfileWrapper(),
   ];
 
@@ -55,11 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
           BottomNavigationBarItem(
             icon: Icon(Icons.play_lesson),
             label: "دوراتي",
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "الملف الشخصي",

@@ -1,12 +1,15 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable
 
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/course_list/presentation/screens/course_category_screen.dart';
-import 'package:arabas_app/features/free_lectures/presentation/screens/free_lectures_screen.dart';
+import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
+import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 
@@ -120,7 +123,11 @@ class HomeTab extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const FreeLecturesScreen(),
+                      builder:
+                          (_) => BlocProvider(
+                            create: (_) => sl<FreeContentCubit>(),
+                            child: const FreeContentScreen(),
+                          ),
                     ),
                   );
                 },
