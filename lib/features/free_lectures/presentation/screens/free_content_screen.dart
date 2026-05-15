@@ -1,8 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/features/free_lectures/presentation/bloc/article_details_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_state.dart';
+import 'package:arabas_app/features/free_lectures/presentation/bloc/video_details_cubit.dart';
+import 'package:arabas_app/features/free_lectures/presentation/screens/article_details_screen.dart';
+import 'package:arabas_app/features/free_lectures/presentation/screens/video_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -77,14 +82,16 @@ class _FreeContentScreenState extends State<FreeContentScreen>
                 icon: Icons.arrow_forward_ios,
                 onTap: () {
                   // 🔥 التنقل لصفحة تفاصيل المحاضرة
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => ArticleDetailsScreen(
-                  //       articleId: article.id,
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => BlocProvider(
+                            create: (_) => sl<ArticleDetailsCubit>(),
+                            child: ArticleDetailsScreen(articleId: article.id),
+                          ),
+                    ),
+                  );
                 },
               );
             },
@@ -121,14 +128,16 @@ class _FreeContentScreenState extends State<FreeContentScreen>
                 icon: Icons.play_circle_fill,
                 onTap: () {
                   // 🔥 التنقل لصفحة تشغيل الفيديو
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => VideoPlayerScreen(
-                  //       videoId: video.id,
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => BlocProvider(
+                            create: (_) => sl<VideoPlayerCubit>(),
+                            child: VideoPlayerScreen(videoId: video.id),
+                          ),
+                    ),
+                  );
                 },
               );
             },

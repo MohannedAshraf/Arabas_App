@@ -1,9 +1,19 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
+import 'package:arabas_app/features/free_lectures/data/data_sources/article_details_remote_data_source.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/free_content_remote_data_source.dart';
+import 'package:arabas_app/features/free_lectures/data/data_sources/video_details_data_source.dart';
+import 'package:arabas_app/features/free_lectures/domain/repo/article_details_repo.dart';
+import 'package:arabas_app/features/free_lectures/domain/repo/article_details_repo_impl.dart';
 import 'package:arabas_app/features/free_lectures/domain/repo/free_content_repo.dart';
 import 'package:arabas_app/features/free_lectures/domain/repo/free_content_repo_impl.dart';
+import 'package:arabas_app/features/free_lectures/domain/repo/video_details_repo.dart';
+import 'package:arabas_app/features/free_lectures/domain/repo/video_details_repo_impl.dart';
+import 'package:arabas_app/features/free_lectures/domain/usecases/get_article_details_usecase.dart';
+import 'package:arabas_app/features/free_lectures/domain/usecases/video_details_usecase.dart';
+import 'package:arabas_app/features/free_lectures/presentation/bloc/article_details_cubit.dart';
+import 'package:arabas_app/features/free_lectures/presentation/bloc/video_details_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,4 +133,32 @@ Future<void> init() async {
 
   /// ⭐ Free Content Cubit
   sl.registerFactory(() => FreeContentCubit(sl(), sl()));
+
+  /// Article Details Data Source
+  sl.registerLazySingleton<ArticleDetailsRemoteDataSource>(
+    () => ArticleDetailsRemoteDataSourceImpl(sl()),
+  );
+
+  /// Repo
+  sl.registerLazySingleton<ArticleDetailsRepo>(
+    () => ArticleDetailsRepoImpl(sl()),
+  );
+
+  /// UseCase
+  sl.registerLazySingleton(() => GetArticleDetailsUseCase(sl()));
+
+  /// Cubit
+  sl.registerFactory(() => ArticleDetailsCubit(sl()));
+
+  sl.registerLazySingleton<FreeVideoRemoteDataSource>(
+    () => FreeVideoRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<FreeVideoRepository>(
+    () => FreeVideoRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetVideoByIdUseCase(sl()));
+
+  sl.registerFactory(() => VideoPlayerCubit(sl()));
 }
