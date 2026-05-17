@@ -1,6 +1,9 @@
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_section_state.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
+import 'package:arabas_app/features/courses/presentation/screens/courses_in_section_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -87,67 +90,89 @@ class _CoursesTabScreenState extends State<CoursesTabScreen> {
                     itemBuilder: (context, index) {
                       final section = state.sections[index];
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: const [
-                            BoxShadow(
-                              blurRadius: 10,
-                              color: Colors.black12,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(18),
-                                ),
-                                child: Image.network(
-                                  section.imageUrl,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
-                              child: Text(
-                                section.title,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-
-                            /// 📝 Description
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Html(
-                                data: section.description,
-                                style: {
-                                  "body": Style(
-                                    margin: Margins.zero,
-                                    padding: HtmlPaddings.zero,
-                                    fontSize: FontSize(12),
-                                    maxLines: 2, // يخليه مختصر داخل الكارد
-                                    textOverflow: TextOverflow.ellipsis,
-                                    color: AppColors.textGray,
-                                    textAlign: TextAlign.center,
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => BlocProvider(
+                                    create: (_) => sl<CoursesBySectionCubit>(),
+                                    child: CoursesBySectionScreen(
+                                      sectionId: section.id,
+                                      sectionTitle: section.title,
+                                    ),
                                   ),
-                                },
-                              ),
                             ),
-                            SizedBox(height: 10.h),
-                          ],
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 10,
+                                color: Colors.black12,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(18),
+                                  ),
+                                  child: Image.network(
+                                    section.imageUrl,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  10,
+                                  10,
+                                  10,
+                                  6,
+                                ),
+                                child: Text(
+                                  section.title,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+
+                              /// 📝 Description
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                child: Html(
+                                  data: section.description,
+                                  style: {
+                                    "body": Style(
+                                      margin: Margins.zero,
+                                      padding: HtmlPaddings.zero,
+                                      fontSize: FontSize(12),
+                                      maxLines: 2,
+                                      textOverflow: TextOverflow.ellipsis,
+                                      color: AppColors.textGray,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 10.h),
+                            ],
+                          ),
                         ),
                       );
                     },
