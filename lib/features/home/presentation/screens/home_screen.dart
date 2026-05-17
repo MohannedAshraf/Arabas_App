@@ -1,8 +1,11 @@
-import 'package:arabas_app/features/home/presentation/screens/Courses_tab_screen.dart';
+import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
+import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/my_courses_tab_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -21,9 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> tabs = [
     HomeTab(),
-    const CoursesTabScreen(),
+    BlocProvider(
+      create: (context) => sl<CoursesCubit>(),
+      child: const CoursesTabScreen(),
+    ),
     const MyCoursesTabScreen(),
-
     const ProfileWrapper(),
   ];
 
@@ -56,11 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
           BottomNavigationBarItem(
             icon: Icon(Icons.play_lesson),
             label: "دوراتي",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
 
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

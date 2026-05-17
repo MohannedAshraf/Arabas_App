@@ -1,6 +1,11 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
+import 'package:arabas_app/features/courses/data/data_sources/courses_remote_data_source.dart';
+import 'package:arabas_app/features/courses/domain/repo/courses_section_repo.dart';
+import 'package:arabas_app/features/courses/domain/repo/courses_section_repo_impl.dart';
+import 'package:arabas_app/features/courses/domain/usecases/get_courses_sections_usecase.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/article_details_remote_data_source.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/free_content_remote_data_source.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/video_details_data_source.dart';
@@ -161,4 +166,16 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetVideoByIdUseCase(sl()));
 
   sl.registerFactory(() => VideoPlayerCubit(sl()));
+
+  // COURSES FEATURE
+
+  sl.registerLazySingleton<CoursesRemoteDataSource>(
+    () => CoursesRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<CoursesRepo>(() => CoursesRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => GetSectionsUseCase(sl()));
+
+  sl.registerFactory(() => CoursesCubit(sl()));
 }
