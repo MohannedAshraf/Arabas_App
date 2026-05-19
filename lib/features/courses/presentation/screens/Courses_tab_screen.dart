@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';

@@ -43,7 +43,7 @@ dependencies:
   flutter_spinkit: ^5.2.1
   form_validator: ^2.1.1
   get_it: ^7.7.0
-  device_info_plus: ^10.1.0
+  device_info_plus: 
   flutter_secure_storage: ^9.2.2
   uuid: ^4.4.0
   shared_preferences: 
@@ -52,6 +52,9 @@ dependencies:
   flutter_launcher_icons:
   flutter_html: 
   youtube_player_iframe:
+  youtube_player_flutter:
+  pod_player: 
+  webview_flutter: ^4.13.0
   
 
 dev_dependencies:

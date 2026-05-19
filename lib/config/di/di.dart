@@ -1,14 +1,19 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
+import 'package:arabas_app/features/courses/data/data_sources/course_details_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_in_section_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_remote_data_source.dart';
+import 'package:arabas_app/features/courses/domain/repo/course_details_repo.dart';
+import 'package:arabas_app/features/courses/domain/repo/course_details_repo_impl.dart';
 import 'package:arabas_app/features/courses/domain/repo/courses_in_section_repo.dart';
 import 'package:arabas_app/features/courses/domain/repo/courses_in_section_repo_impl.dart';
 import 'package:arabas_app/features/courses/domain/repo/courses_section_repo.dart';
 import 'package:arabas_app/features/courses/domain/repo/courses_section_repo_impl.dart';
+import 'package:arabas_app/features/courses/domain/usecases/get_course_details_usecase.dart';
 import 'package:arabas_app/features/courses/domain/usecases/get_courses_in_section_usecase.dart';
 import 'package:arabas_app/features/courses/domain/usecases/get_courses_sections_usecase.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/course_details_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/article_details_remote_data_source.dart';
@@ -192,4 +197,20 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => GetCoursesUseCase(sl()));
   sl.registerFactory(() => CoursesBySectionCubit(sl()));
+
+  // ======================
+  // 🔥 Course Details Feature
+  // ======================
+
+  sl.registerLazySingleton<CourseDetailsRemoteDataSource>(
+    () => CourseDetailsRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<CourseDetailsRepository>(
+    () => CourseDetailsRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetCourseDetailsUseCase(sl()));
+
+  sl.registerFactory(() => CourseDetailsCubit(sl()));
 }

@@ -1,7 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/course_details_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in_section_state.dart';
+import 'package:arabas_app/features/courses/presentation/screens/course_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -103,123 +106,143 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
                     itemBuilder: (_, i) {
                       final course = state.courses[i];
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: const [
-                            BoxShadow(
-                              blurRadius: 10,
-                              color: Colors.black12,
-                              offset: Offset(0, 4),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => BlocProvider(
+                                    create:
+                                        (_) =>
+                                            sl<CourseDetailsCubit>()
+                                              ..getCourseDetails(course.id),
+                                    child: CourseDetailsScreen(
+                                      courseId: course.id,
+                                    ),
+                                  ),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(18),
-                                ),
-                                child: Positioned.fill(
-                                  child: Image.network(
-                                    course.imageUrl,
-                                    fit: BoxFit.cover,
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 10,
+                                color: Colors.black12,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(18),
+                                  ),
+                                  child: Positioned.fill(
+                                    child: Image.network(
+                                      course.imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 6.h,
-                                left: 6.w,
-                                right: 6.w,
-                                bottom: 6.h,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  /// الاسم + السعر
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      /// اسم الكورس
-                                      Text(
-                                        course.title,
-                                        textAlign: TextAlign.right,
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: AppColors.primary,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13.sp,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: 6.h,
+                                  left: 6.w,
+                                  right: 6.w,
+                                  bottom: 6.h,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    /// الاسم + السعر
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        /// اسم الكورس
+                                        Text(
+                                          course.title,
+                                          textAlign: TextAlign.right,
+                                          maxLines: 4,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13.sp,
+                                          ),
                                         ),
-                                      ),
 
-                                      SizedBox(height: 8.sp),
+                                        SizedBox(height: 8.sp),
 
-                                      /// السعر
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Icon(
-                                            Icons.access_time,
-                                            size: 18.sp,
-                                            color: Colors.grey,
-                                          ),
-
-                                          SizedBox(width: 4.sp),
-
-                                          Text(
-                                            "${course.duration} ساعة",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12.sp,
-                                            ),
-                                          ),
-                                          Spacer(),
-
-                                          Text(
-                                            "${course.price} ج.م",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      SizedBox(height: 4.sp),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: List.generate(
-                                          5,
-                                          (index) => Padding(
-                                            padding: EdgeInsets.only(
-                                              right: 2.w,
-                                            ),
-                                            child: Icon(
-                                              index < course.rate.toInt()
-                                                  ? Icons.star
-                                                  : Icons.star_border,
-                                              color: Colors.amber,
+                                        /// السعر
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Icon(
+                                              Icons.access_time,
                                               size: 18.sp,
+                                              color: Colors.grey,
+                                            ),
+
+                                            SizedBox(width: 4.sp),
+
+                                            Text(
+                                              "${course.duration} ساعة",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ),
+                                            Spacer(),
+
+                                            Text(
+                                              "${course.price} ج.م",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        SizedBox(height: 4.sp),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: List.generate(
+                                            5,
+                                            (index) => Padding(
+                                              padding: EdgeInsets.only(
+                                                right: 2.w,
+                                              ),
+                                              child: Icon(
+                                                index < course.rate.toInt()
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.amber,
+                                                size: 18.sp,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(height: 8.sp),
-                                    ],
-                                  ),
-                                ],
+                                        SizedBox(height: 8.sp),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
