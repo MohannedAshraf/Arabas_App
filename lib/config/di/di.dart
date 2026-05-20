@@ -1,6 +1,21 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
+import 'package:arabas_app/features/book_courses/data/data_source/course_book_details_remote_data_source.dart';
+import 'package:arabas_app/features/book_courses/data/data_source/course_book_remote_data_source.dart';
+import 'package:arabas_app/features/book_courses/data/data_source/verify_book_remote_data_source.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/course_book_details_repo.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/course_book_details_repo_impl.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/course_book_repo.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/course_book_repo_impl.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/verify_book_repo.dart';
+import 'package:arabas_app/features/book_courses/domain/repo/verify_book_repo_impl.dart';
+import 'package:arabas_app/features/book_courses/domain/usecases/get_course_book_details_usecase.dart';
+import 'package:arabas_app/features/book_courses/domain/usecases/get_course_book_usecase.dart';
+import 'package:arabas_app/features/book_courses/domain/usecases/verify_book_usecase.dart';
+import 'package:arabas_app/features/book_courses/presentation/bloc/course-book_cubit.dart';
+import 'package:arabas_app/features/book_courses/presentation/bloc/course_book_details_cubit.dart';
+import 'package:arabas_app/features/book_courses/presentation/bloc/verify_book_cubit.dart';
 import 'package:arabas_app/features/courses/data/data_sources/course_details_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_in_section_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_remote_data_source.dart';
@@ -213,4 +228,46 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCourseDetailsUseCase(sl()));
 
   sl.registerFactory(() => CourseDetailsCubit(sl()));
+
+  // ======================
+  // 🔥 Course Books Feature
+  // ======================
+
+  sl.registerLazySingleton<CourseBooksRemoteDataSource>(
+    () => CourseBooksRemoteDataSourceImpl(sl(), sl()),
+  );
+
+  sl.registerLazySingleton<CourseBooksRepo>(() => CourseBooksRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => GetCourseBooksUseCase(sl()));
+
+  sl.registerFactory(() => CourseBooksCubit(sl()));
+
+  // remote
+  sl.registerLazySingleton(() => CourseBookDetailsRemoteDS());
+
+  // repo
+  sl.registerLazySingleton<CourseBookDetailsRepo>(
+    () => CourseBookDetailsRepoImpl(sl()),
+  );
+
+  // usecase
+  sl.registerLazySingleton(() => GetCourseBookDetailsUseCase(sl()));
+
+  // cubit
+  sl.registerFactory(() => CourseBookDetailsCubit(sl()));
+
+  // ======================
+  // 🔥 Verify Book Feature
+  // ======================
+
+  sl.registerLazySingleton<VerifyBookRemoteDataSource>(
+    () => VerifyBookRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<VerifyBookRepo>(() => VerifyBookRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => VerifyBookUseCase(sl()));
+
+  sl.registerFactory(() => VerifyBookCubit(sl()));
 }

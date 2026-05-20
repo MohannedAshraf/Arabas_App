@@ -3,6 +3,7 @@
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
+import 'package:arabas_app/features/book_courses/presentation/screens/verify_book_screen.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/course_list/presentation/screens/course_category_screen.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
@@ -24,7 +25,7 @@ class HomeTab extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _header(),
+              _header(context),
 
               SizedBox(height: 10.h),
 
@@ -142,7 +143,7 @@ class HomeTab extends StatelessWidget {
   int notificationCount = 3;
 
   /// HEADER
-  Widget _header() {
+  Widget _header(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -154,63 +155,72 @@ class HomeTab extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 10.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(width: 130.w),
-              _logoCircle(AppImages.logo),
-              SizedBox(width: 12.w),
-              _logoCircle(AppImages.logo2),
-              Spacer(),
-              InkWell(
-                onTap: () {
-                  // TODO: Navigate to Notifications Screen
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => const NotificationsScreen(),
-                  //   ),
-                  // );
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(right: 12.w),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.white,
-                        size: 26.sp,
-                      ),
-                      if (notificationCount > 0)
-                        Positioned(
-                          right: 2,
-                          top: 2,
-                          child: Container(
-                            width: 10.w,
-                            height: 10.w,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(50.r),
-                            ),
+          Builder(
+            builder: (context) {
+              return Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: Icon(Icons.menu, color: Colors.white, size: 26.sp),
+                  ),
+                  SizedBox(width: 70.w),
+                  _logoCircle(AppImages.logo),
+                  SizedBox(width: 12.w),
+                  _logoCircle(AppImages.logo2),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      // TODO: Navigate to Notifications Screen
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => const NotificationsScreen(),
+                      //   ),
+                      // );
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                            size: 26.sp,
+                          ),
+                          if (notificationCount > 0)
+                            Positioned(
+                              right: 2,
+                              top: 2,
+                              child: Container(
+                                width: 10.w,
+                                height: 10.w,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(50.r),
+                                ),
 
-                            child: Center(
-                              child: Text(
-                                notificationCount.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.bold,
+                                child: Center(
+                                  child: Text(
+                                    notificationCount.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
           SizedBox(height: 10.h),
           Text(
@@ -227,9 +237,26 @@ class HomeTab extends StatelessWidget {
             "(ARABAS) - CPD 20960",
             style: TextStyle(fontSize: 12.sp, color: AppColors.white),
           ),
-          SizedBox(height: 5.h),
 
-          SizedBox(height: 15.h),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const VerifyBookScreen()),
+              );
+            },
+            child: Text(
+              "Verify Book",
+
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 10.h),
         ],
       ),
     );

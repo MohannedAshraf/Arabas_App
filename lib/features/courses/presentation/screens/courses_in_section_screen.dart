@@ -4,7 +4,7 @@ import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/course_details_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in_section_state.dart';
-import 'package:arabas_app/features/courses/presentation/screens/course_detail_screen.dart';
+import 'package:arabas_app/features/courses/presentation/screens/course_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

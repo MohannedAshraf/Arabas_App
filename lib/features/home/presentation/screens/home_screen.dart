@@ -1,6 +1,7 @@
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
+import 'package:arabas_app/features/home/presentation/screens/app_drawer.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/my_courses_tab_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      drawer: const AppDrawer(),
 
       body: tabs[currentIndex],
 

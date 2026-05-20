@@ -55,6 +55,7 @@ dependencies:
   youtube_player_flutter:
   pod_player: 
   webview_flutter: ^4.13.0
+  html: 
   
 
 dev_dependencies:
