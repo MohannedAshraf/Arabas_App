@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, deprecated_member_use
 
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
@@ -8,7 +8,6 @@ import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_c
 import 'package:arabas_app/features/courses/presentation/screens/courses_in_section_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CoursesTabScreen extends StatefulWidget {
@@ -25,37 +24,45 @@ class _CoursesTabScreenState extends State<CoursesTabScreen> {
     super.initState();
   }
 
+  String removeHtmlTags(String htmlText) {
+    return htmlText
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll('&nbsp;', ' ')
+        .trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: const Text(
           "الأقسام",
           style: TextStyle(color: AppColors.primary),
         ),
       ),
+
       body: Column(
         children: [
-          /// 🔍 Search Bar (placeholder)
+          /// 🔍 Search Bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
             child: TextField(
-              readOnly: true, // مش شغال حالياً
+              readOnly: true,
               decoration: InputDecoration(
                 hintText: "ابحث عن قسم...",
                 prefixIcon: const Icon(Icons.search, color: AppColors.primary),
-
                 filled: true,
                 fillColor: Colors.white,
-
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
-
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
                 ),
-
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: const BorderSide(color: Colors.black12),
@@ -64,7 +71,7 @@ class _CoursesTabScreenState extends State<CoursesTabScreen> {
             ),
           ),
 
-          const SizedBox(height: 10),
+          SizedBox(height: 20.h),
 
           /// 📦 Sections List
           Expanded(
@@ -79,16 +86,9 @@ class _CoursesTabScreenState extends State<CoursesTabScreen> {
                 }
 
                 if (state is CoursesSuccess) {
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(16),
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     itemCount: state.sections.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: .8,
-                        ),
                     itemBuilder: (context, index) {
                       final section = state.sections[index];
 
@@ -109,70 +109,96 @@ class _CoursesTabScreenState extends State<CoursesTabScreen> {
                           );
                         },
                         child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: const [
-                              BoxShadow(
-                                blurRadius: 10,
-                                color: Colors.black12,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
+                          margin: EdgeInsets.only(top: 30.h),
+                          child: Stack(
+                            clipBehavior: Clip.none,
                             children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(18),
-                                  ),
-                                  child: Image.network(
-                                    section.imageUrl,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.fromLTRB(
+                                  18.w,
+                                  24.h,
+                                  18.w,
+                                  16.h,
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  10,
-                                  10,
-                                  10,
-                                  6,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffE7EBF0),
+                                  borderRadius: BorderRadius.circular(26.r),
                                 ),
-                                child: Text(
-                                  section.title,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
-                                    fontSize: 14,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    SizedBox(height: 10.h),
+
+                                    /// Title
+                                    Text(
+                                      section.title,
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 20.h),
+
+                                    /// Description
+                                    Text(
+                                      removeHtmlTags(section.description),
+                                      textAlign: TextAlign.right,
+                                      textDirection: TextDirection.rtl,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.black.withOpacity(.7),
+                                        height: 1.5,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 10.h),
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Icon(
+                                          Icons.arrow_back,
+                                          color: AppColors.primary,
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Text(
+                                          textDirection: TextDirection.rtl,
+                                          "استعرض الكورسات",
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
 
-                              /// 📝 Description
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                child: Html(
-                                  data: section.description,
-                                  style: {
-                                    "body": Style(
-                                      margin: Margins.zero,
-                                      padding: HtmlPaddings.zero,
-                                      fontSize: FontSize(12),
-                                      maxLines: 2,
-                                      textOverflow: TextOverflow.ellipsis,
-                                      color: AppColors.textGray,
-                                      textAlign: TextAlign.center,
+                              /// Image
+                              Positioned(
+                                left: 18.w,
+                                top: -20.h,
+                                child: Container(
+                                  height: 90.h,
+                                  width: 90.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    image: DecorationImage(
+                                      image: NetworkImage(section.imageUrl),
+                                      fit: BoxFit.cover,
                                     ),
-                                  },
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 10.h),
                             ],
                           ),
                         ),

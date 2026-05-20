@@ -5,7 +5,8 @@ import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
 import 'package:arabas_app/features/book_courses/presentation/screens/verify_book_screen.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
-import 'package:arabas_app/features/course_list/presentation/screens/course_category_screen.dart';
+import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
+import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
@@ -56,11 +57,18 @@ class HomeTab extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => CourseCategoryScreen()),
+                    MaterialPageRoute(
+                      builder:
+                          (_) => BlocProvider(
+                            create: (context) => sl<CoursesCubit>(),
+                            child: const CoursesTabScreen(),
+                          ),
+                    ),
                   );
                 },
               ),
 
+              //
               Row(
                 children: [
                   Expanded(

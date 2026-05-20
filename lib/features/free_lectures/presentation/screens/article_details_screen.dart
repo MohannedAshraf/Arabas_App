@@ -51,6 +51,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                 children: [
                   Text(
                     article.title,
+                    textDirection: TextDirection.rtl,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -60,7 +61,37 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
 
                   const SizedBox(height: 16),
 
-                  Html(data: article.content),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Html(
+                      data: article.content,
+
+                      style: {
+                        "*": Style(
+                          margin: Margins.zero,
+                          padding: HtmlPaddings.zero,
+                          textAlign: TextAlign.right,
+                          lineHeight: LineHeight(1.5),
+                          color: AppColors.textGray,
+                          fontSize: FontSize(15),
+                        ),
+
+                        "ul": Style(listStyleType: ListStyleType.none),
+
+                        "ol": Style(listStyleType: ListStyleType.none),
+
+                        "li": Style(display: Display.inline),
+
+                        "p": Style(display: Display.inline),
+
+                        "div": Style(display: Display.inline),
+
+                        "span": Style(display: Display.inline),
+
+                        "br": Style(display: Display.none),
+                      },
+                    ),
+                  ),
                 ],
               ),
             );
