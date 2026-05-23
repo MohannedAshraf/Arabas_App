@@ -174,6 +174,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     /// CATEGORY
                     Text(
                       course.categoryName,
+                      textDirection: TextDirection.ltr,
                       style: TextStyle(
                         color: AppColors.textGray,
                         fontSize: 14.sp,
@@ -186,7 +187,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     /// TITLE
                     Text(
                       course.title,
-                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.ltr,
+
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -285,6 +287,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                     Text(
                                       video.title,
                                       textAlign: TextAlign.left,
+                                      textDirection: TextDirection.ltr,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 15.sp,

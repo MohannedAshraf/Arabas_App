@@ -3,7 +3,8 @@ import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_c
 import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/app_drawer.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
-import 'package:arabas_app/features/home/presentation/screens/my_courses_tab_screen.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
+import 'package:arabas_app/features/my_courses/presentation/screens/my_courses_tab_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => sl<CoursesCubit>(),
       child: const CoursesTabScreen(),
     ),
-    const MyCoursesTabScreen(),
+    BlocProvider(
+      create: (_) => sl<MyCoursesCubit>(),
+      child: const MyCoursesTabScreen(),
+    ),
     const ProfileWrapper(),
   ];
 

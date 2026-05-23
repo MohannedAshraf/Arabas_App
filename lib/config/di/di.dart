@@ -44,6 +44,21 @@ import 'package:arabas_app/features/free_lectures/domain/usecases/get_article_de
 import 'package:arabas_app/features/free_lectures/domain/usecases/video_details_usecase.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/article_details_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/video_details_cubit.dart';
+import 'package:arabas_app/features/my_courses/data/data_sources/my_course_details_remote_data_source.dart';
+import 'package:arabas_app/features/my_courses/data/data_sources/my_courses_remote_data_source.dart';
+import 'package:arabas_app/features/my_courses/data/data_sources/my_video_details_remote_data_source.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_course_details_repo.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_course_details_repo_impl.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_courses_repo.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_courses_repo_impl.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_video_details_repo.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/my_video_details_repo_impl.dart';
+import 'package:arabas_app/features/my_courses/domain/usecases/get_my_course_details_usecase.dart';
+import 'package:arabas_app/features/my_courses/domain/usecases/get_my_courses_usecase.dart';
+import 'package:arabas_app/features/my_courses/domain/usecases/get_my_video_details_usecase.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/my_course_details_cubit.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -270,4 +285,49 @@ Future<void> init() async {
   sl.registerLazySingleton(() => VerifyBookUseCase(sl()));
 
   sl.registerFactory(() => VerifyBookCubit(sl()));
+
+  // ======================
+  // 🔥 My Courses Feature
+  // ======================
+
+  sl.registerLazySingleton<MyCoursesRemoteDataSource>(
+    () => MyCoursesRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<MyCoursesRepo>(() => MyCoursesRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => GetMyCoursesUseCase(sl()));
+
+  sl.registerFactory(() => MyCoursesCubit(sl()));
+
+  // ======================
+  // 🔥 Subscribed Course Details
+  // ======================
+
+  sl.registerLazySingleton<MyCourseDetailsRemoteDataSource>(
+    () => MyCourseDetailsRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<MyCourseDetailsRepo>(
+    () => MyCourseDetailsRepoImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetMyCourseDetailsUsecase(sl()));
+
+  sl.registerFactory(() => MyCourseDetailsCubit(sl()));
+  // ======================
+  // 🔥 My Video Details Feature
+  // ======================
+
+  sl.registerLazySingleton<MyVideoDetailsRemoteDataSource>(
+    () => MyVideoDetailsRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<MyVideoDetailsRepo>(
+    () => MyVideoDetailsRepoImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetMyVideoDetailsUsecase(sl()));
+
+  sl.registerFactory(() => MyVideoDetailsCubit(sl()));
 }
