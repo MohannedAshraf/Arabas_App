@@ -16,6 +16,16 @@ import 'package:arabas_app/features/book_courses/domain/usecases/verify_book_use
 import 'package:arabas_app/features/book_courses/presentation/bloc/course-book_cubit.dart';
 import 'package:arabas_app/features/book_courses/presentation/bloc/course_book_details_cubit.dart';
 import 'package:arabas_app/features/book_courses/presentation/bloc/verify_book_cubit.dart';
+import 'package:arabas_app/features/certificates/data/data%20sources/build_certificate_remote_data_source.dart';
+import 'package:arabas_app/features/certificates/data/data%20sources/my_certificates_remote_data_source.dart';
+import 'package:arabas_app/features/certificates/domain/repo/build_certificate_repo.dart';
+import 'package:arabas_app/features/certificates/domain/repo/build_certificate_repo_impl.dart';
+import 'package:arabas_app/features/certificates/domain/repo/my_certificates_repo.dart';
+import 'package:arabas_app/features/certificates/domain/repo/my_certificates_repo_impl.dart';
+import 'package:arabas_app/features/certificates/domain/usecases/build_certificate_usecase.dart';
+import 'package:arabas_app/features/certificates/domain/usecases/get_my_certificates_usecase.dart';
+import 'package:arabas_app/features/certificates/presentation/bloc/build_certificate_cubit.dart';
+import 'package:arabas_app/features/certificates/presentation/bloc/my_certificates_cubit.dart';
 import 'package:arabas_app/features/courses/data/data_sources/course_details_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_in_section_remote_data_source.dart';
 import 'package:arabas_app/features/courses/data/data_sources/courses_remote_data_source.dart';
@@ -352,4 +362,36 @@ Future<void> init() async {
 
   /// CUBIT
   sl.registerFactory(() => ProgressCubit(sl()));
+
+  /// DATASOURCE
+  sl.registerLazySingleton<BuildCertificateRemoteDataSource>(
+    () => BuildCertificateRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<BuildCertificateRepository>(
+    () => BuildCertificateRepositoryImpl(sl()),
+  );
+
+  /// USECASE
+  sl.registerLazySingleton(() => BuildCertificateUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => BuildCertificateCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<CertificateRemoteDataSource>(
+    () => CertificateRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<CertificateRepository>(
+    () => CertificateRepositoryImpl(sl()),
+  );
+
+  /// USE CASE
+  sl.registerLazySingleton(() => GetMyCertificatesUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => CertificateCubit(sl()));
 }

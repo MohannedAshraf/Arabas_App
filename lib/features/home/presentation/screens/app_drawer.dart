@@ -6,6 +6,8 @@ import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:arabas_app/features/book_courses/presentation/bloc/course-book_cubit.dart';
 import 'package:arabas_app/features/book_courses/presentation/screens/course_books_screen.dart';
+import 'package:arabas_app/features/certificates/presentation/bloc/my_certificates_cubit.dart';
+import 'package:arabas_app/features/certificates/presentation/screens/my_certificates_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,6 +100,25 @@ class AppDrawer extends StatelessWidget {
               onTap: () {},
             ),
 
+            SizedBox(height: 10.h),
+            _drawerItem(
+              context,
+              icon: Icons.workspace_premium_outlined,
+              title: "شهاداتي",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => BlocProvider(
+                          create:
+                              (_) => sl<CertificateCubit>()..getCertificates(),
+                          child: const MyCertificatesScreen(),
+                        ),
+                  ),
+                );
+              },
+            ),
             SizedBox(height: 10.h),
 
             _drawerItem(
