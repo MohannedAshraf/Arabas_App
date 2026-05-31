@@ -24,10 +24,46 @@ class LocalStorageService {
   }
 
   // ======================
+  // Device Id
+  // ======================
+  Future<void> saveDeviceId(String value) async {
+    await prefs.setString('deviceId', value);
+  }
+
+  String getDeviceId() {
+    return prefs.getString('deviceId') ?? '';
+  }
+
+  // ======================
+  // Platform
+  // ======================
+  Future<void> savePlatform(String value) async {
+    await prefs.setString('platform', value);
+  }
+
+  String getPlatform() {
+    return prefs.getString('platform') ?? '';
+  }
+
+  // ======================
+  // Fingerprint
+  // ======================
+  Future<void> saveFingerprint(String value) async {
+    await prefs.setString('fingerprint', value);
+  }
+
+  String getFingerprint() {
+    return prefs.getString('fingerprint') ?? '';
+  }
+
+  // ======================
   // Clear all
   // ======================
   Future<void> clear() async {
     await prefs.remove('access');
     await prefs.remove('refresh');
+    await prefs.remove('deviceId');
+    await prefs.remove('platform');
+    await prefs.remove('fingerprint');
   }
 }

@@ -1,4 +1,5 @@
 import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/core/services/auth_refresh_services.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:dio/dio.dart';
 
@@ -17,7 +18,6 @@ class DioHelper {
       ),
     );
 
-    /// 🔥 هنا بنجيب التوكن من SharedPreferences
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -28,18 +28,46 @@ class DioHelper {
             options.headers["Authorization"] = "Bearer $token";
           }
 
-          return handler.next(options);
+          handler.next(options);
         },
 
-        /// 🔥 معالجة أخطاء التوكن
-        onError: (error, handler) {
+        onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
-            return handler.reject(
-              DioException(
-                requestOptions: error.requestOptions,
-                error: "غير مصرح لك، يرجى تسجيل الدخول مرة أخرى",
-              ),
-            );
+            print("401 DETECTED");
+            print("REQUEST PATH: ${error.requestOptions.path}");
+            final path = error.requestOptions.path;
+
+            /// منع الـ Refresh Loop
+            if (path.contains("Auth/login") ||
+                path.contains("Auth/register") ||
+                path.contains("Auth/refresh-token")) {
+              return handler.next(error);
+            }
+
+            try {
+              print("401 DETECTED");
+              print("TRYING REFRESH TOKEN...");
+
+              await sl<AuthRefreshService>().refreshToken();
+
+              final newToken = sl<LocalStorageService>().getAccessToken();
+
+              print("NEW TOKEN RECEIVED");
+
+              error.requestOptions.headers["Authorization"] =
+                  "Bearer $newToken";
+
+              final response = await dio.fetch(error.requestOptions);
+
+              return handler.resolve(response);
+            } catch (e) {
+              print("REFRESH FAILED");
+              print(e);
+
+              await sl<LocalStorageService>().clear();
+
+              return handler.reject(error);
+            }
           }
 
           return handler.next(error);
@@ -47,7 +75,6 @@ class DioHelper {
       ),
     );
 
-    // Logs أثناء التطوير
     dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
 
     return dio;

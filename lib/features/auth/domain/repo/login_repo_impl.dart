@@ -19,6 +19,9 @@ class LoginRepositoryImpl implements LoginRepository {
     // 🔥 Save BOTH tokens
     await localStorage.saveAccessToken(data.accessToken);
     await localStorage.saveRefreshToken(data.refreshToken);
+    await localStorage.saveDeviceId(request.deviceId);
+    await localStorage.savePlatform(request.platform);
+    await localStorage.saveFingerprint(request.fingerprint);
 
     return LoginEntity(
       accessToken: data.accessToken,

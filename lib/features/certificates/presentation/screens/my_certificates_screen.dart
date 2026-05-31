@@ -3,11 +3,19 @@ import 'package:arabas_app/features/certificates/presentation/bloc/my_certificat
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../config/di/di.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class MyCertificatesScreen extends StatelessWidget {
   const MyCertificatesScreen({super.key});
+
+  Future<void> openCertificate(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class MyCertificatesScreen extends StatelessWidget {
             style: TextStyle(color: AppColors.primary),
           ),
           centerTitle: true,
-          leading: BackButton(color: AppColors.primary),
+          leading: const BackButton(color: AppColors.primary),
         ),
         body: BlocBuilder<CertificateCubit, CertificateState>(
           builder: (context, state) {
@@ -62,7 +70,9 @@ class MyCertificatesScreen extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                         ),
+
                         SizedBox(height: 8.h),
+
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Text(
@@ -74,7 +84,9 @@ class MyCertificatesScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+
                         SizedBox(height: 8.h),
+
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Text(
@@ -83,6 +95,35 @@ class MyCertificatesScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: AppColors.textGray,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 15.h),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50.h,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                            ),
+                            onPressed: () {
+                              openCertificate(cert.certificateUrl);
+                              print(
+                                "Opening certificate URL: ${cert.certificateUrl}",
+                              );
+                            },
+                            child: Text(
+                              "عرض الشهادة",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),

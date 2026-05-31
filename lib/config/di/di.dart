@@ -1,4 +1,5 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
+import 'package:arabas_app/core/services/auth_refresh_services.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
 import 'package:arabas_app/features/book_courses/data/data_source/course_book_details_remote_data_source.dart';
@@ -119,6 +120,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton<LocalStorageService>(
     () => LocalStorageService(sl()),
+  );
+  sl.registerLazySingleton<AuthRefreshService>(
+    () => AuthRefreshService(sl<LocalStorageService>()),
   );
 
   // ======================

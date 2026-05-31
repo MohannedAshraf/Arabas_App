@@ -1,36 +1,61 @@
+import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:dio/dio.dart';
-import '../services/local_storage_services.dart';
 
 class AuthRefreshService {
-  final Dio dio;
   final LocalStorageService storage;
 
-  AuthRefreshService(this.dio, this.storage);
+  AuthRefreshService(this.storage);
 
-  Future<void> refreshToken({
-    required String deviceId,
-    required String platform,
-  }) async {
+  Future<void> refreshToken() async {
+    final refreshToken = storage.getRefreshToken();
+    final deviceId = storage.getDeviceId();
+    final platform = storage.getPlatform();
+    final fingerprint = storage.getFingerprint();
+
+    print("Refresh Token: $refreshToken");
+    print("Device Id: $deviceId");
+    print("Platform: $platform");
+    print("Fingerprint: $fingerprint");
+
+    if (refreshToken.isEmpty) {
+      throw Exception("Refresh token not found");
+    }
+
     try {
-      final refreshToken = storage.getRefreshToken();
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: "https://arabas.runasp.net/api/",
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        ),
+      );
 
       final response = await dio.post(
-        "https://arabas.runasp.net/api/Auth/refresh-token",
+        "Auth/refresh-token",
         data: {
           "refreshToken": refreshToken,
           "deviceId": deviceId,
           "platform": platform,
-          "fingerPrint": "",
+          "fingerPrint": fingerprint,
         },
       );
 
-      final data = response.data['data'];
+      final data = response.data["data"];
 
-      // 🔥 update tokens
-      await storage.saveAccessToken(data['accessToken']);
-      await storage.saveRefreshToken(data['refreshToken']);
-    } catch (e) {
-      throw Exception("Refresh Token Failed: $e");
+      if (data == null) {
+        print("DATA IS NULL");
+        throw Exception("Refresh response data is null");
+      }
+
+      await storage.saveAccessToken(data["accessToken"]);
+
+      await storage.saveRefreshToken(data["refreshToken"]);
+    } on DioException {
+      rethrow;
     }
   }
 }

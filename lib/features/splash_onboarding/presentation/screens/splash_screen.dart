@@ -30,18 +30,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final localStorage = sl<LocalStorageService>();
 
+    if (!mounted) return;
     final token = localStorage.getAccessToken();
 
-    if (!mounted) return;
-
     if (token.isNotEmpty) {
-      // ✅ user logged in
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else {
-      // ❌ not logged in
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
