@@ -6,6 +6,7 @@ import 'package:arabas_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:arabas_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:arabas_app/features/book_courses/presentation/bloc/course-book_cubit.dart';
 import 'package:arabas_app/features/book_courses/presentation/screens/course_books_screen.dart';
+import 'package:arabas_app/features/book_courses/presentation/screens/verify_book_screen.dart';
 import 'package:arabas_app/features/certificates/presentation/bloc/my_certificates_cubit.dart';
 import 'package:arabas_app/features/certificates/presentation/screens/my_certificates_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
@@ -116,6 +117,18 @@ class AppDrawer extends StatelessWidget {
                           child: const MyCertificatesScreen(),
                         ),
                   ),
+                );
+              },
+            ),
+            SizedBox(height: 10.h),
+            _drawerItem(
+              context,
+              icon: Icons.verified_outlined,
+              title: "Verify Book",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const VerifyBookScreen()),
                 );
               },
             ),

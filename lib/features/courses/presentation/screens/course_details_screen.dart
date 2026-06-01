@@ -172,27 +172,33 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     SizedBox(height: 20.h),
 
                     /// CATEGORY
-                    Text(
-                      course.categoryName,
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        color: AppColors.textGray,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        course.categoryName,
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: AppColors.textGray,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
 
                     SizedBox(height: 6.h),
 
                     /// TITLE
-                    Text(
-                      course.title,
-                      textDirection: TextDirection.ltr,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        course.title,
+                        textDirection: TextDirection.ltr,
 
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
 

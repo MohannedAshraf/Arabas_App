@@ -3,7 +3,6 @@
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/constants/app_images.dart';
 import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
-import 'package:arabas_app/features/book_courses/presentation/screens/verify_book_screen.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
@@ -40,8 +39,8 @@ class HomeTab extends StatelessWidget {
               SizedBox(height: 10.h),
 
               _mainCard(
-                title: "تعرف على الدورات",
-                desc: "نبذة عن الدورات المقدمه",
+                title: "تعرف على الدبلومة",
+                desc: "نبذة عن الدبلومات المقدمه",
                 image: AppImages.aboutOrg,
                 onTap: () {
                   Navigator.push(
@@ -262,24 +261,6 @@ class HomeTab extends StatelessWidget {
           Text(
             "(ARABAS) - CPD 20960",
             style: TextStyle(fontSize: 12.sp, color: AppColors.white),
-          ),
-
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const VerifyBookScreen()),
-              );
-            },
-            child: Text(
-              "Verify Book",
-
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ),
 
           SizedBox(height: 10.h),

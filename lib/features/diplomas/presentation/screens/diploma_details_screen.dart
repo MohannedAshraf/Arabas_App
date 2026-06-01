@@ -5,6 +5,7 @@ import 'package:arabas_app/features/diplomas/presentation/bloc/diploma_details_c
 import 'package:arabas_app/features/diplomas/presentation/bloc/diploma_details_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DiplomaDetailsScreen extends StatefulWidget {
@@ -29,8 +30,18 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
 
   String formatDuration(int seconds) {
     final minutes = (seconds / 60).round();
-
     return "دقيقة $minutes ";
+  }
+
+  /// 🔥 NEW: short text helper
+  String _getShortText(String html) {
+    final plainText = html.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    if (plainText.length <= 120) return html;
+
+    final short = plainText.substring(0, 120);
+
+    return "$short...";
   }
 
   @override
@@ -42,12 +53,10 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
         backgroundColor: AppColors.white,
         centerTitle: true,
         elevation: 0,
-
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Navigator.pop(context),
         ),
-
         title: Text(
           "تفاصيل الدورة",
           style: TextStyle(
@@ -70,8 +79,7 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
 
           if (state is DiplomaDetailsLoaded) {
             final diploma = state.diploma;
-
-            final description = cleanHtml(diploma.description);
+            cleanHtml(diploma.description);
 
             return SingleChildScrollView(
               padding: EdgeInsets.only(bottom: 15.h),
@@ -88,8 +96,8 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                     child: Image.network(
                       diploma.imageUrl,
                       width: double.infinity,
-                      height: 250.h,
-                      fit: BoxFit.cover,
+                      height: 260.h,
+                      fit: BoxFit.fill,
                     ),
                   ),
 
@@ -113,7 +121,7 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
 
                         SizedBox(height: 15.h),
 
-                        /// DATE + HOURS
+                        /// PRICE + HOURS
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -126,8 +134,7 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                                 color: AppColors.primary,
                               ),
                             ),
-
-                            Spacer(),
+                            const Spacer(),
                             Icon(
                               Icons.schedule,
                               color: AppColors.primary,
@@ -136,7 +143,6 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                             SizedBox(width: 5.w),
                             Text(
                               "${diploma.durationHours} ساعة",
-                              textDirection: TextDirection.rtl,
                               style: TextStyle(fontSize: 13.sp),
                             ),
                           ],
@@ -144,12 +150,12 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
 
                         SizedBox(height: 20.h),
 
-                        /// DESCRIPTION TITLE
+                        /// TITLE
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Text(
-                            textDirection: TextDirection.rtl,
                             "الوصف",
+                            textDirection: TextDirection.rtl,
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -160,26 +166,40 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
 
                         SizedBox(height: 8.h),
 
-                        Text(
-                          description,
-                          textDirection: TextDirection.rtl,
-                          maxLines: isExpanded ? null : 2,
-                          overflow: isExpanded ? null : TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: AppColors.textGray,
-                          ),
+                        /// ✅ FIXED HTML DESCRIPTION
+                        Html(
+                          data:
+                              isExpanded
+                                  ? '''
+<div dir="rtl" style="text-align:right;">
+${diploma.description}
+</div>
+'''
+                                  : '''
+<div dir="rtl" style="text-align:right;">
+${_getShortText(diploma.description)}
+</div>
+''',
+                          style: {
+                            "*": Style(
+                              direction: TextDirection.rtl,
+                              textAlign: TextAlign.right,
+                              fontSize: FontSize(14.sp),
+                              color: AppColors.textGray,
+                              lineHeight: LineHeight(1.8),
+                            ),
+                          },
                         ),
 
                         SizedBox(height: 5.h),
 
+                        /// TOGGLE BUTTON
                         InkWell(
                           onTap: () {
                             setState(() {
                               isExpanded = !isExpanded;
                             });
                           },
-
                           child: Align(
                             alignment: AlignmentDirectional.centerStart,
                             child: Text(
@@ -193,7 +213,6 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                           ),
                         ),
 
-                        /// PRICE
                         SizedBox(height: 18.h),
 
                         /// VIDEOS TITLE
@@ -217,79 +236,58 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                             .map(
                               (video) => Container(
                                 margin: EdgeInsets.only(bottom: 12.h),
-
                                 padding: EdgeInsets.all(12.w),
-
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-
                                   borderRadius: BorderRadius.circular(15.r),
-
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.black12,
-
                                       blurRadius: 6,
                                     ),
                                   ],
                                 ),
-
                                 child: Row(
                                   children: [
                                     Container(
                                       width: 55.w,
                                       height: 55.h,
-
                                       decoration: BoxDecoration(
                                         color: AppColors.primary.withOpacity(
                                           .1,
                                         ),
-
                                         borderRadius: BorderRadius.circular(
                                           12.r,
                                         ),
                                       ),
-
                                       child: Icon(
                                         Icons.play_circle_fill,
                                         color: AppColors.primary,
-
                                         size: 36.sp,
                                       ),
                                     ),
-
                                     SizedBox(width: 12.w),
-
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-
                                         children: [
                                           Text(
                                             video.title,
-
                                             maxLines: 2,
-
                                             overflow: TextOverflow.ellipsis,
-
                                             style: TextStyle(
                                               fontSize: 14.sp,
-
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
-
                                           SizedBox(height: 5.h),
-
                                           Text(
                                             formatDuration(
                                               video.durationSeconds,
                                             ),
-
                                             style: TextStyle(
                                               fontSize: 12.sp,
-
                                               color: AppColors.textGray,
                                             ),
                                           ),

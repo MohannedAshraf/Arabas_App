@@ -162,10 +162,12 @@ Widget _mcqWidget(QuestionEntity question) {
       boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
     ),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText, textAlign: TextAlign.right),
-
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(question.questionText, textAlign: TextAlign.left),
+        ),
         SizedBox(height: 20.h),
 
         ...question.mcqOptions!.map(
@@ -179,7 +181,7 @@ Widget _mcqWidget(QuestionEntity question) {
               ),
             ),
             child: Align(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.centerLeft,
               child: Text(
                 option.optionText,
                 style: TextStyle(
@@ -206,9 +208,12 @@ Widget _essayWidget(QuestionEntity question) {
       boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
     ),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText, textAlign: TextAlign.right),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(question.questionText, textAlign: TextAlign.left),
+        ),
 
         SizedBox(height: 20.h),
 
@@ -221,7 +226,7 @@ Widget _essayWidget(QuestionEntity question) {
           ),
           child: Text(
             question.essayAnswerText ?? "",
-            textAlign: TextAlign.right,
+
             style: const TextStyle(color: AppColors.primary),
           ),
         ),
@@ -240,9 +245,12 @@ Widget _trueFalseWidget(QuestionEntity question) {
       boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
     ),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText, textAlign: TextAlign.right),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(question.questionText, textAlign: TextAlign.left),
+        ),
 
         SizedBox(height: 20.h),
 
@@ -308,9 +316,12 @@ Widget _matchingWidget(QuestionEntity question) {
       boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
     ),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question.questionText, textAlign: TextAlign.right),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(question.questionText, textAlign: TextAlign.left),
+        ),
 
         SizedBox(height: 20.h),
 

@@ -171,7 +171,7 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
                                         /// اسم الكورس
                                         Text(
                                           course.title,
-                                          textAlign: TextAlign.right,
+                                          textDirection: TextDirection.ltr,
                                           maxLines: 4,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -198,6 +198,7 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
 
                                             Text(
                                               "${course.duration} ساعة",
+                                              textDirection: TextDirection.rtl,
                                               style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 12.sp,
@@ -207,6 +208,7 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
 
                                             Text(
                                               "${course.price} ج.م",
+                                              textDirection: TextDirection.rtl,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15.sp,
