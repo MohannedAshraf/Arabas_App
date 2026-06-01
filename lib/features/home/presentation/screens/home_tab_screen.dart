@@ -7,9 +7,12 @@ import 'package:arabas_app/features/book_courses/presentation/screens/verify_boo
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
+import 'package:arabas_app/features/diplomas/presentation/bloc/diplomas_cubit.dart';
+import 'package:arabas_app/features/diplomas/presentation/screens/diplomas_screen.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
-import 'package:arabas_app/features/question_bank/presentation/screens/question_bank_screen.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
+import 'package:arabas_app/features/question_bank/presentation/screens/bank_questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,10 +40,21 @@ class HomeTab extends StatelessWidget {
               SizedBox(height: 10.h),
 
               _mainCard(
-                title: "تعرف على المؤسسة",
-                desc: "نبذة عن المؤسسه وأهدافها والخدمات المقدمه",
+                title: "تعرف على الدورات",
+                desc: "نبذة عن الدورات المقدمه",
                 image: AppImages.aboutOrg,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => BlocProvider(
+                            create: (_) => sl<DiplomaCubit>(),
+                            child: const DiplomaScreen(),
+                          ),
+                    ),
+                  );
+                },
               ),
 
               _mainCard(
@@ -80,7 +94,11 @@ class HomeTab extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => QuestionBankScreen(),
+                            builder:
+                                (_) => BlocProvider(
+                                  create: (_) => sl<BankQuestionsCubit>(),
+                                  child: const BankQuestionsScreen(),
+                                ),
                           ),
                         );
                       },

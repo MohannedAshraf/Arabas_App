@@ -42,6 +42,16 @@ import 'package:arabas_app/features/courses/domain/usecases/get_courses_sections
 import 'package:arabas_app/features/courses/presentation/bloc/course_details_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_in-section-cubit.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
+import 'package:arabas_app/features/diplomas/data/data_sources/diploma_details_remote_data_source.dart';
+import 'package:arabas_app/features/diplomas/data/data_sources/diplomas_remote_data_source.dart';
+import 'package:arabas_app/features/diplomas/domain/repo/diploma_details_repo.dart';
+import 'package:arabas_app/features/diplomas/domain/repo/diploma_details_repo_impl.dart';
+import 'package:arabas_app/features/diplomas/domain/repo/diplomas_repo.dart';
+import 'package:arabas_app/features/diplomas/domain/repo/diplomas_repo_impl.dart';
+import 'package:arabas_app/features/diplomas/domain/usecases/diplomas_usecase.dart';
+import 'package:arabas_app/features/diplomas/domain/usecases/get_diploma_details_usecase.dart';
+import 'package:arabas_app/features/diplomas/presentation/bloc/diploma_details_cubit.dart';
+import 'package:arabas_app/features/diplomas/presentation/bloc/diplomas_cubit.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/article_details_remote_data_source.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/free_content_remote_data_source.dart';
 import 'package:arabas_app/features/free_lectures/data/data_sources/video_details_data_source.dart';
@@ -76,6 +86,11 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_course_detai
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
+import 'package:arabas_app/features/question_bank/data/data_sources/bank_questions_remote_data_source.dart';
+import 'package:arabas_app/features/question_bank/domain/repo/bank_questions_repo.dart';
+import 'package:arabas_app/features/question_bank/domain/repo/bank_questions_repo_impl.dart';
+import 'package:arabas_app/features/question_bank/domain/usecases/get_bank_questions_usecase.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -398,4 +413,52 @@ Future<void> init() async {
 
   /// CUBIT
   sl.registerFactory(() => CertificateCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<DiplomaRemoteDataSource>(
+    () => DiplomaRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<DiplomaRepository>(
+    () => DiplomaRepositoryImpl(sl()),
+  );
+
+  /// USE CASE
+  sl.registerLazySingleton(() => GetDiplomasUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => DiplomaCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<DiplomaDetailsRemoteDataSource>(
+    () => DiplomaDetailsRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<DiplomaDetailsRepository>(
+    () => DiplomaDetailsRepositoryImpl(sl()),
+  );
+
+  /// USE CASE
+  sl.registerLazySingleton(() => GetDiplomaDetailsUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => DiplomaDetailsCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<BankQuestionsRemoteDataSource>(
+    () => BankQuestionsRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<BankQuestionsRepository>(
+    () => BankQuestionsRepositoryImpl(sl()),
+  );
+
+  /// USE CASE
+  sl.registerLazySingleton(() => GetBankQuestionsUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => BankQuestionsCubit(sl()));
 }
