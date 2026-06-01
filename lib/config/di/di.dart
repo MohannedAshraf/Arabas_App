@@ -87,10 +87,15 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubi
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
 import 'package:arabas_app/features/question_bank/data/data_sources/bank_questions_remote_data_source.dart';
+import 'package:arabas_app/features/question_bank/data/data_sources/question_remote_data_source.dart';
 import 'package:arabas_app/features/question_bank/domain/repo/bank_questions_repo.dart';
 import 'package:arabas_app/features/question_bank/domain/repo/bank_questions_repo_impl.dart';
+import 'package:arabas_app/features/question_bank/domain/repo/question_repo.dart';
+import 'package:arabas_app/features/question_bank/domain/repo/question_repo_impl.dart';
 import 'package:arabas_app/features/question_bank/domain/usecases/get_bank_questions_usecase.dart';
+import 'package:arabas_app/features/question_bank/domain/usecases/get_question_usecase.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/question_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -461,4 +466,20 @@ Future<void> init() async {
 
   /// CUBIT
   sl.registerFactory(() => BankQuestionsCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<QuestionsRemoteDataSource>(
+    () => QuestionsRemoteDataSourceImpl(sl()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<QuestionsRepository>(
+    () => QuestionsRepositoryImpl(sl()),
+  );
+
+  /// USECASE
+  sl.registerLazySingleton(() => GetQuestionsUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => QuestionsCubit(sl()));
 }

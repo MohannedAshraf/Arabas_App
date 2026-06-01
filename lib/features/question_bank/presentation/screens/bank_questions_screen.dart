@@ -1,8 +1,11 @@
 // ignore_for_file: file_names, deprecated_member_use
 
+import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_state.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/question_cubit.dart';
+import 'package:arabas_app/features/question_bank/presentation/screens/questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,13 +22,6 @@ class _BankQuestionsScreenState extends State<BankQuestionsScreen> {
   void initState() {
     context.read<BankQuestionsCubit>().getSections();
     super.initState();
-  }
-
-  String removeHtmlTags(String htmlText) {
-    return htmlText
-        .replaceAll(RegExp(r'<[^>]*>'), '')
-        .replaceAll('&nbsp;', ' ')
-        .trim();
   }
 
   @override
@@ -87,94 +83,78 @@ class _BankQuestionsScreenState extends State<BankQuestionsScreen> {
                     itemBuilder: (context, index) {
                       final section = state.sections[index];
 
-                      return Container(
-                        margin: EdgeInsets.only(top: 30.h),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.fromLTRB(
-                                18.w,
-                                24.h,
-                                18.w,
-                                16.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffE7EBF0),
-                                borderRadius: BorderRadius.circular(26.r),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SizedBox(height: 10.h),
-
-                                  Text(
-                                    section.title,
-                                    textAlign: TextAlign.right,
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => BlocProvider(
+                                    create:
+                                        (_) =>
+                                            sl<QuestionsCubit>()..getQuestions(
+                                              medicalSectionId: section.id,
+                                              questionType: 1,
+                                            ),
+                                    child: QuestionsScreen(
+                                      medicalSectionId: section.id,
+                                      sectionName: section.nameAr,
                                     ),
                                   ),
-
-                                  SizedBox(height: 20.h),
-
-                                  Text(
-                                    removeHtmlTags(section.description),
-                                    textAlign: TextAlign.right,
-                                    textDirection: TextDirection.rtl,
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: Colors.black.withOpacity(.7),
-                                      height: 1.5,
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 10.h),
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_back,
-                                        color: AppColors.primary,
-                                      ),
-                                      SizedBox(width: 6.w),
-                                      Text(
-                                        "استعرض الأسئلة",
-                                        style: TextStyle(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
                             ),
-
-                            Positioned(
-                              left: 18.w,
-                              top: -20.h,
-                              child: Container(
-                                height: 90.h,
-                                width: 90.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  image: DecorationImage(
-                                    image: NetworkImage(section.imageUrl),
-                                    fit: BoxFit.cover,
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 10.h),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.fromLTRB(
+                              18.w,
+                              16.h,
+                              18.w,
+                              16.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffE7EBF0),
+                              borderRadius: BorderRadius.circular(26.r),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  section.nameAr,
+                                  textAlign: TextAlign.right,
+                                  textDirection: TextDirection.rtl,
+                                  style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
                                   ),
                                 ),
-                              ),
+
+                                SizedBox(height: 20.h),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    const Icon(
+                                      Icons.arrow_back,
+                                      color: AppColors.primary,
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    Text(
+                                      "استعرض الأسئلة",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       );
                     },

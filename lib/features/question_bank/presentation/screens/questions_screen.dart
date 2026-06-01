@@ -1,13 +1,22 @@
-// ignore_for_file: must_be_immutable, deprecated_member_use
+// ignore_for_file: deprecated_member_use
 
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/features/question_bank/domain/entities/question_entity.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/question_cubit.dart';
+import 'package:arabas_app/features/question_bank/presentation/bloc/question_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class QuestionsScreen extends StatefulWidget {
-  final String section;
+  final String medicalSectionId;
+  final String sectionName;
 
-  const QuestionsScreen({super.key, required this.section});
+  const QuestionsScreen({
+    super.key,
+    required this.medicalSectionId,
+    required this.sectionName,
+  });
 
   @override
   State<QuestionsScreen> createState() => _QuestionsScreenState();
@@ -15,544 +24,320 @@ class QuestionsScreen extends StatefulWidget {
 
 class _QuestionsScreenState extends State<QuestionsScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final List<String> types = ["اختياري", "صح وغلط", "مقالي"];
+  late TabController controller;
 
-  final Map<String, Map<String, List<Map<String, dynamic>>>> data = {
-    /// ================= القلب =================
-    "قلب": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "القلب يضخ الدم (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "عدد حجرات القلب؟ (س${i + 1})",
-          "options": ["2", "3", "4", "5"],
-          "a": "4",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {
-          "q": "كيف نحافظ على صحة القلب؟ (س${i + 1})",
-          "a": "رياضة وغذاء صحي",
-        },
-      ),
-    },
-
-    /// ================= عيون =================
-    "عيون": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "الشبكية مسؤولة عن الرؤية (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "جزء مسؤول عن التركيز؟ (س${i + 1})",
-          "options": ["القرنية", "الشبكية", "العدسة", "العصب"],
-          "a": "العدسة",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "كيف نحافظ على العين؟ (س${i + 1})", "a": "تقليل الشاشات"},
-      ),
-    },
-
-    /// ================= ENT =================
-    "أنف وأذن وحنجرة": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "اللوزتين جزء من المناعة (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "عضو السمع هو؟ (س${i + 1})",
-          "options": ["العين", "الأذن", "القلب", "الأنف"],
-          "a": "الأذن",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "ما أسباب التهاب الأذن؟ (س${i + 1})", "a": "عدوى"},
-      ),
-    },
-
-    /// ================= أسنان =================
-    "أسنان": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "الفلورايد مفيد للأسنان (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "عدد الأسنان عند البالغ؟ (س${i + 1})",
-          "options": ["20", "28", "32", "40"],
-          "a": "32",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "كيف نحمي الأسنان؟ (س${i + 1})", "a": "تنظيف يومي"},
-      ),
-    },
-
-    /// ================= باطنة =================
-    "باطنة": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "الضغط مرض مزمن (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "السكري يؤثر على؟ (س${i + 1})",
-          "options": ["العين", "الكلى", "الأعصاب", "كل ما سبق"],
-          "a": "كل ما سبق",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "ما هو السكري؟ (س${i + 1})", "a": "ارتفاع سكر الدم"},
-      ),
-    },
-
-    /// ================= أطفال =================
-    "أطفال": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "التطعيمات مهمة (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "مدة الرضاعة الطبيعية؟ (س${i + 1})",
-          "options": ["6 شهور", "سنة", "3", "يوم"],
-          "a": "6 شهور",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "أهمية التطعيم؟ (س${i + 1})", "a": "وقاية"},
-      ),
-    },
-
-    /// ================= نساء وتوليد =================
-    "نساء وتوليد": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "حمض الفوليك مهم للحمل (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "مدة الحمل؟ (س${i + 1})",
-          "options": ["9 شهور", "6", "12", "3"],
-          "a": "9 شهور",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "أهمية متابعة الحمل؟ (س${i + 1})", "a": "سلامة الأم"},
-      ),
-    },
-
-    /// ================= عظام =================
-    "عظام": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "الجبس يعالج الكسور (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "أقوى عظمة؟ (س${i + 1})",
-          "options": ["الفخذ", "الذراع", "الجمجمة", "اليد"],
-          "a": "الفخذ",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "علاج الكسور؟ (س${i + 1})", "a": "تثبيت"},
-      ),
-    },
-
-    /// ================= مخ وأعصاب =================
-    "مخ وأعصاب": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "المخ يتحكم بالجسم (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "سبب الجلطة؟ (س${i + 1})",
-          "options": ["نزيف", "انسداد", "هواء", "ماء"],
-          "a": "انسداد",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "أعراض الجلطة؟ (س${i + 1})", "a": "شلل مفاجئ"},
-      ),
-    },
-
-    /// ================= جلدية =================
-    "جلدية": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "الشمس تؤذي الجلد (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "سبب حب الشباب؟ (س${i + 1})",
-          "options": ["هرمونات", "كسر", "نزيف", "برد"],
-          "a": "هرمونات",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "الوقاية من الشمس؟ (س${i + 1})", "a": "واقي شمسي"},
-      ),
-    },
-
-    /// ================= طوارئ =================
-    "طوارئ": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "النزيف الحاد خطر (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "CPR يعني؟ (س${i + 1})",
-          "options": ["إنعاش قلبي", "تنفس", "دواء", "عملية"],
-          "a": "إنعاش قلبي",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "خطوات الإسعاف؟ (س${i + 1})", "a": "تأمين مجرى الهواء"},
-      ),
-    },
-
-    /// ================= جراحة =================
-    "جراحة عامة": {
-      "صح وغلط": List.generate(
-        5,
-        (i) => {"q": "التخدير ضروري (س${i + 1})", "a": "صح"},
-      ),
-      "اختياري": List.generate(
-        5,
-        (i) => {
-          "q": "الزائدة تقع؟ (س${i + 1})",
-          "options": ["يمين أسفل", "يسار", "صدر", "ظهر"],
-          "a": "يمين أسفل",
-        },
-      ),
-      "مقالي": List.generate(
-        5,
-        (i) => {"q": "ما هو البطن الحاد؟ (س${i + 1})", "a": "ألم مفاجئ"},
-      ),
-    },
-  };
+  int currentType = 1;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: types.length, vsync: this);
+
+    controller = TabController(length: 4, vsync: this);
+
+    controller.addListener(() {
+      if (!controller.indexIsChanging) return;
+
+      currentType = controller.index + 1;
+
+      context.read<QuestionsCubit>().getQuestions(
+        medicalSectionId: widget.medicalSectionId,
+        questionType: currentType,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentType = types[_tabController.index];
-    final questions = data[widget.section]?[currentType] ?? [];
-
     return Scaffold(
-      backgroundColor: const Color(0xffF6F7FB),
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+          onPressed: () => Navigator.pop(context),
+        ),
+
         title: Text(
-          widget.section,
+          "الأسئلة",
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 22.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
-        iconTheme: IconThemeData(color: AppColors.primary),
+      ),
 
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.primary,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
-          onTap: (_) => setState(() {}),
+      body: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: TabBar(
+              controller: controller,
+              labelColor: AppColors.white,
+              unselectedLabelColor: AppColors.primary,
 
-          tabs: const [
-            Tab(text: "اختياري"),
-            Tab(text: "صح وغلط"),
-            Tab(text: "مقالي"),
+              indicator: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+
+              tabs: const [
+                Tab(text: "اختياري"),
+                Tab(text: "مقالي"),
+                Tab(text: "صح/خطأ"),
+                Tab(text: "توصيل"),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          Expanded(
+            child: BlocBuilder<QuestionsCubit, QuestionsState>(
+              builder: (context, state) {
+                if (state is QuestionsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is QuestionsError) {
+                  return Center(child: Text(state.message));
+                }
+
+                if (state is QuestionsLoaded) {
+                  if (state.questions.isEmpty) {
+                    return const Center(child: Text("لا توجد أسئلة"));
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.all(16.w),
+                    itemCount: state.questions.length,
+                    itemBuilder: (context, index) {
+                      final question = state.questions[index];
+
+                      switch (question.questionType) {
+                        case 1:
+                          return _mcqWidget(question);
+
+                        case 2:
+                          return _essayWidget(question);
+
+                        case 3:
+                          return _trueFalseWidget(question);
+
+                        case 4:
+                          return _matchingWidget(question);
+
+                        default:
+                          return const SizedBox();
+                      }
+                    },
+                  );
+                }
+
+                return const SizedBox();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _mcqWidget(QuestionEntity question) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 16.h),
+    padding: EdgeInsets.all(18.w),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20.r),
+      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(question.questionText, textAlign: TextAlign.right),
+
+        SizedBox(height: 20.h),
+
+        ...question.mcqOptions!.map(
+          (option) => Container(
+            margin: EdgeInsets.only(bottom: 10.h),
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: option.isCorrect ? AppColors.primary : Colors.black12,
+              ),
+            ),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                option.optionText,
+                style: TextStyle(
+                  color: option.isCorrect ? AppColors.primary : AppColors.black,
+                  fontWeight:
+                      option.isCorrect ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _essayWidget(QuestionEntity question) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 16.h),
+    padding: EdgeInsets.all(18.w),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20.r),
+      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(question.questionText, textAlign: TextAlign.right),
+
+        SizedBox(height: 20.h),
+
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(14.w),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(.1),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Text(
+            question.essayAnswerText ?? "",
+            textAlign: TextAlign.right,
+            style: const TextStyle(color: AppColors.primary),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _trueFalseWidget(QuestionEntity question) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 16.h),
+    padding: EdgeInsets.all(18.w),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20.r),
+      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(question.questionText, textAlign: TextAlign.right),
+
+        SizedBox(height: 20.h),
+
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color:
+                      question.isTrue == false
+                          ? AppColors.primary
+                          : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  "خطأ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color:
+                        question.isTrue == false ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(width: 10.w),
+
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color:
+                      question.isTrue == true
+                          ? AppColors.primary
+                          : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  "صح",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color:
+                        question.isTrue == true ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-      ),
-
-      body: ListView.builder(
-        padding: EdgeInsets.all(12.w),
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          final q = questions[index];
-
-          if (currentType == "اختياري") {
-            return McqQuestionCard(q: q);
-          }
-
-          if (currentType == "صح وغلط") {
-            return TrueFalseQuestionCard(q: q);
-          }
-
-          return EssayQuestionCard(q: q);
-        },
-      ),
-    );
-  }
+      ],
+    ),
+  );
 }
 
-class McqQuestionCard extends StatelessWidget {
-  final Map<String, dynamic> q;
+Widget _matchingWidget(QuestionEntity question) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 16.h),
+    padding: EdgeInsets.all(18.w),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20.r),
+      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(question.questionText, textAlign: TextAlign.right),
 
-  const McqQuestionCard({super.key, required this.q});
+        SizedBox(height: 20.h),
 
-  @override
-  Widget build(BuildContext context) {
-    int correctIndex = q["options"].indexOf(q["a"]);
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Question
-          Text(
-            q["q"],
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-          ),
-
-          SizedBox(height: 12.h),
-
-          /// Options
-          ...List.generate(q["options"].length, (i) {
-            bool isCorrect = i == correctIndex;
-
-            return Container(
-              margin: EdgeInsets.only(bottom: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color:
-                    isCorrect
-                        ? AppColors.primary.withOpacity(0.1)
-                        : Color(0xFFEDF4FF),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: isCorrect ? AppColors.primary : Colors.transparent,
-                  width: 1.5,
-                ),
-              ),
-              child: Row(
-                children: [
-                  /// Circle / Check
-                  Container(
-                    width: 20.w,
-                    height: 20.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCorrect ? AppColors.primary : Colors.transparent,
-                      border: Border.all(
-                        color: isCorrect ? AppColors.primary : Colors.grey,
-                      ),
-                    ),
-                    child:
-                        isCorrect
-                            ? Icon(
-                              Icons.check,
-                              size: 14.sp,
-                              color: Colors.white,
-                            )
-                            : null,
-                  ),
-
-                  SizedBox(width: 10.w),
-
-                  /// Text
-                  Expanded(
-                    child: Text(
-                      q["options"][i],
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: isCorrect ? AppColors.primary : Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class TrueFalseQuestionCard extends StatelessWidget {
-  final Map<String, dynamic> q;
-
-  const TrueFalseQuestionCard({super.key, required this.q});
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> options = ["صح", "غلط"];
-    int correctIndex = options.indexOf(q["a"]);
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// السؤال
-          Text(
-            q["q"],
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-          ),
-
-          SizedBox(height: 12.h),
-
-          /// الاختيارات (صح / غلط)
-          ...List.generate(options.length, (i) {
-            bool isCorrect = i == correctIndex;
-
-            return Container(
-              margin: EdgeInsets.only(bottom: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color:
-                    isCorrect
-                        ? AppColors.primary.withOpacity(0.1)
-                        : const Color(0xFFEDF4FF),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: isCorrect ? AppColors.primary : Colors.transparent,
-                  width: 1.5,
-                ),
-              ),
-              child: Row(
-                children: [
-                  /// circle + check
-                  Container(
-                    width: 20.w,
-                    height: 20.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCorrect ? AppColors.primary : Colors.transparent,
-                      border: Border.all(
-                        color: isCorrect ? AppColors.primary : Colors.grey,
-                      ),
-                    ),
-                    child:
-                        isCorrect
-                            ? Icon(
-                              Icons.check,
-                              size: 14.sp,
-                              color: Colors.white,
-                            )
-                            : null,
-                  ),
-
-                  SizedBox(width: 10.w),
-
-                  /// النص
-                  Expanded(
-                    child: Text(
-                      options[i],
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: isCorrect ? AppColors.primary : Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class EssayQuestionCard extends StatelessWidget {
-  final Map<String, dynamic> q;
-
-  const EssayQuestionCard({super.key, required this.q});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// السؤال
-          Text(
-            q["q"],
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-          ),
-
-          SizedBox(height: 12.h),
-
-          /// بوكس الإجابة (نفس شكل الـ TextField)
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        ...question.matchingPairs!.map(
+          (pair) => Container(
+            margin: EdgeInsets.only(bottom: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
+              color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: Colors.grey.shade300),
             ),
-            child: Text(
-              q["a"], // 👈 الإجابة بتظهر هنا
-              style: TextStyle(
-                fontSize: 14.sp,
-                height: 1.5,
-                color: Colors.black87,
-              ),
+            child: Row(
+              children: [
+                Text(pair.leftItem, style: TextStyle(fontSize: 18.sp)),
+
+                const Spacer(),
+
+                const Icon(Icons.arrow_back, color: AppColors.primary),
+
+                const Spacer(),
+
+                Text(pair.rightItem, style: TextStyle(fontSize: 18.sp)),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

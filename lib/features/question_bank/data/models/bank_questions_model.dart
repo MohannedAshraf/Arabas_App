@@ -3,17 +3,15 @@ import 'package:arabas_app/features/question_bank/domain/entities/bank_questions
 class BankQuestionModel extends BankQuestionEntity {
   const BankQuestionModel({
     required super.id,
-    required super.title,
-    required super.description,
-    required super.imageUrl,
+    required super.nameAr,
+    required super.nameEn,
   });
 
   factory BankQuestionModel.fromJson(Map<String, dynamic> json) {
     return BankQuestionModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      imageUrl: json['imageUrl'],
+      id: json['id'] ?? '',
+      nameAr: json['nameAr'] ?? '',
+      nameEn: json['nameEn'] ?? '',
     );
   }
 }

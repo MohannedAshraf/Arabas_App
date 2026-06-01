@@ -1,13 +1,11 @@
 class BankQuestionEntity {
   final String id;
-  final String title;
-  final String description;
-  final String imageUrl;
+  final String nameAr;
+  final String nameEn;
 
   const BankQuestionEntity({
     required this.id,
-    required this.title,
-    required this.description,
-    required this.imageUrl,
+    required this.nameAr,
+    required this.nameEn,
   });
 }

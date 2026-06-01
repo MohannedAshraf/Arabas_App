@@ -12,7 +12,7 @@ class BankQuestionsRemoteDataSourceImpl
 
   @override
   Future<List<Map<String, dynamic>>> getSections() async {
-    final response = await dio.get("CourseAdminestrator/GetAllSections");
+    final response = await dio.get("/MedicalSection/GetMedicalSection");
 
     return List<Map<String, dynamic>>.from(response.data['data']);
   }
