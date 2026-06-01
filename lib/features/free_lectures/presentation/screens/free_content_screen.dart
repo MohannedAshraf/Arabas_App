@@ -174,8 +174,8 @@ class _FreeContentScreenState extends State<FreeContentScreen>
       child: ListTile(
         onTap: onTap,
         title: Text(
+          textDirection: TextDirection.ltr,
           title,
-          textAlign: TextAlign.right,
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: color),

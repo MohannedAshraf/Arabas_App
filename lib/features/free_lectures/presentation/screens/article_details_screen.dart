@@ -30,6 +30,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
           "المحاضرة",
           style: TextStyle(color: AppColors.primary),
         ),
+        leading: BackButton(color: AppColors.primary),
       ),
       body: BlocBuilder<ArticleDetailsCubit, ArticleDetailsState>(
         builder: (context, state) {
@@ -51,7 +52,7 @@ class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
                 children: [
                   Text(
                     article.title,
-                    textDirection: TextDirection.rtl,
+                    textDirection: TextDirection.ltr,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

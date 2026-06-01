@@ -258,7 +258,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
                     child: Text(
                       video.title,
-                      textDirection: TextDirection.rtl,
+                      textDirection: TextDirection.ltr,
 
                       style: TextStyle(
                         color: AppColors.primary,
@@ -268,8 +268,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                       ),
                     ),
                   ),
-
-                  SizedBox(height: 14.h),
 
                   /// =========================
                   /// DESCRIPTION
