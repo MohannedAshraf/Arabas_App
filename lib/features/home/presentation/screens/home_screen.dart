@@ -7,6 +7,7 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubi
 import 'package:arabas_app/features/my_courses/presentation/screens/my_courses_tab_screen.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -24,16 +25,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late int currentIndex;
 
+  DateTime? lastBackPressed;
+
   final List<Widget> tabs = [
     HomeTab(),
+
     BlocProvider(
       create: (context) => sl<CoursesCubit>(),
       child: const CoursesTabScreen(),
     ),
+
     BlocProvider(
       create: (_) => sl<MyCoursesCubit>(),
       child: const MyCoursesTabScreen(),
     ),
+
     const ProfileWrapper(),
   ];
 
@@ -43,41 +49,79 @@ class _HomeScreenState extends State<HomeScreen> {
     currentIndex = widget.initialIndex;
   }
 
+  void _handleBackPress() {
+    final now = DateTime.now();
+
+    if (lastBackPressed == null ||
+        now.difference(lastBackPressed!) > const Duration(seconds: 2)) {
+      lastBackPressed = now;
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            "اضغط مرة أخرى للخروج من التطبيق",
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      return;
+    }
+
+    SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      drawer: const AppDrawer(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-      body: tabs[currentIndex],
+        _handleBackPress();
+      },
 
-      bottomNavigationBar: BottomNavigationBar(
-        iconSize: 22.sp,
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        drawer: const AppDrawer(),
 
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.primary,
-        selectedItemColor: AppColors.white,
-        unselectedItemColor: Colors.grey,
+        body: tabs[currentIndex],
 
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.play_lesson),
-            label: "دوراتي",
-          ),
+        bottomNavigationBar: BottomNavigationBar(
+          iconSize: 22.sp,
+          currentIndex: currentIndex,
 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "الملف الشخصي",
-          ),
-        ],
+          onTap: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: AppColors.primary,
+          selectedItemColor: AppColors.white,
+          unselectedItemColor: Colors.grey,
+
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسيه"),
+
+            BottomNavigationBarItem(icon: Icon(Icons.book), label: "الكورسات"),
+
+            BottomNavigationBarItem(
+              icon: Icon(Icons.play_lesson),
+              label: "دوراتي",
+            ),
+
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: "الملف الشخصي",
+            ),
+          ],
+        ),
       ),
     );
   }
