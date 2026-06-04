@@ -17,8 +17,13 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MyVideoDetailsScreen extends StatefulWidget {
   final String videoId;
+  final int lastPositionSeconds;
 
-  const MyVideoDetailsScreen({super.key, required this.videoId});
+  const MyVideoDetailsScreen({
+    super.key,
+    required this.videoId,
+    required this.lastPositionSeconds,
+  });
 
   @override
   State<MyVideoDetailsScreen> createState() => _MyVideoDetailsScreenState();
@@ -33,10 +38,14 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
   Timer? progressTimer;
 
   int currentSeconds = 0;
+  int lastSentPosition = -1;
 
   bool isYoutubeTrackingStarted = false;
 
   bool isVimeoTrackingStarted = false;
+  bool youtubeSeekDone = false;
+
+  bool vimeoSeekDone = false;
 
   bool isYoutube(String url) {
     return url.contains("youtube") || url.contains("youtu.be");
@@ -52,6 +61,8 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
   @override
   void initState() {
     super.initState();
+
+    print("🔥 Received Progress => ${widget.lastPositionSeconds}");
 
     WidgetsBinding.instance.addObserver(this);
 
@@ -88,11 +99,20 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
   Future<void> sendProgress() async {
     print("🚀 SEND PROGRESS CALLED");
 
+    print("LESSON ID => ${widget.videoId}");
+    print("POSITION => $currentSeconds");
+
     if (currentSeconds <= 0) {
       print("⚠️ currentSeconds = 0");
-
       return;
     }
+
+    if (currentSeconds == lastSentPosition) {
+      print("⚠️ SAME POSITION ALREADY SENT");
+      return;
+    }
+
+    lastSentPosition = currentSeconds;
 
     try {
       await sl<ProgressCubit>().trackProgress(
@@ -117,6 +137,8 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
     progressTimer?.cancel();
 
     progressTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
+      print("🔥 REQUEST CURRENT TIME");
+
       if (youtubeController != null) {
         currentSeconds = youtubeController!.value.position.inSeconds;
 
@@ -136,17 +158,29 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
     progressTimer?.cancel();
 
     progressTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
-      try {
-        await controller.runJavaScript('''
-            player.getCurrentTime().then(function(seconds) {
-              ProgressChannel.postMessage(
-                seconds.toString()
-              );
-            });
-          ''');
-      } catch (e) {
-        print("❌ Vimeo Tracking Error => $e");
-      }
+      print("🔥 REQUEST CURRENT TIME");
+
+      await controller.runJavaScript('''
+
+if(window.player &&
+   typeof window.player.getCurrentTime === 'function') {
+
+    window.player.getCurrentTime().then(function(seconds){
+
+        ProgressChannel.postMessage(
+          "TIME_" + seconds
+        );
+
+    });
+
+}
+''');
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      print("🔥 CURRENT BEFORE SEND => $currentSeconds");
+
+      await sendProgress();
     });
   }
 
@@ -180,9 +214,29 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
 
           print("✅ Youtube Controller Created");
 
-          youtubeController!.addListener(() {
+          youtubeController!.addListener(() async {
             if (youtubeController!.value.isReady) {
               currentSeconds = youtubeController!.value.position.inSeconds;
+              if (youtubeController!.value.playerState == PlayerState.ended) {
+                print("🏁 YOUTUBE VIDEO ENDED");
+
+                currentSeconds = youtubeController!.metadata.duration.inSeconds;
+
+                await sendProgress();
+              }
+
+              if (!youtubeSeekDone && widget.lastPositionSeconds > 0) {
+                youtubeSeekDone = true;
+
+                youtubeController!.seekTo(
+                  Duration(seconds: widget.lastPositionSeconds),
+                );
+                print("🔥 SEEK EXECUTED => ${widget.lastPositionSeconds}");
+
+                currentSeconds = widget.lastPositionSeconds;
+
+                print("✅ Youtube Seek To ${widget.lastPositionSeconds}");
+              }
             }
           });
 
@@ -220,39 +274,113 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
                 "ProgressChannel",
 
                 onMessageReceived: (message) async {
-                  currentSeconds =
-                      double.tryParse(message.message)?.toInt() ?? 0;
+                  print("🔥 CHANNEL MESSAGE => ${message.message}");
+                  print("🔥 BEFORE UPDATE => $currentSeconds");
 
-                  print("🎥 Vimeo Position => $currentSeconds sec");
+                  if (message.message == "VIDEO_ENDED") {
+                    print("🏁 VIDEO ENDED");
 
-                  await sendProgress();
+                    await vimeoController?.runJavaScript('''
+
+if(window.player){
+
+player.getDuration().then(function(duration){
+
+ProgressChannel.postMessage(
+"ENDED_" + duration.toString()
+);
+
+});
+
+}
+
+''');
+
+                    return;
+                  }
+                  if (message.message.startsWith("ENDED_")) {
+                    currentSeconds =
+                        double.parse(
+                          message.message.replaceFirst("ENDED_", ""),
+                        ).toInt();
+                    print("🔥 AFTER UPDATE => $currentSeconds");
+
+                    await sendProgress();
+
+                    return;
+                  }
+
+                  if (message.message.startsWith("TIME_")) {
+                    currentSeconds =
+                        double.parse(
+                          message.message.replaceFirst("TIME_", ""),
+                        ).round();
+
+                    print("🎥 Vimeo Position => $currentSeconds sec");
+                  }
                 },
               )
               ..setNavigationDelegate(
                 NavigationDelegate(
                   onPageFinished: (_) async {
+                    print("🔥 Vimeo Page Finished");
                     print("✅ Vimeo Loaded");
 
                     await vimeoController!.runJavaScript('''
 
-                      var script = document.createElement('script');
+var script = document.createElement('script');
+script.src = "https://player.vimeo.com/api/player.js";
 
-                      script.src =
-                      "https://player.vimeo.com/api/player.js";
+document.head.appendChild(script);
 
-                      document.head.appendChild(script);
+script.onload = function() {
 
-                      script.onload = function() {
+    var iframe = document.getElementById('player');
 
-                        var iframe =
-                        document.querySelector('iframe');
+    if(!iframe){
+      console.log("IFRAME NOT FOUND");
+      return;
+    }
 
-                        window.player =
-                        new Vimeo.Player(iframe);
+    window.player = new Vimeo.Player(iframe);
 
-                      };
+    window.player.ready().then(function() {
 
-                    ''');
+        console.log("PLAYER READY");
+
+        window.player.setCurrentTime(
+          ${widget.lastPositionSeconds}
+        );
+
+        console.log(
+          "SEEK TO => ${widget.lastPositionSeconds}"
+        );
+
+    });
+
+    window.player.on('timeupdate', function(data) {
+
+        ProgressChannel.postMessage(
+          "TIME_" + data.seconds
+        );
+
+    });
+
+    window.player.on('ended', function() {
+
+        ProgressChannel.postMessage(
+          "VIDEO_ENDED"
+        );
+
+    });
+
+};
+''');
+                    currentSeconds = widget.lastPositionSeconds;
+
+                    print(
+                      "🔥 INITIAL POSITION => ${widget.lastPositionSeconds}",
+                    );
 
                     if (!isVimeoTrackingStarted) {
                       isVimeoTrackingStarted = true;
@@ -271,7 +399,7 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
 
 <iframe
   id="player"
-  src="$embedUrl"
+  src="$embedUrl#t=${widget.lastPositionSeconds}s"
   width="100%"
   height="230"
   frameborder="0"

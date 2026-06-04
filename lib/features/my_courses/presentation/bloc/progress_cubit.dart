@@ -25,8 +25,6 @@ class ProgressCubit extends Cubit<ProgressState> {
       );
 
       emit(ProgressSuccess());
-
-      emit(ProgressSuccess());
     } catch (e) {
       emit(ProgressError(e.toString()));
     }

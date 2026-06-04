@@ -15,7 +15,10 @@ class ProgressRemoteDataSourceImpl implements ProgressRemoteDataSource {
   }) async {
     final response = await dio.post(
       "/Progress/track",
-      data: {"lessonId": lessonId, "positionSeconds": positionSeconds},
+      queryParameters: {
+        "lessonId": lessonId,
+        "positionSeconds": positionSeconds,
+      },
     );
 
     final model = ProgressModel.fromJson(response.data);

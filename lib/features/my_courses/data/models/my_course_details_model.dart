@@ -34,7 +34,7 @@ class CourseVideoModel extends CourseVideoEntity {
     required super.title,
     required super.durationMinutes,
     required super.order,
-    required super.lastPositionMinutes,
+    required super.lastPositionSeconds,
   });
 
   factory CourseVideoModel.fromJson(Map<String, dynamic> json) {
@@ -43,7 +43,7 @@ class CourseVideoModel extends CourseVideoEntity {
       title: json["title"] ?? "",
       durationMinutes: json["durationMinutes"] ?? 0,
       order: json["order"] ?? 0,
-      lastPositionMinutes: json["lastPositionMinutes"] ?? 0,
+      lastPositionSeconds: json["lastPositionSeconds"] ?? 0,
     );
   }
 }

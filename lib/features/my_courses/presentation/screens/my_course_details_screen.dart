@@ -329,11 +329,16 @@ class MyCourseDetailsScreen extends StatelessWidget {
                             itemBuilder: (_, i) {
                               final video = course.videos[i];
 
+                              final totalVideoSeconds =
+                                  video.durationMinutes * 60;
+
                               double progress =
-                                  video.durationMinutes == 0
+                                  totalVideoSeconds == 0
                                       ? 0
-                                      : video.lastPositionMinutes /
-                                          video.durationMinutes;
+                                      : video.lastPositionSeconds /
+                                          totalVideoSeconds;
+
+                              progress = progress.clamp(0.0, 1.0);
 
                               return Container(
                                 padding: EdgeInsets.all(14.w),
@@ -397,6 +402,9 @@ class MyCourseDetailsScreen extends StatelessWidget {
 
                                         InkWell(
                                           onTap: () {
+                                            print(
+                                              "🔥 Sending Progress => ${video.lastPositionSeconds}",
+                                            );
                                             Navigator.push(
                                               context,
 
@@ -409,10 +417,12 @@ class MyCourseDetailsScreen extends StatelessWidget {
                                                                 MyVideoDetailsCubit
                                                               >(),
 
-                                                      child:
-                                                          MyVideoDetailsScreen(
-                                                            videoId: video.id,
-                                                          ),
+                                                      child: MyVideoDetailsScreen(
+                                                        videoId: video.id,
+                                                        lastPositionSeconds:
+                                                            video
+                                                                .lastPositionSeconds,
+                                                      ),
                                                     ),
                                               ),
                                             );

@@ -24,13 +24,13 @@ class CourseVideoEntity {
   final String title;
   final int durationMinutes;
   final int order;
-  final int lastPositionMinutes;
+  final int lastPositionSeconds;
 
   const CourseVideoEntity({
     required this.id,
     required this.title,
     required this.durationMinutes,
     required this.order,
-    required this.lastPositionMinutes,
+    required this.lastPositionSeconds,
   });
 }
