@@ -29,8 +29,13 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
   }
 
   String formatDuration(int seconds) {
-    final minutes = (seconds / 60).round();
-    return "دقيقة $minutes ";
+    final duration = Duration(seconds: seconds);
+
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final secs = duration.inSeconds.remainder(60);
+
+    return '$hours:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   /// 🔥 NEW: short text helper
@@ -171,15 +176,15 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen> {
                           data:
                               isExpanded
                                   ? '''
-<div dir="rtl" style="text-align:right;">
-${diploma.description}
-</div>
-'''
+                     <div dir="rtl" style="text-align:right;">
+                     ${diploma.description}
+                     </div>
+                      '''
                                   : '''
-<div dir="rtl" style="text-align:right;">
-${_getShortText(diploma.description)}
-</div>
-''',
+                      <div dir="rtl" style="text-align:right;">
+                     ${_getShortText(diploma.description)}
+                     </div>
+                     ''',
                           style: {
                             "*": Style(
                               direction: TextDirection.rtl,
@@ -215,12 +220,11 @@ ${_getShortText(diploma.description)}
 
                         SizedBox(height: 18.h),
 
-                        /// VIDEOS TITLE
+                        /// MODULES TITLE
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Text(
-                            "الفيديوهات",
-                            textDirection: TextDirection.rtl,
+                            "محتوى الدبلومة",
                             style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 18.sp,
@@ -231,73 +235,96 @@ ${_getShortText(diploma.description)}
 
                         SizedBox(height: 15.h),
 
-                        ...diploma.modules
-                            .expand((module) => module.videos)
-                            .map(
-                              (video) => Container(
-                                margin: EdgeInsets.only(bottom: 12.h),
-                                padding: EdgeInsets.all(12.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15.r),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 6,
-                                    ),
-                                  ],
+                        ...diploma.modules.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final module = entry.value;
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 12.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Theme(
+                              data: Theme.of(
+                                context,
+                              ).copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                iconColor: AppColors.primary,
+                                collapsedIconColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  side: BorderSide.none,
                                 ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 55.w,
-                                      height: 55.h,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primary.withOpacity(
-                                          .1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.play_circle_fill,
-                                        color: AppColors.primary,
-                                        size: 36.sp,
-                                      ),
-                                    ),
-                                    SizedBox(width: 12.w),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            video.title,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          SizedBox(height: 5.h),
-                                          Text(
-                                            formatDuration(
-                                              video.durationSeconds,
-                                            ),
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: AppColors.textGray,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                collapsedShape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  side: BorderSide.none,
                                 ),
+
+                                tilePadding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 6.h,
+                                ),
+
+                                leading: Container(
+                                  width: 35.w,
+                                  height: 35.h,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: Text(
+                                    "${index + 1}",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                title: Text(
+                                  module.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+
+                                subtitle: Text(
+                                  textDirection: TextDirection.rtl,
+                                  "${module.videos.length} محاضرة",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+
+                                children:
+                                    module.videos.map((video) {
+                                      return ListTile(
+                                        leading: Icon(
+                                          Icons.play_circle_fill,
+                                          color: AppColors.primary,
+                                        ),
+                                        title: Text(
+                                          video.title,
+                                          style: TextStyle(fontSize: 13.sp),
+                                        ),
+                                        trailing: Text(
+                                          formatDuration(video.durationSeconds),
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            color: AppColors.textGray,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
                               ),
                             ),
+                          );
+                        }),
                       ],
                     ),
                   ),
