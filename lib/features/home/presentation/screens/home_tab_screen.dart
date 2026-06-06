@@ -10,6 +10,8 @@ import 'package:arabas_app/features/diplomas/presentation/bloc/diplomas_cubit.da
 import 'package:arabas_app/features/diplomas/presentation/screens/diplomas_screen.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
+import 'package:arabas_app/features/practicals/presentation/bloc/practical_cubit.dart';
+import 'package:arabas_app/features/practicals/presentation/screens/practical_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/bank_questions_screen.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +111,18 @@ class HomeTab extends StatelessWidget {
                       title: "التدريب العملي",
                       desc: "فرص تدريب عملي ",
                       image: AppImages.training,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => BlocProvider(
+                                  create: (_) => sl<PracticalCubit>(),
+                                  child: const PracticalScreen(),
+                                ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

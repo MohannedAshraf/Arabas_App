@@ -86,6 +86,16 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_course_detai
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
+import 'package:arabas_app/features/practicals/data/data_sources/practical_details_remote_data_source.dart';
+import 'package:arabas_app/features/practicals/data/data_sources/practical_remote_data_source.dart';
+import 'package:arabas_app/features/practicals/domain/repo/practical_details_repo.dart';
+import 'package:arabas_app/features/practicals/domain/repo/practical_details_repo_impl.dart';
+import 'package:arabas_app/features/practicals/domain/repo/practical_repo.dart';
+import 'package:arabas_app/features/practicals/domain/repo/practical_repo_impl.dart';
+import 'package:arabas_app/features/practicals/domain/usecases/get_practical_details.dart';
+import 'package:arabas_app/features/practicals/domain/usecases/get_practical_usecase.dart';
+import 'package:arabas_app/features/practicals/presentation/bloc/practical_cubit.dart';
+import 'package:arabas_app/features/practicals/presentation/bloc/practical_details_cubit.dart';
 import 'package:arabas_app/features/question_bank/data/data_sources/bank_questions_remote_data_source.dart';
 import 'package:arabas_app/features/question_bank/data/data_sources/question_remote_data_source.dart';
 import 'package:arabas_app/features/question_bank/domain/repo/bank_questions_repo.dart';
@@ -482,4 +492,36 @@ Future<void> init() async {
 
   /// CUBIT
   sl.registerFactory(() => QuestionsCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<PracticalRemoteDataSource>(
+    () => PracticalRemoteDataSourceImpl(sl<Dio>()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<PracticalRepository>(
+    () => PracticalRepositoryImpl(sl()),
+  );
+
+  /// USECASE
+  sl.registerLazySingleton(() => GetPracticalUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => PracticalCubit(sl()));
+
+  /// DATA SOURCE
+  sl.registerLazySingleton<PracticalDetailsRemoteDataSource>(
+    () => PracticalDetailsRemoteDataSourceImpl(sl<Dio>()),
+  );
+
+  /// REPOSITORY
+  sl.registerLazySingleton<PracticalDetailsRepository>(
+    () => PracticalDetailsRepositoryImpl(sl()),
+  );
+
+  /// USECASE
+  sl.registerLazySingleton(() => GetPracticalDetailsUseCase(sl()));
+
+  /// CUBIT
+  sl.registerFactory(() => PracticalDetailsCubit(sl()));
 }
