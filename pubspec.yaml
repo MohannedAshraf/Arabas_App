@@ -57,6 +57,7 @@ dependencies:
   webview_flutter: ^4.13.0
   html: 
   url_launcher: ^6.3.0
+  qr_flutter: 
   
 
 dev_dependencies:

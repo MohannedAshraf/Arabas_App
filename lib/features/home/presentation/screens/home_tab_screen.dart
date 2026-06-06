@@ -10,6 +10,7 @@ import 'package:arabas_app/features/diplomas/presentation/bloc/diplomas_cubit.da
 import 'package:arabas_app/features/diplomas/presentation/screens/diplomas_screen.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
+import 'package:arabas_app/features/home/presentation/screens/about_arabas_screen.dart';
 import 'package:arabas_app/features/practicals/presentation/bloc/practical_cubit.dart';
 import 'package:arabas_app/features/practicals/presentation/screens/practical_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
@@ -39,11 +40,25 @@ class HomeTab extends StatelessWidget {
                 child: _announcement(),
               ),
               SizedBox(height: 10.h),
+              _mainCard(
+                title: "تعرف علي  المؤسسة",
+                desc: " نبذة عن المؤسسة واهدافها",
+                image: AppImages.aboutOrg,
+               onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const AboutArabasScreen(),
+    ),
+  );
+},
+              ),
 
               _mainCard(
                 title: "تعرف على الدبلومة",
                 desc: "نبذة عن الدبلومات المقدمه",
-                image: AppImages.aboutOrg,
+                image: AppImages.bestProg,
+                
                 onTap: () {
                   Navigator.push(
                     context,
@@ -58,12 +73,7 @@ class HomeTab extends StatelessWidget {
                 },
               ),
 
-              _mainCard(
-                title: "أهم البرامج التدريبية",
-                desc: "الدبلومة المتقدمه في أطفال الأنابيب والعقم",
-                image: AppImages.bestProg,
-                onTap: () {},
-              ),
+              
 
               _mainCard(
                 title: "كورسات مسجلة",

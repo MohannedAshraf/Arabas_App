@@ -158,41 +158,103 @@ Widget _mcqWidget(QuestionEntity question) {
     padding: EdgeInsets.all(18.w),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(20.r),
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+      borderRadius: BorderRadius.circular(24.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(.05),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(question.questionText, textAlign: TextAlign.left),
+        Text(
+          question.questionText,
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
         ),
-        SizedBox(height: 20.h),
 
-        ...question.mcqOptions!.map(
-          (option) => Container(
-            margin: EdgeInsets.only(bottom: 10.h),
-            padding: EdgeInsets.all(12.w),
+        SizedBox(height: 24.h),
+
+        ...question.mcqOptions!.map((option) {
+          final isCorrect = option.isCorrect;
+
+          return Container(
+            margin: EdgeInsets.only(bottom: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
+              color: isCorrect ? const Color(0xffEAF5F1) : Colors.white,
+              borderRadius: BorderRadius.circular(16.r),
               border: Border.all(
-                color: option.isCorrect ? AppColors.primary : Colors.black12,
+                color:
+                    isCorrect ? const Color(0xff1F7A63) : Colors.grey.shade300,
+                width: isCorrect ? 2 : 1,
               ),
             ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                option.optionText,
-                style: TextStyle(
-                  color: option.isCorrect ? AppColors.primary : AppColors.black,
-                  fontWeight:
-                      option.isCorrect ? FontWeight.bold : FontWeight.normal,
+            child: Row(
+              children: [
+                if (isCorrect)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xff1F7A63),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      "Correct",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                const Spacer(),
+
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    option.optionText,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      color:
+                          isCorrect ? const Color(0xff1F7A63) : Colors.black87,
+                      fontWeight: isCorrect ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
+
+                SizedBox(width: 12.w),
+
+                Container(
+                  width: 28.w,
+                  height: 28.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        isCorrect
+                            ? const Color(0xff1F7A63)
+                            : Colors.transparent,
+                    border: Border.all(
+                      color: isCorrect ? const Color(0xff1F7A63) : Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  child:
+                      isCorrect
+                          ? Icon(Icons.check, size: 16.sp, color: Colors.white)
+                          : null,
+                ),
+              ],
             ),
-          ),
-        ),
+          );
+        }),
       ],
     ),
   );
@@ -236,70 +298,100 @@ Widget _essayWidget(QuestionEntity question) {
 }
 
 Widget _trueFalseWidget(QuestionEntity question) {
+  final bool isTrueAnswer = question.isTrue ?? false;
+
   return Container(
     margin: EdgeInsets.only(bottom: 16.h),
     padding: EdgeInsets.all(18.w),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(20.r),
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+      borderRadius: BorderRadius.circular(24.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(.05),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(question.questionText, textAlign: TextAlign.left),
+        Text(
+          question.questionText,
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
         ),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: 24.h),
 
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color:
-                      question.isTrue == false
-                          ? AppColors.primary
-                          : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  "خطأ",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color:
-                        question.isTrue == false ? Colors.white : Colors.black,
-                  ),
-                ),
+        _trueFalseOption(text: "صح", isCorrect: isTrueAnswer),
+
+        SizedBox(height: 12.h),
+
+        _trueFalseOption(text: "خطأ", isCorrect: !isTrueAnswer),
+      ],
+    ),
+  );
+}
+
+Widget _trueFalseOption({required String text, required bool isCorrect}) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+    decoration: BoxDecoration(
+      color: isCorrect ? const Color(0xffEAF5F1) : Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(
+        color: isCorrect ? const Color(0xff1F7A63) : Colors.grey.shade300,
+        width: isCorrect ? 2 : 1,
+      ),
+    ),
+    child: Row(
+      children: [
+        if (isCorrect)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: const Color(0xff1F7A63),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              "Correct",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.bold,
               ),
             ),
+          ),
 
-            SizedBox(width: 10.w),
+        const Spacer(),
 
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color:
-                      question.isTrue == true
-                          ? AppColors.primary
-                          : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  "صح",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color:
-                        question.isTrue == true ? Colors.white : Colors.black,
-                  ),
-                ),
-              ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 18.sp,
+            color: isCorrect ? const Color(0xff1F7A63) : Colors.black87,
+            fontWeight: isCorrect ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+
+        SizedBox(width: 12.w),
+
+        Container(
+          width: 28.w,
+          height: 28.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isCorrect ? const Color(0xff1F7A63) : Colors.transparent,
+            border: Border.all(
+              color: isCorrect ? const Color(0xff1F7A63) : Colors.grey,
+              width: 2,
             ),
-          ],
+          ),
+          child:
+              isCorrect
+                  ? Icon(Icons.check, size: 16.sp, color: Colors.white)
+                  : null,
         ),
       ],
     ),
@@ -312,38 +404,94 @@ Widget _matchingWidget(QuestionEntity question) {
     padding: EdgeInsets.all(18.w),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(20.r),
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6.r)],
+      borderRadius: BorderRadius.circular(24.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(.05),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(question.questionText, textAlign: TextAlign.left),
+        /// Header
+
+        /// Question
+        Text(
+          question.questionText,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
         ),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: 24.h),
 
+        /// Pairs
         ...question.matchingPairs!.map(
-          (pair) => Container(
-            margin: EdgeInsets.only(bottom: 12.h),
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(14.r),
-            ),
+          (pair) => Padding(
+            padding: EdgeInsets.only(bottom: 14.h),
             child: Row(
               children: [
-                Text(pair.leftItem, style: TextStyle(fontSize: 18.sp)),
+                /// Left Item
+                Expanded(
+                  child: Container(
+                    height: 52.h,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey.shade300),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(.15),
+                          blurRadius: 3,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      pair.leftItem,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
 
-                const Spacer(),
+                SizedBox(width: 16.w),
 
-                const Icon(Icons.arrow_back, color: AppColors.primary),
+                /// Matching Icon
+                Icon(
+                  Icons.compare_arrows_rounded,
+                  color: AppColors.primary,
+                  size: 34.sp,
+                ),
 
-                const Spacer(),
+                SizedBox(width: 16.w),
 
-                Text(pair.rightItem, style: TextStyle(fontSize: 18.sp)),
+                /// Right Item
+                Expanded(
+                  child: Container(
+                    height: 52.h,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffEAF1FB),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      pair.rightItem,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
