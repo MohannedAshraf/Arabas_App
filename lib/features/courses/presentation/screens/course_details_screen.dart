@@ -1,4 +1,5 @@
 import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/features/courses/domain/entities/course_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -122,6 +123,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
+            if (state is CourseDetailsError) {
+              return Center(child: Text(state.message));
+            }
+
             if (state is CourseDetailsSuccess) {
               final course = state.course;
 
@@ -131,214 +136,88 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               final firstVideo =
                   validVideos.isNotEmpty ? validVideos.first : null;
 
-              return SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    /// VIDEO PLAYER
-                    Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: buildVideo(firstVideo?.url, course.imageUrl),
-                        ),
-                        Positioned(
-                          top: 15.h,
-                          left: 10.w,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 6.h,
+              return DefaultTabController(
+                length: 2,
+                child: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            CourseVideoSection(
+                              videoUrl: firstVideo?.url,
+                              imageUrl: course.imageUrl,
+                              offer: course.offer,
                             ),
-                            decoration: BoxDecoration(
-                              color: AppColors.green,
-                              borderRadius: BorderRadius.circular(30.sp),
-                            ),
-                            child: Text(
-                              textDirection: TextDirection.rtl,
-                              "خصم ${course.offer}%",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
 
-                    SizedBox(height: 20.h),
+                            Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      textDirection: TextDirection.ltr,
+                                      course.categoryName,
+                                      style: TextStyle(
+                                        color: AppColors.textGray,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                  ),
 
-                    /// CATEGORY
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        course.categoryName,
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: AppColors.textGray,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                                  SizedBox(height: 6.h),
 
-                    SizedBox(height: 6.h),
-
-                    /// TITLE
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        course.title,
-                        textDirection: TextDirection.ltr,
-
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 15.h),
-
-                    /// DESCRIPTION
-                    Html(
-                      data: course.description,
-
-                      style: {
-                        "body": Style(
-                          textAlign: TextAlign.right,
-                          fontSize: FontSize(16.sp),
-                          color: AppColors.black,
-                        ),
-                      },
-                    ),
-
-                    SizedBox(height: 15.h),
-
-                    /// RATE + DURATION
-                    Row(
-                      children: [
-                        ...List.generate(
-                          5,
-                          (i) => Icon(
-                            i < course.rateStar
-                                ? Icons.star
-                                : Icons.star_border,
-                            color: Colors.amber,
-                          ),
-                        ),
-
-                        const Spacer(),
-
-                        Text(
-                          "${course.durationHours} ساعة",
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 30.h),
-
-                    /// CONTENT TITLE
-                    Text(
-                      "المحتوى",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    SizedBox(height: 15.h),
-
-                    /// VIDEOS LIST
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: course.videos.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 10.h),
-                      itemBuilder: (_, i) {
-                        final video = course.videos[i];
-                        final locked = video.url == null;
-
-                        final duration = formatDuration(video.durationSeconds);
-
-                        return Container(
-                          padding: EdgeInsets.all(14.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(
-                                blurRadius: 6,
-                                color: Colors.black12,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              /// TEXTS (LEFT SIDE)
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      video.title,
-                                      textAlign: TextAlign.left,
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      course.title,
                                       textDirection: TextDirection.ltr,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15.sp,
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20.sp,
                                       ),
                                     ),
-
-                                    SizedBox(height: 4.h),
-
-                                    Text(
-                                      duration,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 13.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
+                            ),
 
-                              SizedBox(width: 12.w),
+                            TabBar(
+                              labelColor: AppColors.primary,
+                              unselectedLabelColor: Colors.grey,
+                              indicatorColor: AppColors.primary,
+                              indicatorWeight: 3,
+                              tabs: const [
+                                Tab(text: "الوصف"),
+                                Tab(text: "المحتوى"),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ];
+                  },
+                  body: TabBarView(
+                    children: [
+                      CourseDescriptionTab(
+                        description: course.description,
+                        rateStar: course.rateStar,
+                        durationHours: course.durationHours,
+                      ),
 
-                              /// ICON (RIGHT SIDE)
-                              Icon(
-                                locked ? Icons.lock : Icons.play_circle_fill,
-                                size: 28,
-                                color: locked ? Colors.grey : AppColors.primary,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                      CourseContentTab(videos: course.videos),
+                    ],
+                  ),
                 ),
               );
-            }
-
-            if (state is CourseDetailsError) {
-              return Center(child: Text(state.message));
             }
 
             return const SizedBox();
           },
         ),
-
         bottomNavigationBar:
             BlocBuilder<CourseDetailsCubit, CourseDetailsState>(
               builder: (context, state) {
@@ -393,6 +272,234 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               },
             ),
       ),
+    );
+  }
+}
+
+class CourseVideoSection extends StatelessWidget {
+  final String? videoUrl;
+  final String? imageUrl;
+  final int offer;
+
+  const CourseVideoSection({
+    super.key,
+    required this.videoUrl,
+    required this.imageUrl,
+    required this.offer,
+  });
+
+  Widget _buildVideo() {
+    if (videoUrl == null || videoUrl!.isEmpty) {
+      return Image.network(
+        imageUrl ?? "",
+        width: double.infinity,
+        height: 250.h,
+        fit: BoxFit.cover,
+      );
+    }
+
+    /// YOUTUBE
+    if (videoUrl!.contains("youtube") || videoUrl!.contains("youtu.be")) {
+      final videoId = YoutubePlayer.convertUrlToId(videoUrl!);
+
+      if (videoId == null) {
+        return const SizedBox();
+      }
+
+      return YoutubePlayer(
+        controller: YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(autoPlay: false, forceHD: true),
+        ),
+        showVideoProgressIndicator: true,
+      );
+    }
+
+    /// VIMEO
+    if (videoUrl!.contains("vimeo")) {
+      final uri = Uri.parse(videoUrl!);
+
+      final videoId = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : "";
+
+      final embedUrl =
+          "https://player.vimeo.com/video/$videoId?title=0&byline=0&portrait=0";
+
+      final controller =
+          WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..loadRequest(Uri.parse(embedUrl));
+
+      return SizedBox(
+        height: 250.h,
+        width: double.infinity,
+        child: WebViewWidget(controller: controller),
+      );
+    }
+
+    return const SizedBox();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SizedBox(width: double.infinity, height: 250.h, child: _buildVideo()),
+
+        Positioned(
+          top: 20.h,
+          left: 10.w,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(30.r),
+            ),
+            child: Text(
+              "خصم $offer%",
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CourseDescriptionTab extends StatelessWidget {
+  final String description;
+  final int rateStar;
+  final int durationHours;
+
+  const CourseDescriptionTab({
+    super.key,
+    required this.description,
+    required this.rateStar,
+    required this.durationHours,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Html(
+              data: description,
+              style: {
+                "body": Style(
+                  textAlign: TextAlign.right,
+                  fontSize: FontSize(16.sp),
+                ),
+              },
+            ),
+
+            SizedBox(height: 20.h),
+
+            Row(
+              children: [
+                ...List.generate(
+                  5,
+                  (i) => Icon(
+                    i < rateStar ? Icons.star : Icons.star_border,
+                    color: Colors.amber,
+                  ),
+                ),
+
+                const Spacer(),
+
+                Text("$durationHours ساعة", textDirection: TextDirection.rtl),
+
+                SizedBox(width: 6.w),
+                Icon(Icons.access_time, color: AppColors.primary),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CourseContentTab extends StatelessWidget {
+  final List<CourseVideoEntity> videos;
+
+  const CourseContentTab({super.key, required this.videos});
+
+  String formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remaining = seconds % 60;
+
+    return "$minutes:${remaining.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.all(16.w),
+      itemCount: videos.length,
+      separatorBuilder: (_, __) => SizedBox(height: 10.h),
+      itemBuilder: (_, i) {
+        final video = videos[i];
+
+        final locked = video.url == null;
+
+        return Container(
+          padding: EdgeInsets.all(14.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.r),
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 6,
+                color: Colors.black12,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      video.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+
+                    SizedBox(height: 4.h),
+
+                    Text(
+                      formatDuration(video.durationSeconds),
+                      style: TextStyle(color: Colors.grey, fontSize: 13.sp),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(width: 12.w),
+
+              Icon(
+                locked ? Icons.lock : Icons.play_circle_fill,
+                size: 28.sp,
+                color: locked ? Colors.grey : AppColors.primary,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

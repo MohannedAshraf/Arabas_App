@@ -20,7 +20,7 @@ class PracticalDetailsModel extends PracticalDetailsEntity {
       certificateUrl: json["urlCertificate"] ?? "",
       createdAt: json["createAt"] ?? "",
       students:
-          (json["urlStudents"] as List)
+          (json["urlStudents"] as List? ?? [])
               .map((e) => StudentImageModel.fromJson(e))
               .toList(),
     );

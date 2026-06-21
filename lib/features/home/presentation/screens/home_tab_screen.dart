@@ -44,21 +44,21 @@ class HomeTab extends StatelessWidget {
                 title: "تعرف علي  المؤسسة",
                 desc: " نبذة عن المؤسسة واهدافها",
                 image: AppImages.aboutOrg,
-               onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const AboutArabasScreen(),
-    ),
-  );
-},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AboutArabasScreen(),
+                    ),
+                  );
+                },
               ),
 
               _mainCard(
-                title: "تعرف على الدبلومة",
-                desc: "نبذة عن الدبلومات المقدمه",
+                title: "الدبلومة المتقدمة في أطفال الأنابيب والعقم",
+                desc: "نبذة عن الدبلومة ومحتواها ",
                 image: AppImages.bestProg,
-                
+
                 onTap: () {
                   Navigator.push(
                     context,
@@ -72,8 +72,6 @@ class HomeTab extends StatelessWidget {
                   );
                 },
               ),
-
-              
 
               _mainCard(
                 title: "كورسات مسجلة",

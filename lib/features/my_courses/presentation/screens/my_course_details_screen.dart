@@ -198,274 +198,70 @@ class MyCourseDetailsScreen extends StatelessWidget {
                   if (state is MyCourseDetailsSuccess) {
                     final course = state.course;
 
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-
-                        children: [
-                          /// IMAGE
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20.r),
-
-                            child: Image.network(
-                              course.imageUrl,
-                              width: double.infinity,
-                              height: 220.h,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-
-                          SizedBox(height: 18.h),
-
-                          /// TITLE
-                          Text(
-                            course.title,
-                            textDirection: TextDirection.ltr,
-                            textAlign: TextAlign.left,
-
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          /// DESCRIPTION
-                          Html(
-                            data: course.description,
-
-                            style: {
-                              "body": Style(
-                                color: AppColors.textGray,
-                                fontSize: FontSize(15.sp),
-                                lineHeight: LineHeight(1.7),
-                                textAlign: TextAlign.right,
-                              ),
-                            },
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          /// RATE + HOURS
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                            children: [
-                              Row(
-                                children: List.generate(
-                                  5,
-                                  (index) => Icon(
-                                    index < course.rateStars
-                                        ? Icons.star_rounded
-                                        : Icons.star_border_rounded,
-
-                                    color: Colors.amber,
-                                    size: 22.sp,
-                                  ),
-                                ),
-                              ),
-
-                              Row(
+                    return DefaultTabController(
+                      length: 2,
+                      child: NestedScrollView(
+                        headerSliverBuilder: (context, innerBoxIsScrolled) {
+                          return [
+                            SliverToBoxAdapter(
+                              child: Column(
                                 children: [
-                                  Text(
-                                    "${course.durationHours} ساعة",
-
-                                    textDirection: TextDirection.rtl,
-
-                                    style: TextStyle(
-                                      color: AppColors.textGray,
-
-                                      fontSize: 14.sp,
-
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  Image.network(
+                                    course.imageUrl,
+                                    width: double.infinity,
+                                    height: 250.h,
+                                    fit: BoxFit.cover,
                                   ),
 
-                                  SizedBox(width: 6.w),
-
-                                  Icon(
-                                    Icons.access_time_filled_rounded,
-
-                                    color: AppColors.primary,
-
-                                    size: 20.sp,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 16.h),
-
-                          /// CONTENT TITLE
-                          Text(
-                            "المحتوى",
-
-                            textDirection: TextDirection.rtl,
-
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 19.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          /// VIDEOS
-                          ListView.separated(
-                            shrinkWrap: true,
-
-                            physics: const NeverScrollableScrollPhysics(),
-
-                            itemCount: course.videos.length,
-
-                            separatorBuilder: (_, __) => SizedBox(height: 12.h),
-
-                            itemBuilder: (_, i) {
-                              final video = course.videos[i];
-
-                              final totalVideoSeconds =
-                                  video.durationMinutes * 60;
-
-                              double progress =
-                                  totalVideoSeconds == 0
-                                      ? 0
-                                      : video.lastPositionSeconds /
-                                          totalVideoSeconds;
-
-                              progress = progress.clamp(0.0, 1.0);
-
-                              return Container(
-                                padding: EdgeInsets.all(14.w),
-
-                                decoration: BoxDecoration(
-                                  color: AppColors.white,
-
-                                  borderRadius: BorderRadius.circular(16.r),
-
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 6,
-                                      color: Colors.black12,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-
-                                child: Column(
-                                  children: [
-                                    Row(
+                                  Padding(
+                                    padding: EdgeInsets.all(16.w),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-
-                                            children: [
-                                              Text(
-                                                video.title,
-
-                                                textDirection:
-                                                    TextDirection.ltr,
-
-                                                style: TextStyle(
-                                                  fontSize: 15.sp,
-
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-
-                                              SizedBox(height: 4.h),
-
-                                              Text(
-                                                "${video.durationMinutes} min",
-
-                                                textDirection:
-                                                    TextDirection.ltr,
-
-                                                style: TextStyle(
-                                                  color: AppColors.textGray,
-
-                                                  fontSize: 13.sp,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        SizedBox(width: 12.w),
-
-                                        InkWell(
-                                          onTap: () {
-                                            print(
-                                              "🔥 Sending Progress => ${video.lastPositionSeconds}",
-                                            );
-                                            Navigator.push(
-                                              context,
-
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (_) => BlocProvider(
-                                                      create:
-                                                          (_) =>
-                                                              sl<
-                                                                MyVideoDetailsCubit
-                                                              >(),
-
-                                                      child: MyVideoDetailsScreen(
-                                                        videoId: video.id,
-                                                        lastPositionSeconds:
-                                                            video
-                                                                .lastPositionSeconds,
-                                                      ),
-                                                    ),
-                                              ),
-                                            );
-                                          },
-
-                                          child: Icon(
-                                            Icons.play_circle_fill_rounded,
-
-                                            color: AppColors.primary,
-
-                                            size: 32.sp,
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            course.title,
+                                            textDirection: TextDirection.ltr,
+                                            style: TextStyle(
+                                              color: AppColors.primary,
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
+                                  ),
 
-                                    SizedBox(height: 14.h),
+                                  TabBar(
+                                    labelColor: AppColors.primary,
+                                    unselectedLabelColor: Colors.grey,
+                                    indicatorColor: AppColors.primary,
+                                    indicatorWeight: 3,
+                                    tabs: const [
+                                      Tab(text: "الوصف"),
+                                      Tab(text: "المحتوى"),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ];
+                        },
 
-                                    /// PROGRESS
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(20.r),
+                        body: TabBarView(
+                          children: [
+                            MyCourseDescriptionTab(
+                              description: course.description,
+                              rateStars: course.rateStars,
+                              durationHours: course.durationHours,
+                            ),
 
-                                      child: LinearProgressIndicator(
-                                        value: progress,
-
-                                        minHeight: 8.h,
-
-                                        backgroundColor: AppColors.lightGray
-                                            .withOpacity(.3),
-
-                                        valueColor: AlwaysStoppedAnimation(
-                                          AppColors.primary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-
-                          SizedBox(height: 10.h),
-                        ],
+                            MyCourseContentTab(videos: course.videos),
+                          ],
+                        ),
                       ),
                     );
                   }
@@ -541,6 +337,181 @@ class MyCourseDetailsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class MyCourseDescriptionTab extends StatelessWidget {
+  final String description;
+  final int rateStars;
+  final int durationHours;
+
+  const MyCourseDescriptionTab({
+    super.key,
+    required this.description,
+    required this.rateStars,
+    required this.durationHours,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Html(
+            data: description,
+            style: {
+              "body": Style(
+                textAlign: TextAlign.right,
+                fontSize: FontSize(16.sp),
+                color: AppColors.textGray,
+              ),
+            },
+          ),
+
+          SizedBox(height: 20.h),
+
+          Row(
+            children: [
+              ...List.generate(
+                5,
+                (index) => Icon(
+                  index < rateStars
+                      ? Icons.star_rounded
+                      : Icons.star_border_rounded,
+                  color: Colors.amber,
+                ),
+              ),
+
+              const Spacer(),
+
+              Text("$durationHours ساعة", textDirection: TextDirection.rtl),
+
+              SizedBox(width: 6.w),
+
+              Icon(Icons.access_time_filled_rounded, color: AppColors.primary),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyCourseContentTab extends StatelessWidget {
+  final List videos;
+
+  const MyCourseContentTab({super.key, required this.videos});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: EdgeInsets.all(16.w),
+      itemCount: videos.length,
+      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      itemBuilder: (_, i) {
+        final video = videos[i];
+
+        final totalVideoSeconds = video.durationMinutes * 60;
+
+        double progress =
+            totalVideoSeconds == 0
+                ? 0
+                : video.lastPositionSeconds / totalVideoSeconds;
+
+        progress = progress.clamp(0.0, 1.0);
+
+        return Container(
+          padding: EdgeInsets.all(14.w),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 6,
+                color: Colors.black12,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            video.title,
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 4.h),
+
+                        Text(
+                          "${video.durationMinutes} min",
+                          style: TextStyle(
+                            color: AppColors.textGray,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: 12.w),
+
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => BlocProvider(
+                                create: (_) => sl<MyVideoDetailsCubit>(),
+                                child: MyVideoDetailsScreen(
+                                  videoId: video.id,
+                                  lastPositionSeconds:
+                                      video.lastPositionSeconds,
+                                ),
+                              ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.play_circle_fill_rounded,
+                      color: AppColors.primary,
+                      size: 32.sp,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 14.h),
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 8.h,
+                  backgroundColor: AppColors.lightGray.withOpacity(.3),
+                  valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -41,30 +41,29 @@ class _BankQuestionsScreenState extends State<BankQuestionsScreen> {
 
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-            child: TextField(
-              readOnly: true,
-              decoration: InputDecoration(
-                hintText: "ابحث عن قسم...",
-                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: const BorderSide(color: Colors.black12),
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+          //   child: TextField(
+          //     readOnly: true,
+          //     decoration: InputDecoration(
+          //       hintText: "ابحث عن قسم...",
+          //       prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+          //       filled: true,
+          //       fillColor: Colors.white,
+          //       contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(30),
+          //         borderSide: BorderSide.none,
+          //       ),
+          //       enabledBorder: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(30),
+          //         borderSide: const BorderSide(color: Colors.black12),
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
-          SizedBox(height: 20.h),
-
+          // SizedBox(height: 20.h),
           Expanded(
             child: BlocBuilder<BankQuestionsCubit, BankQuestionsState>(
               builder: (context, state) {

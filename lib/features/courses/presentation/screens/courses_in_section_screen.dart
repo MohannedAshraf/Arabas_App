@@ -57,32 +57,31 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-            child: TextField(
-              readOnly: true, // مش شغال حالياً
-              decoration: InputDecoration(
-                hintText: "ابحث عن قسم...",
-                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+          //   child: TextField(
+          //     readOnly: true, // مش شغال حالياً
+          //     decoration: InputDecoration(
+          //       hintText: "ابحث عن قسم...",
+          //       prefixIcon: const Icon(Icons.search, color: AppColors.primary),
 
-                filled: true,
-                fillColor: Colors.white,
+          //       filled: true,
+          //       fillColor: Colors.white,
 
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          //       contentPadding: const EdgeInsets.symmetric(vertical: 14),
 
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(30),
+          //         borderSide: BorderSide.none,
+          //       ),
 
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: const BorderSide(color: Colors.black12),
-                ),
-              ),
-            ),
-          ),
-
+          //       enabledBorder: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(30),
+          //         borderSide: const BorderSide(color: Colors.black12),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 10),
           Expanded(
             child: BlocBuilder<CoursesBySectionCubit, CoursesBySectionState>(
@@ -92,159 +91,205 @@ class _CoursesBySectionScreenState extends State<CoursesBySectionScreen> {
                 }
 
                 if (state is CoursesSuccess) {
-                  return GridView.builder(
+                  return ListView.builder(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 12.h,
+                    ),
                     itemCount: state.courses.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: .75,
-                        ),
+
                     itemBuilder: (_, i) {
                       final course = state.courses[i];
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => BlocProvider(
-                                    create:
-                                        (_) =>
-                                            sl<CourseDetailsCubit>()
-                                              ..getCourseDetails(course.id),
-                                    child: CourseDetailsScreen(
-                                      courseId: course.id,
-                                    ),
-                                  ),
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 16.h),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(.06),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: const [
-                              BoxShadow(
-                                blurRadius: 10,
-                                color: Colors.black12,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(18),
+                          ],
+                        ),
+
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// IMAGE + OFFER
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.r),
+                                    topRight: Radius.circular(20.r),
                                   ),
-                                  child: Positioned.fill(
-                                    child: Image.network(
-                                      course.imageUrl,
-                                      fit: BoxFit.cover,
+                                  child: Image.network(
+                                    course.imageUrl,
+                                    width: double.infinity,
+                                    height: 300.h,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+
+                                if (course.offer > 0)
+                                  Positioned(
+                                    top: 12,
+                                    right: 12,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 6.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "%${course.offer} خصم",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                              ],
+                            ),
 
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: 6.h,
-                                  left: 6.w,
-                                  right: 6.w,
-                                  bottom: 6.h,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    /// الاسم + السعر
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                            Padding(
+                              padding: EdgeInsets.all(12.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  /// TITLE
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      course.title,
+                                      textDirection: TextDirection.ltr,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 12.h),
+
+                                  /// DURATION
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        /// اسم الكورس
                                         Text(
-                                          course.title,
-                                          textDirection: TextDirection.ltr,
-                                          maxLines: 4,
-                                          overflow: TextOverflow.ellipsis,
+                                          "${course.durationHours} ساعة",
+                                          textDirection: TextDirection.rtl,
                                           style: TextStyle(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13.sp,
+                                            color: AppColors.black,
+                                            fontSize: 14.sp,
                                           ),
                                         ),
+                                        SizedBox(width: 6.w),
 
-                                        SizedBox(height: 8.sp),
-
-                                        /// السعر
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Icon(
-                                              Icons.access_time,
-                                              size: 18.sp,
-                                              color: Colors.grey,
-                                            ),
-
-                                            SizedBox(width: 4.sp),
-
-                                            Text(
-                                              "${course.duration} ساعة",
-                                              textDirection: TextDirection.rtl,
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 12.sp,
-                                              ),
-                                            ),
-                                            Spacer(),
-
-                                            Text(
-                                              "${course.price} ج.م",
-                                              textDirection: TextDirection.rtl,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15.sp,
-                                              ),
-                                            ),
-                                          ],
+                                        Icon(
+                                          Icons.access_time,
+                                          color: AppColors.primary,
+                                          size: 20.sp,
                                         ),
-
-                                        SizedBox(height: 4.sp),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: List.generate(
-                                            5,
-                                            (index) => Padding(
-                                              padding: EdgeInsets.only(
-                                                right: 2.w,
-                                              ),
-                                              child: Icon(
-                                                index < course.rate.toInt()
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: Colors.amber,
-                                                size: 18.sp,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.sp),
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+
+                                  SizedBox(height: 10.h),
+
+                                  /// PRICE
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "${course.priceInEGP} ج.م",
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Icon(
+                                          Icons.payments,
+                                          color: AppColors.primary,
+                                          size: 20.sp,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 15.h),
+
+                                  /// BUTTON
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 50.h,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14.r,
+                                          ),
+                                        ),
+                                      ),
+
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => BlocProvider(
+                                                  create:
+                                                      (_) =>
+                                                          sl<
+                                                              CourseDetailsCubit
+                                                            >()
+                                                            ..getCourseDetails(
+                                                              course.id,
+                                                            ),
+                                                  child: CourseDetailsScreen(
+                                                    courseId: course.id,
+                                                  ),
+                                                ),
+                                          ),
+                                        );
+                                      },
+
+                                      child: Text(
+                                        "عرض التفاصيل",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },

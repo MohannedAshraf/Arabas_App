@@ -81,13 +81,12 @@ class _QuestionsScreenState extends State<QuestionsScreen>
             ),
             child: TabBar(
               controller: controller,
-              labelColor: AppColors.white,
+              labelColor: AppColors.primary,
               unselectedLabelColor: AppColors.primary,
 
-              indicator: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 3,
+              indicatorSize: TabBarIndicatorSize.label,
 
               tabs: const [
                 Tab(text: "اختياري"),
