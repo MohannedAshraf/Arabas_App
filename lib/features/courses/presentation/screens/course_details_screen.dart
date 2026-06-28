@@ -1,4 +1,5 @@
 import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/core/widgets/subscribe_button.dart';
 import 'package:arabas_app/features/courses/domain/entities/course_details_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -226,47 +227,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 final course = state.course;
 
                 return SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
-                    ),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.sp),
-                        ),
-                        elevation: 8,
-                        shadowColor: Colors.black26,
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "${course.priceInEGP} جنيه",
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(width: 12.w),
-                          Text(
-                            "اشترك الآن",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: SubscribeButton(
+                    price: course.priceInEGP.toDouble(),
+                    onPressed: () {
+                      // هنضيف الأكشن بعدين
+                    },
                   ),
                 );
               },

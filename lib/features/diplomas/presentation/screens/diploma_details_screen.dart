@@ -1,14 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/core/widgets/subscribe_button.dart';
 import 'package:arabas_app/features/diplomas/domain/entities/diploma_details_entity.dart';
 import 'package:arabas_app/features/diplomas/presentation/bloc/diploma_details_cubit.dart';
 import 'package:arabas_app/features/diplomas/presentation/bloc/diploma_details_state.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class DiplomaDetailsScreen extends StatefulWidget {
   final String diplomaId;
@@ -108,7 +110,7 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen>
                       child: DiplomaHeaderSection(
                         imageUrl: diploma.imageUrl,
                         title: diploma.title,
-                        price: diploma.price,
+                        price: diploma.priceInEGP,
                         durationHours: diploma.durationHours,
                         controller: _tabController,
                       ),
@@ -157,7 +159,7 @@ class _DiplomaDetailsScreenState extends State<DiplomaDetailsScreen>
           BlocBuilder<DiplomaDetailsCubit, DiplomaDetailsState>(
             builder: (context, state) {
               if (state is DiplomaDetailsLoaded) {
-                return BottomPriceBar(price: state.diploma.price);
+                return SubscribeButton(price: state.diploma.priceInEGP);
               }
 
               return const SizedBox();
@@ -209,61 +211,73 @@ class DiplomaHeaderSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: AppColors.black,
                 ),
               ),
 
-              SizedBox(height: 15.h),
+              // SizedBox(height: 15.h),
 
-              Row(
-                children: [
-                  Icon(Icons.schedule, color: AppColors.primary, size: 18.sp),
+              // Row(
+              //   children: [
+              //     Icon(Icons.schedule, color: AppColors.primary, size: 18.sp),
 
-                  SizedBox(width: 5.w),
+              //     SizedBox(width: 5.w),
 
-                  Text(
-                    "$durationHours ساعة",
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(fontSize: 13.sp),
-                  ),
+              //     Text(
+              //       "$durationHours ساعة",
+              //       textDirection: TextDirection.rtl,
+              //       style: TextStyle(fontSize: 13.sp),
+              //     ),
 
-                  const Spacer(),
+              //     const Spacer(),
 
-                  Text(
-                    "$price جنيه",
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
+              //     Text(
+              //       "$price جنيه",
+              //       textDirection: TextDirection.rtl,
+              //       style: TextStyle(
+              //         fontSize: 15.sp,
+              //         color: AppColors.primary,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               SizedBox(height: 20.h),
 
               Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(15.r),
                 ),
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TabBar(
-                    controller: controller,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: AppColors.primary,
-                    indicatorColor: AppColors.primary,
-                    indicatorWeight: 3,
-                    indicatorSize: TabBarIndicatorSize.label,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TabBar(
+                      controller: controller,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
 
-                    dividerColor: Colors.transparent,
-                    tabs: const [
-                      Tab(text: "الوصف"),
-                      Tab(text: "المحتوى"),
-                      Tab(text: "الشهادات"),
-                    ],
+                      labelColor: AppColors.primary,
+                      unselectedLabelColor: const Color(0xff5A4A4F),
+
+                      indicatorColor: AppColors.primary,
+                      indicatorWeight: 4,
+                      indicatorSize: TabBarIndicatorSize.label,
+
+                      dividerColor: Colors.transparent,
+
+                      labelPadding: EdgeInsets.only(
+                        left: 20.w, // المسافة بين التابات
+                      ),
+
+                      tabs: const [
+                        Tab(text: "الوصف"),
+                        Tab(text: "المحتوى"),
+                        Tab(text: "الشهادات"),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -342,9 +356,9 @@ class DiplomaDescriptionTab extends StatelessWidget {
   String getShortText(String html) {
     final plainText = html.replaceAll(RegExp(r'<[^>]*>'), '');
 
-    if (plainText.length <= 120) return html;
+    if (plainText.length <= 500) return html;
 
-    return "${plainText.substring(0, 120)}...";
+    return "${plainText.substring(0, 500)}...";
   }
 
   @override
@@ -353,65 +367,17 @@ class DiplomaDescriptionTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (studentsInTrainingImages.isNotEmpty) ...[
-            CarouselSlider.builder(
-              itemCount: studentsInTrainingImages.length,
-              itemBuilder: (context, index, realIndex) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Image.network(
-                    studentsInTrainingImages[index].url,
-                    width: double.infinity,
-                    fit: BoxFit.fill,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-
-                      return Container(
-                        color: Colors.grey.shade200,
-                        child: const Center(child: CircularProgressIndicator()),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey.shade200,
-                        child: const Center(child: Icon(Icons.broken_image)),
-                      );
-                    },
-                  ),
-                );
-              },
-              options: CarouselOptions(
-                height: 220.h,
-                viewportFraction: 0.9,
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 3),
-                autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                enlargeCenterPage: true,
-              ),
-            ),
-
-            SizedBox(height: 16.h),
-          ],
-          SizedBox(height: 20.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            child: Text(
-              "الوصف",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-
           SizedBox(height: 10.h),
 
           Container(
             width: double.infinity,
             margin: EdgeInsets.symmetric(horizontal: 8.w),
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+            padding: EdgeInsets.only(
+              right: 15.w,
+              top: 20.h,
+              bottom: 10.h,
+              left: 10.w,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16.r),
@@ -427,6 +393,19 @@ class DiplomaDescriptionTab extends StatelessWidget {
 
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "عن الدبلومة ",
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
+                    ),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ),
+                SizedBox(height: 15.h),
                 Html(
                   data: isExpanded ? description : getShortText(description),
                   style: {
@@ -458,6 +437,161 @@ class DiplomaDescriptionTab extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 20.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "الطلاب أثناء  التدريب",
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.sp,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          if (studentsInTrainingImages.isNotEmpty) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Column(
+                children: List.generate(
+                  (studentsInTrainingImages.length / 2).ceil(),
+                  (index) {
+                    final first = index * 2;
+                    final second = first + 1;
+
+                    // آخر صورة فقط
+                    if (second >= studentsInTrainingImages.length) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Image.network(
+                            studentsInTrainingImages[first].url,
+                            width: double.infinity,
+                            height: 260.h,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) return child;
+
+                              return Container(
+                                height: 260.h,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                height: 260.h,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    }
+
+                    // صورتين جنب بعض
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Image.network(
+                                studentsInTrainingImages[first].url,
+                                height: 170.h,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, progress) {
+                                  if (progress == null) return child;
+
+                                  return Container(
+                                    height: 170.h,
+                                    color: Colors.grey.shade200,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 170.h,
+                                    color: Colors.grey.shade200,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.image,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: 10.w),
+
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Image.network(
+                                studentsInTrainingImages[second].url,
+                                height: 170.h,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, progress) {
+                                  if (progress == null) return child;
+
+                                  return Container(
+                                    height: 170.h,
+                                    color: Colors.grey.shade200,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 170.h,
+                                    color: Colors.grey.shade200,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.image,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            SizedBox(height: 10.h),
+          ],
+
+          SizedBox(height: 10.h),
         ],
       ),
     );
@@ -476,74 +610,95 @@ class DiplomaContentTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: modules.length,
-      itemBuilder: (context, index) {
-        final module = modules[index];
+    if (modules.isEmpty) {
+      return const Center(child: Text("No Content"));
+    }
 
-        return Container(
-          margin: EdgeInsets.only(bottom: 12.h),
+    final firstModule = modules.first;
 
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: Colors.grey.shade200),
+    final VideoEntity? firstVideo =
+        firstModule.videos.isNotEmpty ? firstModule.videos.first : null;
+
+    return ListView(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      children: [
+        if (firstVideo != null && firstVideo.videoUrl.isNotEmpty) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: DiplomaPreviewVideo(videoUrl: firstVideo.videoUrl),
           ),
 
-          child: Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          SizedBox(height: 20.h),
+        ],
 
-            child: ExpansionTile(
-              iconColor: AppColors.primary,
-              collapsedIconColor: AppColors.primary,
-
-              leading: Container(
-                width: 35.w,
-                height: 35.h,
-                alignment: Alignment.center,
-
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-
-                child: Text(
-                  "${index + 1}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              title: Text(
-                module.title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
-              ),
-
-              subtitle: Text(
-                "${module.videos.length} محاضرة",
-                style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-              ),
-
-              children:
-                  module.videos.map((video) {
-                    return ListTile(
-                      leading: const Icon(
-                        Icons.play_circle_fill,
-                        color: AppColors.primary,
-                      ),
-
-                      title: Text(video.title),
-
-                      trailing: Text(formatDuration(video.durationSeconds)),
-                    );
-                  }).toList(),
+        ...List.generate(modules.length, (index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 14.h),
+            child: ModuleCard(
+              module: modules[index],
+              moduleIndex: index,
+              formatDuration: formatDuration,
             ),
-          ),
-        );
-      },
+          );
+        }),
+      ],
     );
+  }
+}
+
+class DiplomaPreviewVideo extends StatelessWidget {
+  final String videoUrl;
+
+  const DiplomaPreviewVideo({super.key, required this.videoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16.r),
+      child: SizedBox(
+        height: 220.h,
+        width: double.infinity,
+        child: _buildVideo(),
+      ),
+    );
+  }
+
+  Widget _buildVideo() {
+    /// Youtube
+    if (videoUrl.contains("youtube") || videoUrl.contains("youtu.be")) {
+      final videoId = YoutubePlayer.convertUrlToId(videoUrl);
+
+      if (videoId == null) {
+        return const SizedBox();
+      }
+
+      return YoutubePlayer(
+        controller: YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(autoPlay: false, forceHD: true),
+        ),
+        showVideoProgressIndicator: true,
+      );
+    }
+
+    /// Vimeo
+    if (videoUrl.contains("vimeo")) {
+      final uri = Uri.parse(videoUrl);
+
+      final videoId = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : "";
+
+      final embedUrl =
+          "https://player.vimeo.com/video/$videoId?title=0&byline=0&portrait=0";
+
+      final controller =
+          WebViewController()
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..loadRequest(Uri.parse(embedUrl));
+
+      return WebViewWidget(controller: controller);
+    }
+
+    return const Center(child: Text("نوع الفيديو غير مدعوم"));
   }
 }
 
@@ -613,14 +768,14 @@ class DiplomaCertificatesTab extends StatelessWidget {
 
                         margin: EdgeInsets.only(left: 8.w),
                         decoration: BoxDecoration(
-                          color: Color(0xff5F2444),
+                          color: Color(0xff5F2444).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Center(
                           child: Text(
                             "المستوي الأساسي",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0XFF5F2444).withOpacity(0.6),
                               fontSize: 14.sp,
                             ),
                           ),
@@ -738,14 +893,14 @@ class DiplomaCertificatesTab extends StatelessWidget {
                         ),
                         margin: EdgeInsets.only(left: 8.w),
                         decoration: BoxDecoration(
-                          color: Color(0xff146A59),
+                          color: Color(0xff146A59).withOpacity(0.15),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Center(
                           child: Text(
                             "اعتماد دولي",
                             style: TextStyle(
-                              color: AppColors.white,
+                              color: Color(0XFF146A59),
                               fontSize: 14.sp,
                             ),
                           ),
@@ -850,39 +1005,279 @@ class DiplomaCertificatesTab extends StatelessWidget {
             SizedBox(height: 15.h),
 
             SizedBox(
-              height: 280.h,
-              child: CarouselSlider.builder(
+              height: 220.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
                 itemCount: certificates.length,
-                itemBuilder: (context, index, realIndex) {
+                separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                itemBuilder: (context, index) {
                   final certificate = certificates[index];
 
                   return Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 4.w),
-                    clipBehavior: Clip.antiAlias,
+                    width: 300.w,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16.r),
+                      color: Colors.grey.shade200,
                     ),
+                    clipBehavior: Clip.antiAlias,
                     child: Image.network(
                       certificate.imageUrl,
                       fit: BoxFit.fill,
                     ),
                   );
                 },
-                options: CarouselOptions(
-                  height: 300.h,
-                  viewportFraction: 0.95,
-                  enlargeCenterPage: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                ),
               ),
             ),
             SizedBox(height: 10.h),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ModuleCard extends StatefulWidget {
+  final ModuleEntity module;
+  final int moduleIndex;
+  final String Function(int) formatDuration;
+
+  const ModuleCard({
+    super.key,
+    required this.module,
+    required this.moduleIndex,
+    required this.formatDuration,
+  });
+
+  @override
+  State<ModuleCard> createState() => _ModuleCardState();
+}
+
+class _ModuleCardState extends State<ModuleCard> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          onExpansionChanged: (value) {
+            setState(() {
+              isExpanded = value;
+            });
+          },
+
+          tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+
+          childrenPadding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            bottom: 16.h,
+          ),
+
+          iconColor: AppColors.primary,
+          collapsedIconColor: Colors.grey.shade700,
+
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.module.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: isExpanded ? 12.sp : 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xff2D2D2D),
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 12.w),
+
+              Container(
+                width: 42.w,
+                height: 42.w,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color:
+                      isExpanded ? AppColors.primary : const Color(0xffE8EEF9),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  (widget.moduleIndex + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    color:
+                        isExpanded
+                            ? const Color(0xFFFCABD1)
+                            : const Color(0xff8A4A74),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          children: List.generate(widget.module.videos.length, (videoIndex) {
+            final video = widget.module.videos[videoIndex];
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: 14.h),
+              child: VideoItem(
+                video: video,
+                duration: widget.formatDuration(video.durationSeconds),
+
+                isPreview: widget.moduleIndex == 0 && videoIndex == 0,
+
+                showImage: widget.moduleIndex == 0 && videoIndex == 0,
+
+                showCompleted: widget.moduleIndex == 0 && videoIndex == 0,
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}
+
+class VideoItem extends StatelessWidget {
+  final VideoEntity video;
+  final String duration;
+
+  final bool isPreview;
+  final bool showImage;
+  final bool showCompleted;
+
+  const VideoItem({
+    super.key,
+    required this.video,
+    required this.duration,
+    required this.isPreview,
+    required this.showImage,
+    required this.showCompleted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        /// Check أو Lock
+        SizedBox(
+          width: 28.w,
+          child: Center(
+            child: Icon(
+              showCompleted
+                  ? Icons.check_circle_outline_rounded
+                  : Icons.lock_outline_rounded,
+              color:
+                  showCompleted
+                      ? const Color(0xff32B56A)
+                      : Colors.grey.shade500,
+              size: 22.sp,
+            ),
+          ),
+        ),
+
+        SizedBox(width: 12.w),
+
+        /// Title + Duration
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                video.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xff2D2D2D),
+                ),
+              ),
+
+              SizedBox(height: 6.h),
+
+              Row(
+                children: [
+                  if (isPreview)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 7.w,
+                        vertical: 2.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff6ED39D),
+                        borderRadius: BorderRadius.circular(5.r),
+                      ),
+                      child: Text(
+                        "PREVIEW",
+                        style: TextStyle(
+                          fontSize: 8.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                  if (isPreview) SizedBox(width: 8.w),
+
+                  Text(
+                    duration,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 11.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        SizedBox(width: 12.w),
+
+        /// Thumbnail أو Lock Box
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10.r),
+          child:
+              showImage
+                  ? Image.network(
+                    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300",
+                    width: 56.w,
+                    height: 56.w,
+                    fit: BoxFit.cover,
+                  )
+                  : Container(
+                    width: 56.w,
+                    height: 56.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffEEF1F5),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(
+                      Icons.lock_outline_rounded,
+                      color: Colors.grey.shade500,
+                      size: 22.sp,
+                    ),
+                  ),
+        ),
+      ],
     );
   }
 }

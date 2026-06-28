@@ -3,22 +3,40 @@ class DiplomaDetailsEntity {
   final String title;
   final String description;
   final String imageUrl;
+
   final int durationHours;
-  final double price;
+
+  final double priceInEGP;
+  final double priceOutEGP;
+
+  final int offer;
+
+  final String level;
+
+  final int enrolledStudentsCount;
+
+  final bool isPublished;
+
   final String? introVideoUrl;
 
   final List<ModuleEntity> modules;
 
   final List<CertificateEntity> certificateImages;
+
   final List<StudentTrainingImageEntity> studentsInTrainingImages;
 
-  DiplomaDetailsEntity({
+  const DiplomaDetailsEntity({
     required this.id,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.durationHours,
-    required this.price,
+    required this.priceInEGP,
+    required this.priceOutEGP,
+    required this.offer,
+    required this.level,
+    required this.enrolledStudentsCount,
+    required this.isPublished,
     required this.introVideoUrl,
     required this.modules,
     required this.certificateImages,
@@ -29,20 +47,33 @@ class DiplomaDetailsEntity {
 class ModuleEntity {
   final String id;
   final String title;
+  final int order;
   final List<VideoEntity> videos;
 
-  ModuleEntity({required this.id, required this.title, required this.videos});
+  const ModuleEntity({
+    required this.id,
+    required this.title,
+    required this.order,
+    required this.videos,
+  });
 }
 
 class VideoEntity {
   final String id;
   final String title;
+  final String description;
   final int durationSeconds;
+  final int order;
 
-  VideoEntity({
+  final String videoUrl; // NEW
+
+  const VideoEntity({
     required this.id,
     required this.title,
+    required this.description,
     required this.durationSeconds,
+    required this.order,
+    required this.videoUrl,
   });
 }
 
@@ -50,12 +81,17 @@ class CertificateEntity {
   final String id;
   final String imageUrl;
 
-  CertificateEntity({required this.id, required this.imageUrl});
+  const CertificateEntity({required this.id, required this.imageUrl});
 }
 
 class StudentTrainingImageEntity {
   final String id;
   final String url;
+  final String? imagePublicId;
 
-  StudentTrainingImageEntity({required this.id, required this.url});
+  const StudentTrainingImageEntity({
+    required this.id,
+    required this.url,
+    required this.imagePublicId,
+  });
 }

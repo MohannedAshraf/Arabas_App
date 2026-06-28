@@ -6,11 +6,14 @@ class DiplomaModel extends DiplomaEntity {
     required super.title,
     required super.description,
     required super.imageUrl,
+    required super.imagePublicId,
     required super.priceInEGP,
     required super.priceOutEGP,
     required super.offer,
     required super.durationHours,
     required super.level,
+    required super.enrolledStudentsCount,
+    required super.isPublished,
   });
 
   factory DiplomaModel.fromJson(Map<String, dynamic> json) {
@@ -19,11 +22,14 @@ class DiplomaModel extends DiplomaEntity {
       title: json["title"] ?? "",
       description: json["description"] ?? "",
       imageUrl: json["imageUrl"] ?? "",
+      imagePublicId: json["imagePublicId"] ?? "",
       priceInEGP: (json["priceInEGP"] ?? 0).toDouble(),
       priceOutEGP: (json["priceOutEGP"] ?? 0).toDouble(),
       offer: json["offer"] ?? 0,
       durationHours: json["durationHours"] ?? 0,
       level: json["level"] ?? "",
+      enrolledStudentsCount: json["enrolledStudentsCount"] ?? 0,
+      isPublished: json["isPublished"] ?? false,
     );
   }
 }
