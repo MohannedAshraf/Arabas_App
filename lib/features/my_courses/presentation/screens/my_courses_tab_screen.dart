@@ -4,6 +4,10 @@
 
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/core/widgets/app_primary_button.dart';
+import 'package:arabas_app/features/my_courses/domain/entity/last_progress_entity.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/last_progress_cubit.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/last_progress_state.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_course_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_state.dart';
@@ -17,15 +21,18 @@ class MyCoursesTabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<MyCoursesCubit>()..getMyCourses(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<MyCoursesCubit>()..getMyCourses()),
 
+        BlocProvider(
+          create: (_) => sl<LastProgressCubit>()..getLastThreeProgress(),
+        ),
+      ],
       child: Scaffold(
-        backgroundColor: AppColors.white,
-
+        backgroundColor: const Color(0xffF7F9FF),
         appBar: AppBar(
           backgroundColor: AppColors.white,
-          elevation: 0,
           centerTitle: true,
 
           title: Text(
@@ -121,217 +128,329 @@ class MyCoursesTabScreen extends StatelessWidget {
                 );
               }
 
-              return ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-
-                itemCount: state.courses.length,
-
-                separatorBuilder: (_, __) => SizedBox(height: 18.h),
-
-                itemBuilder: (context, index) {
-                  final course = state.courses[index];
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-
-                      borderRadius: BorderRadius.circular(22.r),
-
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(.15),
-                          blurRadius: 12,
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 20.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "استكمال التعلم",
+                          textDirection: TextDirection.rtl,
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.sp,
+                          ),
                         ),
-                      ],
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    SizedBox(
+                      height: 230.h,
+                      child: BlocBuilder<LastProgressCubit, LastProgressState>(
+                        builder: (context, state) {
+                          if (state is LastProgressLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (state is LastProgressLoaded) {
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+
+                              itemCount: state.progress.length,
+
+                              itemBuilder: (context, index) {
+                                return ContinueLearningCard(
+                                  progress: state.progress[index],
+                                );
+                              },
+                            );
+                          }
+
+                          return const SizedBox();
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "الكورسات المشترك بها",
+                          textDirection: TextDirection.rtl,
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.sp,
+                          ),
+                        ),
+                      ),
                     ),
 
-                    child: Padding(
-                      padding: EdgeInsets.all(12.w),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
 
-                      child: Column(
-                        children: [
-                          /// TOP SECTION
-                          Row(
-                            textDirection: TextDirection.ltr,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      itemCount: state.courses.length,
 
+                      itemBuilder: (context, index) {
+                        final course = state.courses[index];
+
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+
+                            borderRadius: BorderRadius.circular(32.r),
+
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.15),
+                                blurRadius: 12,
+                              ),
+                            ],
+                          ),
+
+                          child: Column(
                             children: [
-                              /// IMAGE
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(18.r),
+                              /// TOP SECTION
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(32.r),
+                                      topLeft: Radius.circular(32.r),
+                                    ),
 
-                                child: Image.network(
-                                  course.imageUrl,
-                                  width: 120.w,
-                                  height: 110.h,
-                                  fit: BoxFit.cover,
+                                    child: Image.network(
+                                      course.imageUrl,
+                                      width: double.infinity,
+                                      height: 190.h,
+                                      fit: BoxFit.fill,
 
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      width: 120.w,
-                                      height: 110.h,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Container(
+                                          height: 190.h,
 
-                                      color: AppColors.lightGray.withOpacity(
-                                        .2,
+                                          color: AppColors.lightGray
+                                              .withOpacity(.2),
+
+                                          child: Icon(
+                                            Icons.image_not_supported_outlined,
+
+                                            color: AppColors.textGray,
+
+                                            size: 35.sp,
+                                          ),
+                                        );
+                                      },
+
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        loadingProgress,
+                                      ) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+
+                                        return SizedBox(
+                                          height: 190.h,
+
+                                          child: const Center(
+                                            child: CircularProgressIndicator(
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 16.h,
+                                    right: 90.w,
+
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 6.h,
                                       ),
-
-                                      child: Icon(
-                                        Icons.image_not_supported_outlined,
-
-                                        color: AppColors.textGray,
-
-                                        size: 35.sp,
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          50.r,
+                                        ),
+                                        color: AppColors.white.withOpacity(0.2),
                                       ),
-                                    );
-                                  },
-
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-
-                                    return SizedBox(
-                                      width: 120.w,
-                                      height: 135.h,
-
-                                      child: const Center(
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.primary,
+                                      child: Center(
+                                        child: Text(
+                                          "${course.videoCount} فيديوهات",
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.sp,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 16.h,
+                                    right: 16.w,
+
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 6.h,
+                                      ),
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          50.r,
+                                        ),
+                                        color: AppColors.white.withOpacity(0.2),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "${course.durationHours} ساعة",
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 15.h),
+
+                              /// DETAILS
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    course.title,
+                                    textDirection: TextDirection.ltr,
+
+                                    maxLines: 2,
+
+                                    overflow: TextOverflow.ellipsis,
+
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
                                 ),
                               ),
 
-                              SizedBox(width: 14.w),
+                              SizedBox(height: 15.h),
 
-                              /// DETAILS
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Row(
                                   children: [
-                                    /// TITLE
                                     Text(
-                                      course.title,
-                                      textDirection: TextDirection.ltr,
-
-                                      maxLines: 2,
-
-                                      overflow: TextOverflow.ellipsis,
-
+                                      "${course.progressPercent}%",
                                       style: TextStyle(
-                                        fontSize: 15.sp,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                        height: 1.5,
+                                        color: AppColors.black,
                                       ),
                                     ),
 
-                                    SizedBox(height: 10.h),
-
-                                    /// VIDEOS + HOURS
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-
-                                      children: [
-                                        _buildInfoItem(
-                                          icon:
-                                              Icons.play_circle_outline_rounded,
-
-                                          text: "${course.videoCount} فيديو",
-                                        ),
-
-                                        _buildInfoItem(
-                                          icon: Icons.access_time_rounded,
-
-                                          text: "${course.durationHours} ساعة",
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 10.h),
-
-                                    /// RATING
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-
-                                      children: List.generate(
-                                        5,
-                                        (starIndex) => Icon(
-                                          starIndex < course.rateStar
-                                              ? Icons.star_rounded
-                                              : Icons.star_border_rounded,
-
-                                          color: Colors.amber,
-                                          size: 20.sp,
-                                        ),
+                                    Spacer(),
+                                    Text(
+                                      "إجمالي التقدم",
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 12.h),
+
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    child: LinearProgressIndicator(
+                                      value: (course.progressPercent) / 100,
+                                      minHeight: 12.h,
+                                      backgroundColor: const Color(0xffDDE8F6),
+                                      valueColor: const AlwaysStoppedAnimation(
+                                        Color(0xff146A59),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 20),
+
+                              /// BUTTON
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: AppPrimaryButton(
+                                  text: "دخول الدورة",
+                                  icon: Icons.arrow_back,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => BlocProvider(
+                                              create:
+                                                  (_) =>
+                                                      sl<
+                                                        MyCourseDetailsCubit
+                                                      >(),
+                                              child: MyCourseDetailsScreen(
+                                                courseId: course.id,
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
                             ],
                           ),
-
-                          SizedBox(height: 8.h),
-
-                          /// BUTTON
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48.h,
-
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-
-                                elevation: 0,
-
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14.r),
-                                ),
-                              ),
-
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => BlocProvider(
-                                          create:
-                                              (_) => sl<MyCourseDetailsCubit>(),
-                                          child: MyCourseDetailsScreen(
-                                            courseId: course.id,
-                                          ),
-                                        ),
-                                  ),
-                                );
-                              },
-
-                              child: Text(
-                                "الدخول للكورس",
-                                textDirection: TextDirection.rtl,
-
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ],
+                ),
               );
             }
 
@@ -341,27 +460,138 @@ class MyCoursesTabScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildInfoItem({required IconData icon, required String text}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+class ContinueLearningCard extends StatelessWidget {
+  final LastProgressEntity progress;
 
-      children: [
-        Text(
-          text,
-          textDirection: TextDirection.rtl,
+  const ContinueLearningCard({super.key, required this.progress});
 
-          style: TextStyle(
-            color: AppColors.textGray,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
+  @override
+  Widget build(BuildContext context) {
+    final double progressValue =
+        progress.durationSeconds == 0
+            ? 0
+            : progress.lastPositionSeconds / progress.durationSeconds;
+
+    return Container(
+      width: 280.w,
+      height: 220.h,
+      margin: EdgeInsets.only(right: 20.w),
+
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 6,
+            spreadRadius: 1,
+            offset: Offset.zero,
           ),
-        ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 18,
+            spreadRadius: 2,
+            offset: Offset.zero,
+          ),
+        ],
+      ),
 
-        SizedBox(width: 4.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /// Course Title
+          Text(
+            progress.courseTitle,
 
-        Icon(icon, color: AppColors.primary, size: 18.sp),
-      ],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+
+            style: TextStyle(
+              color: const Color(0xff146A59),
+              fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
+            ),
+          ),
+
+          SizedBox(height: 8.h),
+
+          /// Lesson Title
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              progress.lessonTitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+
+              style: TextStyle(
+                color: AppColors.black,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          /// Percent + Duration
+          Row(
+            children: [
+              Text(
+                "${progress.lastPositionSeconds}/${progress.durationSeconds} ثانية",
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  color: AppColors.textGray,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              const Spacer(),
+
+              Text(
+                "${(progressValue * 100).toStringAsFixed(0)}%",
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16.h),
+
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.r),
+
+              child: LinearProgressIndicator(
+                value: progressValue,
+                minHeight: 12.h,
+                backgroundColor: const Color(0xffDDE8F6),
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          AppPrimaryButton(
+            text: "استكمال الدرس",
+            icon: Icons.play_arrow_outlined,
+
+            onPressed: () {
+              // TODO
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -65,11 +65,14 @@ import 'package:arabas_app/features/free_lectures/domain/usecases/get_article_de
 import 'package:arabas_app/features/free_lectures/domain/usecases/video_details_usecase.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/article_details_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/bloc/video_details_cubit.dart';
+import 'package:arabas_app/features/my_courses/data/data_sources/last_progress_remote_data_source.dart';
 import 'package:arabas_app/features/my_courses/data/data_sources/my_course_details_remote_data_source.dart';
 import 'package:arabas_app/features/my_courses/data/data_sources/my_courses_remote_data_source.dart';
 import 'package:arabas_app/features/my_courses/data/data_sources/my_video_details_remote_data_source.dart';
 import 'package:arabas_app/features/my_courses/data/data_sources/progress_remote_data_source.dart';
 import 'package:arabas_app/features/my_courses/data/data_sources/progress_remote_data_source_impl.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/last_progress_repo.dart';
+import 'package:arabas_app/features/my_courses/domain/repo/last_progress_repo_impl.dart';
 import 'package:arabas_app/features/my_courses/domain/repo/my_course_details_repo.dart';
 import 'package:arabas_app/features/my_courses/domain/repo/my_course_details_repo_impl.dart';
 import 'package:arabas_app/features/my_courses/domain/repo/my_courses_repo.dart';
@@ -78,10 +81,12 @@ import 'package:arabas_app/features/my_courses/domain/repo/my_video_details_repo
 import 'package:arabas_app/features/my_courses/domain/repo/my_video_details_repo_impl.dart';
 import 'package:arabas_app/features/my_courses/domain/repo/progress_repo.dart';
 import 'package:arabas_app/features/my_courses/domain/repo/progress_repo_impl.dart';
+import 'package:arabas_app/features/my_courses/domain/usecases/get_last_progress_usecase.dart';
 import 'package:arabas_app/features/my_courses/domain/usecases/get_my_course_details_usecase.dart';
 import 'package:arabas_app/features/my_courses/domain/usecases/get_my_courses_usecase.dart';
 import 'package:arabas_app/features/my_courses/domain/usecases/get_my_video_details_usecase.dart';
 import 'package:arabas_app/features/my_courses/domain/usecases/track_progress_usecase.dart';
+import 'package:arabas_app/features/my_courses/presentation/bloc/last_progress_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_course_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
@@ -524,4 +529,14 @@ Future<void> init() async {
 
   /// CUBIT
   sl.registerFactory(() => PracticalDetailsCubit(sl()));
+
+  sl.registerLazySingleton<LastProgressRemoteDataSource>(
+    () => LastProgressRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<LastProgressRepo>(() => LastProgressRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => GetLastThreeProgressUseCase(sl()));
+
+  sl.registerFactory(() => LastProgressCubit(sl()));
 }
