@@ -1,9 +1,11 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/theme/app_colors.dart';
+import 'package:arabas_app/features/my_courses/domain/entity/my_video_details_entity.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_state.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
@@ -39,17 +41,13 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
 
   int currentSeconds = 0;
   int lastSentPosition = -1;
+  int _videoDuration = 0;
 
   bool isYoutubeTrackingStarted = false;
-
   bool isVimeoTrackingStarted = false;
+
   bool youtubeSeekDone = false;
-
   bool vimeoSeekDone = false;
-
-  bool isYoutube(String url) {
-    return url.contains("youtube") || url.contains("youtu.be");
-  }
 
   String formatDuration(int seconds) {
     final minutes = seconds ~/ 60;
@@ -62,17 +60,11 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
   void initState() {
     super.initState();
 
-    print("🔥 Received Progress => ${widget.lastPositionSeconds}");
-
     WidgetsBinding.instance.addObserver(this);
-
-    print("✅ Video Screen Initialized");
   }
 
   @override
   void dispose() {
-    print("🛑 SCREEN DISPOSED");
-
     sendProgress();
 
     progressTimer?.cancel();
@@ -86,31 +78,21 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
     super.dispose();
   }
 
-  /// لما التطبيق يروح background
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("📱 App Lifecycle State => $state");
-
     if (state == AppLifecycleState.paused) {
       sendProgress();
     }
   }
 
   Future<void> sendProgress() async {
-    print("🚀 SEND PROGRESS CALLED");
+    if (currentSeconds <= 0) return;
 
-    print("LESSON ID => ${widget.videoId}");
-    print("POSITION => $currentSeconds");
-
-    if (currentSeconds <= 0) {
-      print("⚠️ currentSeconds = 0");
-      return;
+    if (_videoDuration > 0 && currentSeconds >= (_videoDuration * 0.99)) {
+      currentSeconds = _videoDuration;
     }
 
-    if (currentSeconds == lastSentPosition) {
-      print("⚠️ SAME POSITION ALREADY SENT");
-      return;
-    }
+    if (currentSeconds == lastSentPosition) return;
 
     lastSentPosition = currentSeconds;
 
@@ -119,66 +101,42 @@ class _MyVideoDetailsScreenState extends State<MyVideoDetailsScreen>
         lessonId: widget.videoId,
         positionSeconds: currentSeconds,
       );
-
-      print(
-        "✅ Progress Sent Successfully => lessonId: ${widget.videoId} | seconds: $currentSeconds",
-      );
-    } catch (e) {
-      print("❌ Progress Error => $e");
-    }
+    } catch (_) {}
   }
 
-  /// =========================
-  /// YOUTUBE TRACKING
-  /// =========================
   void startYoutubeTracking() {
-    print("⏱ START YOUTUBE TRACKING");
-
     progressTimer?.cancel();
 
-    progressTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
-      print("🔥 REQUEST CURRENT TIME");
-
+    progressTimer = Timer.periodic(const Duration(seconds: 15), (_) async {
       if (youtubeController != null) {
         currentSeconds = youtubeController!.value.position.inSeconds;
-
-        print("🎥 Youtube Position => $currentSeconds sec");
 
         await sendProgress();
       }
     });
   }
 
-  /// =========================
-  /// VIMEO TRACKING
-  /// =========================
   void startVimeoTracking(WebViewController controller) {
-    print("⏱ START VIMEO TRACKING");
-
     progressTimer?.cancel();
 
     progressTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
-      print("🔥 REQUEST CURRENT TIME");
-
       await controller.runJavaScript('''
 
 if(window.player &&
    typeof window.player.getCurrentTime === 'function') {
 
-    window.player.getCurrentTime().then(function(seconds){
+window.player.getCurrentTime().then(function(seconds){
 
-        ProgressChannel.postMessage(
-          "TIME_" + seconds
-        );
+ProgressChannel.postMessage(
+"TIME_" + seconds
+);
 
-    });
+});
 
 }
 ''');
 
       await Future.delayed(const Duration(seconds: 2));
-
-      print("🔥 CURRENT BEFORE SEND => $currentSeconds");
 
       await sendProgress();
     });
@@ -194,15 +152,11 @@ if(window.player &&
 
   Widget buildVideo(String url) {
     try {
-      /// =========================
       /// YOUTUBE
-      /// =========================
       if (url.contains("youtube") || url.contains("youtu.be")) {
         final id = YoutubePlayer.convertUrlToId(url);
 
         if (id == null) {
-          print("❌ Invalid Youtube URL");
-
           return const SizedBox();
         }
 
@@ -212,14 +166,11 @@ if(window.player &&
             flags: const YoutubePlayerFlags(autoPlay: false),
           );
 
-          print("✅ Youtube Controller Created");
-
           youtubeController!.addListener(() async {
             if (youtubeController!.value.isReady) {
               currentSeconds = youtubeController!.value.position.inSeconds;
-              if (youtubeController!.value.playerState == PlayerState.ended) {
-                print("🏁 YOUTUBE VIDEO ENDED");
 
+              if (youtubeController!.value.playerState == PlayerState.ended) {
                 currentSeconds = youtubeController!.metadata.duration.inSeconds;
 
                 await sendProgress();
@@ -231,11 +182,8 @@ if(window.player &&
                 youtubeController!.seekTo(
                   Duration(seconds: widget.lastPositionSeconds),
                 );
-                print("🔥 SEEK EXECUTED => ${widget.lastPositionSeconds}");
 
                 currentSeconds = widget.lastPositionSeconds;
-
-                print("✅ Youtube Seek To ${widget.lastPositionSeconds}");
               }
             }
           });
@@ -253,12 +201,8 @@ if(window.player &&
         );
       }
 
-      /// =========================
       /// VIMEO
-      /// =========================
       if (url.contains("vimeo")) {
-        print("🔥 VIMEO VIDEO DETECTED");
-
         final uri = Uri.parse(url);
 
         final videoId =
@@ -272,14 +216,8 @@ if(window.player &&
               ..setJavaScriptMode(JavaScriptMode.unrestricted)
               ..addJavaScriptChannel(
                 "ProgressChannel",
-
                 onMessageReceived: (message) async {
-                  print("🔥 CHANNEL MESSAGE => ${message.message}");
-                  print("🔥 BEFORE UPDATE => $currentSeconds");
-
                   if (message.message == "VIDEO_ENDED") {
-                    print("🏁 VIDEO ENDED");
-
                     await vimeoController?.runJavaScript('''
 
 if(window.player){
@@ -293,17 +231,16 @@ ProgressChannel.postMessage(
 });
 
 }
-
 ''');
 
                     return;
                   }
+
                   if (message.message.startsWith("ENDED_")) {
                     currentSeconds =
                         double.parse(
                           message.message.replaceFirst("ENDED_", ""),
                         ).toInt();
-                    print("🔥 AFTER UPDATE => $currentSeconds");
 
                     await sendProgress();
 
@@ -315,17 +252,12 @@ ProgressChannel.postMessage(
                         double.parse(
                           message.message.replaceFirst("TIME_", ""),
                         ).round();
-
-                    print("🎥 Vimeo Position => $currentSeconds sec");
                   }
                 },
               )
               ..setNavigationDelegate(
                 NavigationDelegate(
                   onPageFinished: (_) async {
-                    print("🔥 Vimeo Page Finished");
-                    print("✅ Vimeo Loaded");
-
                     await vimeoController!.runJavaScript('''
 
 var script = document.createElement('script');
@@ -335,52 +267,49 @@ document.head.appendChild(script);
 
 script.onload = function() {
 
-    var iframe = document.getElementById('player');
+var iframe =
+document.getElementById('player');
 
-    if(!iframe){
-      console.log("IFRAME NOT FOUND");
-      return;
-    }
+if(!iframe){
+return;
+}
 
-    window.player = new Vimeo.Player(iframe);
+window.player =
+new Vimeo.Player(iframe);
 
-    window.player.ready().then(function() {
+window.player.ready()
+.then(function() {
 
-        console.log("PLAYER READY");
+window.player.setCurrentTime(
+${widget.lastPositionSeconds}
+);
 
-        window.player.setCurrentTime(
-          ${widget.lastPositionSeconds}
-        );
+});
 
-        console.log(
-          "SEEK TO => ${widget.lastPositionSeconds}"
-        );
+window.player.on(
+'timeupdate',
+function(data) {
 
-    });
+ProgressChannel.postMessage(
+"TIME_" + data.seconds
+);
 
-    window.player.on('timeupdate', function(data) {
+});
 
-        ProgressChannel.postMessage(
-          "TIME_" + data.seconds
-        );
+window.player.on(
+'ended',
+function() {
 
-    });
+ProgressChannel.postMessage(
+"VIDEO_ENDED"
+);
 
-    window.player.on('ended', function() {
-
-        ProgressChannel.postMessage(
-          "VIDEO_ENDED"
-        );
-
-    });
+});
 
 };
 ''');
-                    currentSeconds = widget.lastPositionSeconds;
 
-                    print(
-                      "🔥 INITIAL POSITION => ${widget.lastPositionSeconds}",
-                    );
+                    currentSeconds = widget.lastPositionSeconds;
 
                     if (!isVimeoTrackingStarted) {
                       isVimeoTrackingStarted = true;
@@ -392,23 +321,20 @@ script.onload = function() {
               )
               ..loadHtmlString('''
 <!DOCTYPE html>
-
 <html>
-
 <body style="margin:0;padding:0;">
 
 <iframe
-  id="player"
-  src="$embedUrl#t=${widget.lastPositionSeconds}s"
-  width="100%"
-  height="230"
-  frameborder="0"
-  allow="autoplay; fullscreen"
-  allowfullscreen>
+id="player"
+src="$embedUrl#t=${widget.lastPositionSeconds}s"
+width="100%"
+height="230"
+frameborder="0"
+allow="autoplay; fullscreen"
+allowfullscreen>
 </iframe>
 
 </body>
-
 </html>
 ''');
 
@@ -423,9 +349,7 @@ script.onload = function() {
         alignment: Alignment.center,
         child: const Text("نوع الفيديو غير مدعوم"),
       );
-    } catch (e) {
-      print("❌ VIDEO ERROR => $e");
-
+    } catch (_) {
       return Container(
         height: 230.h,
         alignment: Alignment.center,
@@ -449,8 +373,6 @@ script.onload = function() {
 
           leading: IconButton(
             onPressed: () async {
-              print("⬅️ BACK BUTTON CLICKED");
-
               await sendProgress();
 
               if (mounted) {
@@ -467,7 +389,6 @@ script.onload = function() {
 
           title: Text(
             "فيديو",
-
             style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
@@ -492,13 +413,10 @@ script.onload = function() {
 
             if (state is MyVideoDetailsSuccess) {
               final video = state.video;
-
+              _videoDuration = video.durationSeconds;
               return WillPopScope(
                 onWillPop: () async {
-                  print("🔙 SYSTEM BACK PRESSED");
-
                   await sendProgress();
-
                   return true;
                 },
 
@@ -506,93 +424,21 @@ script.onload = function() {
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
 
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: [
-                      /// VIDEO
                       ClipRRect(
                         borderRadius: BorderRadius.circular(18.r),
-
                         child: buildVideo(video.url),
                       ),
 
-                      SizedBox(height: 10.h),
+                      SizedBox(height: 20.h),
 
-                      /// TITLE
-                      Text(
-                        video.title,
-                        textDirection: TextDirection.ltr,
-                        textAlign: TextAlign.left,
-
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      VideoTabsSection(
+                        video: video,
+                        lastPositionSeconds: widget.lastPositionSeconds,
+                        onOpenFile: openFile,
                       ),
 
-                      SizedBox(height: 10.h),
-
-                      /// DURATION
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_filled_rounded,
-                            color: AppColors.primary,
-                            size: 24.sp,
-                          ),
-
-                          SizedBox(width: 6.w),
-
-                          Text(
-                            formatDuration(video.durationSeconds),
-
-                            style: TextStyle(
-                              color: AppColors.textGray,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 10.h),
-
-                      /// DESCRIPTION
-                      Html(
-                        data: '''
-<div dir="rtl" style="text-align:right;">
-${video.description}
-</div>
-''',
-
-                        style: {
-                          "*": Style(
-                            direction: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            color: AppColors.textGray,
-                            fontSize: FontSize(15.sp),
-                            lineHeight: LineHeight(1.8),
-                          ),
-
-                          "div": Style(
-                            direction: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                          ),
-
-                          "p": Style(
-                            direction: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                          ),
-
-                          "body": Style(
-                            margin: Margins.zero,
-                            padding: HtmlPaddings.zero,
-                            direction: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                          ),
-                        },
-                      ),
+                      SizedBox(height: 30.h),
                     ],
                   ),
                 ),
@@ -603,6 +449,490 @@ ${video.description}
           },
         ),
       ),
+    );
+  }
+}
+
+class VideoTabsSection extends StatelessWidget {
+  final MyVideoDetailsEntity video;
+  final int lastPositionSeconds;
+  final Future<void> Function(String url) onOpenFile;
+
+  const VideoTabsSection({
+    super.key,
+    required this.video,
+    required this.lastPositionSeconds,
+    required this.onOpenFile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+
+            child: Container(
+              width: 220.w,
+              height: 46.h,
+
+              decoration: BoxDecoration(
+                color: const Color(0xffE9EEF6),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+
+              child: TabBar(
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+
+                indicator: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(.05),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+
+                labelColor: const Color(0xff7D365B),
+                unselectedLabelColor: const Color(0xff687790),
+
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.sp,
+                ),
+
+                tabs: const [Tab(text: "نظرة عامة"), Tab(text: "المصادر")],
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          SizedBox(
+            height: 650.h,
+
+            child: TabBarView(
+              children: [
+                OverviewTab(video: video),
+
+                ResourcesTab(
+                  video: video,
+                  lastPositionSeconds: lastPositionSeconds,
+                  onOpenFile: onOpenFile,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class OverviewTab extends StatelessWidget {
+  final MyVideoDetailsEntity video;
+
+  const OverviewTab({super.key, required this.video});
+
+  String formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remain = seconds % 60;
+
+    return "$minutes:${remain.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          Text(
+            video.title,
+            textAlign: TextAlign.left,
+            textDirection: TextDirection.ltr,
+
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.sp,
+            ),
+          ),
+
+          SizedBox(height: 10.h),
+
+          Align(
+            alignment: Alignment.centerRight,
+
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+
+              children: [
+                Text(
+                  formatDuration(video.durationSeconds),
+
+                  style: TextStyle(
+                    color: AppColors.textGray,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.sp,
+                  ),
+                ),
+
+                SizedBox(width: 6.w),
+
+                Icon(
+                  Icons.access_time_filled_rounded,
+                  color: AppColors.primary,
+                  size: 20.sp,
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 15.h),
+
+          ExpandableDescription(description: video.description),
+        ],
+      ),
+    );
+  }
+}
+
+class ExpandableDescription extends StatefulWidget {
+  final String description;
+
+  const ExpandableDescription({super.key, required this.description});
+
+  @override
+  State<ExpandableDescription> createState() => _ExpandableDescriptionState();
+}
+
+class _ExpandableDescriptionState extends State<ExpandableDescription> {
+  bool expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+
+      padding: EdgeInsets.all(16.w),
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+
+        borderRadius: BorderRadius.circular(16.r),
+
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 20,
+            color: Colors.black12,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "وصف الدرس",
+              textAlign: TextAlign.right,
+
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+              ),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          Html(
+            data: '''
+<div dir="rtl">
+${widget.description}
+</div>
+''',
+
+            style: {
+              "*": Style(
+                direction: TextDirection.rtl,
+
+                textAlign: TextAlign.right,
+
+                color: AppColors.textGray,
+
+                fontSize: FontSize(14.sp),
+
+                lineHeight: LineHeight(1.8),
+
+                maxLines: expanded ? null : 7,
+
+                textOverflow: TextOverflow.ellipsis,
+              ),
+            },
+          ),
+
+          SizedBox(height: 10.h),
+
+          InkWell(
+            onTap: () {
+              setState(() {
+                expanded = !expanded;
+              });
+            },
+
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                expanded ? "عرض أقل" : "عرض المزيد",
+
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ResourcesTab extends StatelessWidget {
+  final MyVideoDetailsEntity video;
+
+  final int lastPositionSeconds;
+
+  final Future<void> Function(String url) onOpenFile;
+
+  const ResourcesTab({
+    super.key,
+    required this.video,
+    required this.lastPositionSeconds,
+    required this.onOpenFile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress =
+        video.durationSeconds == 0
+            ? 0.0
+            : ((lastPositionSeconds / video.durationSeconds) * 100).clamp(
+              0,
+              100,
+            );
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "المصادر والملفات",
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 10.h),
+
+          if (video.files.isNotEmpty)
+            ListView.builder(
+              itemCount: video.files.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final file = video.files[index];
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: 12.h),
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+
+                    borderRadius: BorderRadius.circular(16.r),
+
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 20,
+                        color: Colors.black12,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+
+                  child: ListTile(
+                    title: Text(
+                      file.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    subtitle: Text(file.size?.toString() ?? ""),
+
+                    trailing: InkWell(
+                      borderRadius: BorderRadius.circular(12.r),
+
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => PdfViewerScreen(
+                                  pdfUrl: file.url,
+                                  title: file.title,
+                                ),
+                          ),
+                        );
+                      },
+
+                      child: Container(
+                        padding: EdgeInsets.all(10.r),
+
+                        decoration: BoxDecoration(
+                          color: const Color(0XFFFFD8E8),
+
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+
+                        child: Icon(
+                          Icons.insert_drive_file_rounded,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+
+          SizedBox(height: 20.h),
+
+          LessonProgressCard(progress: progress.toDouble()),
+        ],
+      ),
+    );
+  }
+}
+
+class LessonProgressCard extends StatelessWidget {
+  final double progress;
+
+  const LessonProgressCard({super.key, required this.progress});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+
+      padding: EdgeInsets.symmetric(vertical: 24.h),
+
+      decoration: BoxDecoration(
+        color: const Color(0xffEEF3FB),
+
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "تقدمك في الدرس",
+
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.sp,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 12.h),
+          SizedBox(
+            width: 100.w,
+            height: 100.w,
+
+            child: Stack(
+              alignment: Alignment.center,
+
+              children: [
+                SizedBox(
+                  width: 90.w,
+                  height: 90.w,
+
+                  child: CircularProgressIndicator(
+                    value: progress / 100,
+
+                    strokeWidth: 8,
+
+                    color: AppColors.green,
+                  ),
+                ),
+
+                Text(
+                  "${progress.toInt()}%",
+
+                  style: TextStyle(
+                    color: AppColors.primary,
+
+                    fontWeight: FontWeight.bold,
+
+                    fontSize: 20.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PdfViewerScreen extends StatelessWidget {
+  final String pdfUrl;
+  final String title;
+
+  const PdfViewerScreen({super.key, required this.pdfUrl, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+
+        title: Text(
+          title,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: Colors.black),
+        ),
+
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+
+      body: SfPdfViewer.network(pdfUrl),
     );
   }
 }

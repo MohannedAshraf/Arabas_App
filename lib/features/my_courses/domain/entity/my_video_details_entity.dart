@@ -6,13 +6,13 @@ class MyVideoFileEntity {
   final String createdAt;
   final dynamic size;
 
-  MyVideoFileEntity({
+  const MyVideoFileEntity({
     required this.id,
     required this.title,
     required this.url,
-    required this.publicId,
+    this.publicId,
     required this.createdAt,
-    required this.size,
+    this.size,
   });
 }
 
@@ -24,10 +24,9 @@ class MyVideoDetailsEntity {
   final int order;
   final String courseTitle;
   final int durationSeconds;
-
   final List<MyVideoFileEntity> files;
 
-  MyVideoDetailsEntity({
+  const MyVideoDetailsEntity({
     required this.id,
     required this.title,
     required this.url,

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/widgets/subscribe_button.dart';
 import 'package:arabas_app/features/courses/domain/entities/course_details_entity.dart';
@@ -144,7 +146,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     return [
                       SliverToBoxAdapter(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            /// الفيديو (سيبه كما هو)
                             CourseVideoSection(
                               videoUrl: firstVideo?.url,
                               imageUrl: course.imageUrl,
@@ -152,49 +156,142 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             ),
 
                             Padding(
-                              padding: EdgeInsets.all(16.w),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 18.w,
+                                vertical: 16.h,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  /// Badge
                                   Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      textDirection: TextDirection.ltr,
-                                      course.categoryName,
-                                      style: TextStyle(
-                                        color: AppColors.textGray,
-                                        fontSize: 14.sp,
+                                    alignment: Alignment.centerRight,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xff7A3556),
+                                        borderRadius: BorderRadius.circular(
+                                          6.r,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        course.categoryName,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
 
-                                  SizedBox(height: 6.h),
+                                  SizedBox(height: 12.h),
 
+                                  /// Title
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       course.title,
                                       textDirection: TextDirection.ltr,
                                       style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.bold,
                                         fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 15.h),
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${course.durationHours} ساعة",
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                          color: AppColors.black,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5.w),
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 18.sp,
+                                        color: AppColors.black,
+                                      ),
+
+                                      const Spacer(),
+
+                                      Row(
+                                        children: List.generate(
+                                          5,
+                                          (index) => Icon(
+                                            index < course.rateStar
+                                                ? Icons.star
+                                                : Icons.star_border,
+                                            color: AppColors.primary,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  SizedBox(height: 20.h),
+
+                                  Container(
+                                    height: 64.h,
+
+                                    padding: EdgeInsets.all(6.w),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xffEEF3FF),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: TabBar(
+                                      dividerColor: Colors.transparent,
+                                      indicatorSize: TabBarIndicatorSize.tab,
+                                      indicator: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              .08,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      labelColor: const Color(0xff6A244A),
+                                      unselectedLabelColor: const Color(
+                                        0xff5B4D57,
+                                      ),
+                                      labelStyle: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      unselectedLabelStyle: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      splashFactory: NoSplash.splashFactory,
+                                      overlayColor: WidgetStateProperty.all(
+                                        Colors.transparent,
+                                      ),
+                                      tabs: const [
+                                        Tab(text: "الوصف"),
+                                        Tab(text: "المحتوى"),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-
-                            TabBar(
-                              labelColor: AppColors.primary,
-                              unselectedLabelColor: Colors.grey,
-                              indicatorColor: AppColors.primary,
-                              indicatorWeight: 3,
-                              tabs: const [
-                                Tab(text: "الوصف"),
-                                Tab(text: "المحتوى"),
-                              ],
                             ),
                           ],
                         ),
@@ -203,11 +300,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   },
                   body: TabBarView(
                     children: [
-                      CourseDescriptionTab(
-                        description: course.description,
-                        rateStar: course.rateStar,
-                        durationHours: course.durationHours,
-                      ),
+                      CourseDescriptionTab(description: course.description),
 
                       CourseContentTab(videos: course.videos),
                     ],
@@ -226,13 +319,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
                 final course = state.course;
 
-                return SafeArea(
-                  child: SubscribeButton(
-                    price: course.priceInEGP.toDouble(),
-                    onPressed: () {
-                      // هنضيف الأكشن بعدين
-                    },
-                  ),
+                return SubscribeButton(
+                  price: course.priceInEGP.toDouble(),
+                  onPressed: () {
+                    // هنضيف الأكشن بعدين
+                  },
                 );
               },
             ),
@@ -335,56 +426,104 @@ class CourseVideoSection extends StatelessWidget {
   }
 }
 
-class CourseDescriptionTab extends StatelessWidget {
+class CourseDescriptionTab extends StatefulWidget {
   final String description;
-  final int rateStar;
-  final int durationHours;
 
-  const CourseDescriptionTab({
-    super.key,
-    required this.description,
-    required this.rateStar,
-    required this.durationHours,
-  });
+  const CourseDescriptionTab({super.key, required this.description});
+
+  @override
+  State<CourseDescriptionTab> createState() => _CourseDescriptionTabState();
+}
+
+class _CourseDescriptionTabState extends State<CourseDescriptionTab> {
+  bool isExpanded = false;
+
+  String getShortText(String html) {
+    final text = html.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    if (text.length <= 180) return html;
+
+    return "${text.substring(0, 180)}...";
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(vertical: 16.h),
+      child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.only(
+          right: 15.w,
+          top: 20.h,
+          bottom: 15.h,
+          left: 15.w,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "عن الكورس",
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.sp,
+                ),
+              ),
+            ),
+
+            SizedBox(height: 15.h),
+
             Html(
-              data: description,
+              data:
+                  isExpanded
+                      ? widget.description
+                      : getShortText(widget.description),
               style: {
-                "body": Style(
+                "*": Style(
+                  direction: TextDirection.rtl,
                   textAlign: TextAlign.right,
-                  fontSize: FontSize(16.sp),
+                  fontSize: FontSize(14.sp),
+                  color: AppColors.textGray,
+                  lineHeight: LineHeight(1.8),
                 ),
               },
             ),
 
-            SizedBox(height: 20.h),
+            SizedBox(height: 8.h),
 
-            Row(
-              children: [
-                ...List.generate(
-                  5,
-                  (i) => Icon(
-                    i < rateStar ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
+            InkWell(
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  isExpanded ? "عرض أقل" : "عرض المزيد",
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
                   ),
                 ),
-
-                const Spacer(),
-
-                Text("$durationHours ساعة", textDirection: TextDirection.rtl),
-
-                SizedBox(width: 6.w),
-                Icon(Icons.access_time, color: AppColors.primary),
-              ],
+              ),
             ),
           ],
         ),
@@ -418,17 +557,11 @@ class CourseContentTab extends StatelessWidget {
         final locked = video.url == null;
 
         return Container(
-          padding: EdgeInsets.all(14.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14.r),
-            boxShadow: const [
-              BoxShadow(
-                blurRadius: 6,
-                color: Colors.black12,
-                offset: Offset(0, 3),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: Colors.grey.shade300),
           ),
           child: Row(
             children: [
@@ -437,29 +570,38 @@ class CourseContentTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      video.title,
+                      "${i + 1}. ${video.title}",
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15.sp,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
 
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 5.h),
 
                     Text(
                       formatDuration(video.durationSeconds),
-                      style: TextStyle(color: Colors.grey, fontSize: 13.sp),
+                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     ),
                   ],
                 ),
               ),
 
-              SizedBox(width: 12.w),
-
-              Icon(
-                locked ? Icons.lock : Icons.play_circle_fill,
-                size: 28.sp,
-                color: locked ? Colors.grey : AppColors.primary,
+              Container(
+                width: 48.w,
+                height: 48.w,
+                decoration: BoxDecoration(
+                  color:
+                      locked
+                          ? Color(0XFFDCEAFA)
+                          : const Color(0xff7A3B5C).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  locked ? Icons.lock_outline : Icons.play_arrow,
+                  color: locked ? Color(0XFF514349) : AppColors.primary,
+                  size: 24.sp,
+                ),
               ),
             ],
           ),

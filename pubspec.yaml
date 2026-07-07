@@ -58,7 +58,7 @@ dependencies:
   html: 
   url_launcher: ^6.3.0
   qr_flutter: 
-  
+  syncfusion_flutter_pdfviewer:
 
 dev_dependencies:
   flutter_test:
