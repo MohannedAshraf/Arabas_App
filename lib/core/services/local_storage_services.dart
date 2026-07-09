@@ -57,6 +57,17 @@ class LocalStorageService {
   }
 
   // ======================
+  // FCM Token
+  // ======================
+  Future<void> saveFcmToken(String value) async {
+    await prefs.setString('fcmToken', value);
+  }
+
+  String getFcmToken() {
+    return prefs.getString('fcmToken') ?? '';
+  }
+
+  // ======================
   // Clear all
   // ======================
   Future<void> clear() async {
@@ -65,5 +76,6 @@ class LocalStorageService {
     await prefs.remove('deviceId');
     await prefs.remove('platform');
     await prefs.remove('fingerprint');
+    await prefs.remove('fcmToken');
   }
 }

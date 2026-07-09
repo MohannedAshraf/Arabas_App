@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'package:arabas_app/config/di/di.dart';
+import 'package:arabas_app/core/services/local_storage_services.dart';
 import 'package:arabas_app/features/auth/data/models/login_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,7 @@ class LoginCubit extends Cubit<LoginState> {
   final SharedPreferences prefs;
 
   LoginCubit(this.loginUseCase, this.prefs) : super(LoginInitial());
+
   Future<void> login({
     required String email,
     required String password,
@@ -21,20 +24,30 @@ class LoginCubit extends Cubit<LoginState> {
     emit(LoginLoading());
 
     try {
+      final fcmToken = sl<LocalStorageService>().getFcmToken();
+
+      print("====================================");
+      print("FCM TOKEN : $fcmToken");
+      print("====================================");
+
       final request = LoginRequestModel(
         email: email,
         password: password,
         deviceId: deviceId,
         fingerprint: "",
         platform: platform,
+        fcmToken: fcmToken,
       );
 
       final result = await loginUseCase(request);
 
       await prefs.setString("accessToken", result.accessToken);
       await prefs.setString("refreshToken", result.refreshToken);
+
+      print("====================================");
       print("Access Token: ${result.accessToken}");
       print("Refresh Token: ${result.refreshToken}");
+      print("====================================");
 
       emit(LoginSuccess());
     } catch (e) {

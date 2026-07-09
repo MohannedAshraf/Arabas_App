@@ -5,6 +5,7 @@ import 'package:arabas_app/features/home/presentation/screens/app_drawer.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/screens/my_courses_tab_screen.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_number_cubit.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,7 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime? lastBackPressed;
 
   final List<Widget> tabs = [
-    HomeTab(),
+    BlocProvider(
+      create: (_) => sl<NotificationNumberCubit>()..getUnreadCount(),
+      child: HomeTab(),
+    ),
 
     BlocProvider(
       create: (context) => sl<CoursesCubit>(),

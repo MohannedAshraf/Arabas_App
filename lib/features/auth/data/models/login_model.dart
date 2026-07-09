@@ -4,6 +4,7 @@ class LoginRequestModel {
   final String deviceId;
   final String fingerprint;
   final String platform;
+  final String fcmToken;
 
   LoginRequestModel({
     required this.email,
@@ -11,6 +12,7 @@ class LoginRequestModel {
     required this.deviceId,
     required this.fingerprint,
     required this.platform,
+    required this.fcmToken,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class LoginRequestModel {
       "deviceId": deviceId,
       "fingerprint": fingerprint,
       "platform": platform,
+      "fcmToken": fcmToken,
     };
   }
 }

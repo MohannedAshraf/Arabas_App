@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "994679381155",
+    "project_id": "arabas-4b17e",
+    "storage_bucket": "arabas-4b17e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994679381155:android:b4f90e0d41a1d56472f316",
+        "android_client_info": {
+          "package_name": "com.example.arabas_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994679381155-qpuaubf1c13e0vvak3g7iihp16112qud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrVQUNp42i78doukxpAt9E8gZv5dHQdL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994679381155-qpuaubf1c13e0vvak3g7iihp16112qud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

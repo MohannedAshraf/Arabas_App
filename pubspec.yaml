@@ -59,6 +59,11 @@ dependencies:
   url_launcher: ^6.3.0
   qr_flutter: 
   syncfusion_flutter_pdfviewer:
+  firebase_core: 
+  firebase_messaging: 
+  flutter_local_notifications: 
+  geolocator: 
+  geocoding: 
 
 dev_dependencies:
   flutter_test:

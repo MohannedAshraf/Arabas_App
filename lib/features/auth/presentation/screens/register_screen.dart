@@ -13,6 +13,8 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../bloc/register_cubit.dart';
 import '../bloc/register_state.dart';
+import 'package:arabas_app/core/services/location_services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 /// Regex
 final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -42,6 +44,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final deviceId = await DeviceHelper.getDeviceId();
     final deviceName = await DeviceHelper.getDeviceName();
     final platform = DeviceHelper.getPlatform();
+    final country = await LocationService.getCountryName();
+
+    final fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
 
     final model = RegisterRequestModel(
       firstName: firstNameController.text.trim(),
@@ -54,8 +59,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       deviceName: deviceName,
       platform: platform,
       fingerprint: "",
+      country: country,
+      fcmToken: fcmToken,
     );
     print("deviceId: $deviceId");
+    print("Country : $country");
+    print("FCM Token : $fcmToken");
     context.read<RegisterCubit>().register(model);
   }
 

@@ -2,7 +2,8 @@
 
 import 'package:arabas_app/config/di/di.dart';
 import 'package:arabas_app/core/constants/app_images.dart';
-import 'package:arabas_app/features/announcement/presentation/screens/announcement_screen.dart';
+import 'package:arabas_app/features/announcement/presentation/bloc/announcement_cubit.dart';
+import 'package:arabas_app/features/announcement/presentation/bloc/announcement_state.dart';
 import 'package:arabas_app/features/books/presentation/screens/medical_books_screen.dart';
 import 'package:arabas_app/features/courses/presentation/bloc/courses_sections_cubit.dart';
 import 'package:arabas_app/features/courses/presentation/screens/Courses_tab_screen.dart';
@@ -11,17 +12,25 @@ import 'package:arabas_app/features/diplomas/presentation/screens/diplomas_scree
 import 'package:arabas_app/features/free_lectures/presentation/bloc/free_content_cubit.dart';
 import 'package:arabas_app/features/free_lectures/presentation/screens/free_content_screen.dart';
 import 'package:arabas_app/features/home/presentation/screens/about_arabas_screen.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/delete_notification_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_number_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_number_state.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/read_notification_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/screens/notification_screen.dart';
 import 'package:arabas_app/features/practicals/presentation/bloc/practical_cubit.dart';
 import 'package:arabas_app/features/practicals/presentation/screens/practical_screen.dart';
 import 'package:arabas_app/features/question_bank/presentation/bloc/bank_questions_cubit.dart';
 import 'package:arabas_app/features/question_bank/presentation/screens/bank_questions_screen.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class HomeTab extends StatelessWidget {
-  HomeTab({super.key});
+  const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,10 @@ class HomeTab extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
-                child: _announcement(),
+                child: BlocProvider(
+                  create: (_) => sl<AnnouncementCubit>()..getAnnouncements(),
+                  child: const AnnouncementCarousel(),
+                ),
               ),
               SizedBox(height: 10.h),
               _mainCard(
@@ -186,8 +198,6 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  int notificationCount = 3;
-
   /// HEADER
   Widget _header(BuildContext context) {
     return Container(
@@ -218,49 +228,83 @@ class HomeTab extends StatelessWidget {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      // TODO: Navigate to Notifications Screen
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => const NotificationsScreen(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (_) => sl<NotificationCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (_) => sl<ReadNotificationCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create:
+                                        (_) => sl<DeleteNotificationCubit>(),
+                                  ),
+                                ],
+                                child: const NotificationScreen(),
+                              ),
+                        ),
+                      );
+                      context.read<NotificationNumberCubit>().getUnreadCount();
                     },
                     child: Padding(
                       padding: EdgeInsets.only(right: 12.w),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Icon(
-                            Icons.notifications_outlined,
-                            color: Colors.white,
-                            size: 26.sp,
-                          ),
-                          if (notificationCount > 0)
-                            Positioned(
-                              right: 2,
-                              top: 2,
-                              child: Container(
-                                width: 10.w,
-                                height: 10.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(50.r),
-                                ),
+                      child: BlocBuilder<
+                        NotificationNumberCubit,
+                        NotificationNumberState
+                      >(
+                        builder: (context, state) {
+                          int notificationCount = 0;
 
-                                child: Center(
-                                  child: Text(
-                                    notificationCount.toString(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.bold,
+                          if (state is NotificationNumberSuccess) {
+                            notificationCount = state.count;
+                          }
+
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(
+                                Icons.notifications_outlined,
+                                color: Colors.white,
+                                size: 26.sp,
+                              ),
+                              if (notificationCount > 0)
+                                Positioned(
+                                  right: -2,
+                                  top: -2,
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      minWidth: 18.w,
+                                      minHeight: 18.h,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        notificationCount > 99
+                                            ? "99+"
+                                            : notificationCount.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                        ],
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -291,58 +335,58 @@ class HomeTab extends StatelessWidget {
   }
 
   /// ANNOUNCEMENT
-  Widget _announcement() {
-    return Builder(
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(12.w),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
-            ],
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.campaign, color: AppColors.primary, size: 24.sp),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Text(
-                  "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
-                  style: TextStyle(fontSize: 11.sp),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AnnouncementScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Text(
-                    "إعلانات",
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // Widget _announcement() {
+  //   return Builder(
+  //     builder: (context) {
+  //       return Container(
+  //         padding: EdgeInsets.all(12.w),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.white,
+  //           borderRadius: BorderRadius.circular(16.r),
+  //           boxShadow: [
+  //             BoxShadow(color: Colors.black12.withOpacity(.05), blurRadius: 10),
+  //           ],
+  //         ),
+  //         child: Row(
+  //           children: [
+  //             Icon(Icons.campaign, color: AppColors.primary, size: 24.sp),
+  //             SizedBox(width: 10.w),
+  //             Expanded(
+  //               child: Text(
+  //                 "إعلان هام: اكتشف برامجنا الجديدة\nللعام الجاري! اضغط لمشاهدة التفاصيل",
+  //                 style: TextStyle(fontSize: 11.sp),
+  //               ),
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (_) => const AnnouncementScreen(),
+  //                   ),
+  //                 );
+  //               },
+  //               child: Container(
+  //                 padding: EdgeInsets.symmetric(
+  //                   horizontal: 14.w,
+  //                   vertical: 6.h,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color: AppColors.primary,
+  //                   borderRadius: BorderRadius.circular(12.r),
+  //                 ),
+  //                 child: Text(
+  //                   "إعلانات",
+  //                   style: TextStyle(color: Colors.white, fontSize: 12.sp),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   /// MAIN CARD
   Widget _mainCard({
@@ -614,6 +658,153 @@ class HomeTab extends StatelessWidget {
         radius: 35.r,
         backgroundImage: AssetImage(image),
         backgroundColor: Colors.white,
+      ),
+    );
+  }
+}
+
+class AnnouncementCarousel extends StatefulWidget {
+  const AnnouncementCarousel({super.key});
+
+  @override
+  State<AnnouncementCarousel> createState() => _AnnouncementCarouselState();
+}
+
+class _AnnouncementCarouselState extends State<AnnouncementCarousel> {
+  int currentIndex = 0;
+
+  Future<void> _openWhatsApp() async {
+    final Uri url = Uri.parse("https://wa.me/201140060621");
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<AnnouncementCubit>()..getAnnouncements(),
+      child: BlocBuilder<AnnouncementCubit, AnnouncementState>(
+        builder: (context, state) {
+          if (state is AnnouncementLoading) {
+            return const SizedBox.shrink();
+          }
+
+          if (state is AnnouncementError) {
+            return const SizedBox.shrink();
+          }
+
+          if (state is! AnnouncementSuccess || state.announcements.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            children: [
+              CarouselSlider.builder(
+                itemCount: state.announcements.length,
+                itemBuilder: (context, index, realIndex) {
+                  final announcement = state.announcements[index];
+
+                  return Container(
+                    width: double.infinity,
+
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDCEAFA),
+                      borderRadius: BorderRadius.circular(16.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 38.h,
+                          child: ElevatedButton(
+                            onPressed: _openWhatsApp,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            ),
+                            child: Text(
+                              "تواصل معنا",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(width: 12.w),
+
+                        Expanded(
+                          child: Text(
+                            announcement.title,
+                            textAlign: TextAlign.right,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                options: CarouselOptions(
+                  height: 60.h,
+                  viewportFraction: 1,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
+                  enlargeCenterPage: false,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                ),
+              ),
+
+              SizedBox(height: 8.h),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  state.announcements.length,
+                  (index) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: EdgeInsets.symmetric(horizontal: 3.w),
+                    width: currentIndex == index ? 18.w : 8.w,
+                    height: 8.h,
+                    decoration: BoxDecoration(
+                      color:
+                          currentIndex == index
+                              ? AppColors.primary
+                              : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

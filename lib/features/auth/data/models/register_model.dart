@@ -4,11 +4,13 @@ class RegisterRequestModel {
   final String email;
   final String password;
   final String confirmPassword;
+  final String country;
   final String phoneNumber;
   final String deviceId;
   final String deviceName;
   final String platform;
   final String fingerprint;
+  final String fcmToken;
 
   RegisterRequestModel({
     required this.firstName,
@@ -16,11 +18,13 @@ class RegisterRequestModel {
     required this.email,
     required this.password,
     required this.confirmPassword,
+    required this.country,
     required this.phoneNumber,
     required this.deviceId,
     required this.deviceName,
     required this.platform,
     required this.fingerprint,
+    required this.fcmToken,
   });
 
   Map<String, dynamic> toJson() {
@@ -29,12 +33,14 @@ class RegisterRequestModel {
       "lastName": lastName,
       "email": email,
       "password": password,
+      "country": country,
       "confirmPassword": confirmPassword,
       "phoneNumber": phoneNumber,
       "deviceId": deviceId,
       "deviceName": deviceName,
       "platform": platform,
       "fingerprint": fingerprint,
+      "fcmToken": fcmToken,
     };
   }
 }

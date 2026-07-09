@@ -76,7 +76,7 @@ class AppDrawer extends StatelessWidget {
             _drawerItem(
               context,
               icon: Icons.menu_book_rounded,
-              title: "كورسات الكتاب",
+              title: "كورس الكتاب",
               onTap: () {
                 Navigator.push(
                   context,

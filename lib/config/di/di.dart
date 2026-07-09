@@ -1,7 +1,15 @@
 import 'package:arabas_app/core/network/dio_helper.dart';
 import 'package:arabas_app/core/services/auth_refresh_services.dart';
+import 'package:arabas_app/core/services/firebas_service.dart';
 import 'package:arabas_app/core/services/local_storage_services.dart';
+import 'package:arabas_app/core/services/location_services.dart';
+import 'package:arabas_app/core/services/notification_api_service.dart';
 import 'package:arabas_app/core/services/register_api_service.dart';
+import 'package:arabas_app/features/announcement/data/data_sources/announcement_remote_data_source.dart';
+import 'package:arabas_app/features/announcement/domain/repo/announcement_repo.dart';
+import 'package:arabas_app/features/announcement/domain/repo/announcement_repo_impl.dart';
+import 'package:arabas_app/features/announcement/domain/usecases/get_active_announcements_use_case.dart';
+import 'package:arabas_app/features/announcement/presentation/bloc/announcement_cubit.dart';
 import 'package:arabas_app/features/book_courses/data/data_source/course_book_details_remote_data_source.dart';
 import 'package:arabas_app/features/book_courses/data/data_source/course_book_remote_data_source.dart';
 import 'package:arabas_app/features/book_courses/data/data_source/verify_book_remote_data_source.dart';
@@ -96,6 +104,26 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubi
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progrress_in_course_cubit.dart';
+import 'package:arabas_app/features/notifications/data/data_sources/notification_delete_remote_data_source.dart';
+import 'package:arabas_app/features/notifications/data/data_sources/notification_number_remote_data_source.dart';
+import 'package:arabas_app/features/notifications/data/data_sources/notification_read_remote_data_source.dart';
+import 'package:arabas_app/features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_delete_repo.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_delete_repo_impl.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_number_repo.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_number_repo_impl.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_read_repo.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_read_repo_impl.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_repo.dart';
+import 'package:arabas_app/features/notifications/domain/repo/notification_repo_impl.dart';
+import 'package:arabas_app/features/notifications/domain/usecases/delete_notification_use_case.dart';
+import 'package:arabas_app/features/notifications/domain/usecases/get_notification_number_usecase.dart';
+import 'package:arabas_app/features/notifications/domain/usecases/notification_usecase.dart';
+import 'package:arabas_app/features/notifications/domain/usecases/read_notification_use_case.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/delete_notification_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/notification_number_cubit.dart';
+import 'package:arabas_app/features/notifications/presentation/bloc/read_notification_cubit.dart';
 import 'package:arabas_app/features/practicals/data/data_sources/practical_details_remote_data_source.dart';
 import 'package:arabas_app/features/practicals/data/data_sources/practical_remote_data_source.dart';
 import 'package:arabas_app/features/practicals/domain/repo/practical_details_repo.dart';
@@ -565,4 +593,67 @@ Future<void> init() async {
   sl.registerFactory(
     () => ProgressInCourseCubit(sl<ProgressInCourseUseCase>()),
   );
+
+  sl.registerLazySingleton<FirebaseService>(
+    () => FirebaseService(sl<LocalStorageService>()),
+  );
+
+  sl.registerLazySingleton<LocationService>(() => LocationService());
+  sl.registerLazySingleton(() => NotificationApiService(sl()));
+
+  sl.registerLazySingleton<NotificationNumberRemoteDataSource>(
+    () => NotificationNumberRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<NotificationNumberRepository>(
+    () => NotificationNumberRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetNotificationNumberUseCase(sl()));
+
+  sl.registerFactory(() => NotificationNumberCubit(sl()));
+
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => NotificationUseCase(sl()));
+
+  sl.registerFactory(() => NotificationCubit(sl()));
+
+  sl.registerLazySingleton<NotificationReadRemoteDataSource>(
+    () => NotificationReadRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<NotificationDeleteRemoteDataSource>(
+    () => NotificationDeleteRemoteDataSourceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<NotificationReadRepository>(
+    () => NotificationReadRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton<NotificationDeleteRepository>(
+    () => NotificationDeleteRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => ReadNotificationUseCase(sl()));
+
+  sl.registerLazySingleton(() => DeleteNotificationUseCase(sl()));
+  sl.registerFactory(() => ReadNotificationCubit(sl()));
+
+  sl.registerFactory(() => DeleteNotificationCubit(sl()));
+  sl.registerLazySingleton<AnnouncementRemoteDataSource>(
+    () => AnnouncementRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<AnnouncementRepository>(
+    () => AnnouncementRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton(() => GetActiveAnnouncementsUseCase(sl()));
+
+  sl.registerFactory(() => AnnouncementCubit(sl()));
 }
