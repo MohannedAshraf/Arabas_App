@@ -5,6 +5,8 @@ import 'package:arabas_app/features/home/presentation/screens/app_drawer.dart';
 import 'package:arabas_app/features/home/presentation/screens/home_tab_screen.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/screens/my_courses_tab_screen.dart';
+import 'package:arabas_app/features/my_diploma/presentation/bloc/my_diploma_cubit.dart';
+import 'package:arabas_app/features/my_diploma/presentation/screens/my_diplomas_screen.dart';
 import 'package:arabas_app/features/notifications/presentation/bloc/notification_number_cubit.dart';
 import 'package:arabas_app/features/profile/presentation/screens/profile_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
     BlocProvider(
       create: (_) => sl<MyCoursesCubit>(),
       child: const MyCoursesTabScreen(),
+    ),
+    BlocProvider(
+      create: (_) => sl<MyDiplomaCubit>()..getMyDiplomas(),
+      child: const MyDiplomasScreen(),
     ),
 
     const ProfileWrapper(),
@@ -118,6 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.play_lesson),
               label: "دوراتي",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.workspace_premium),
+              label: "دبلوماتي",
             ),
 
             BottomNavigationBarItem(

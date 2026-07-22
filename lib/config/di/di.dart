@@ -104,6 +104,21 @@ import 'package:arabas_app/features/my_courses/presentation/bloc/my_courses_cubi
 import 'package:arabas_app/features/my_courses/presentation/bloc/my_video_details_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progress_cubit.dart';
 import 'package:arabas_app/features/my_courses/presentation/bloc/progrress_in_course_cubit.dart';
+import 'package:arabas_app/features/my_diploma/data/data_sources/my_diploma_details_remote_data_source.dart';
+import 'package:arabas_app/features/my_diploma/data/data_sources/my_diploma_remote_data_source.dart';
+import 'package:arabas_app/features/my_diploma/data/data_sources/my_diploma_video_remote-data_source.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_details_repo.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_details_repo_impl.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_repo.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_repo_impl.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_vide_repo_impl.dart';
+import 'package:arabas_app/features/my_diploma/domain/repo/my_diploma_video_repo.dart';
+import 'package:arabas_app/features/my_diploma/domain/usecases/get_my_diploma_details_usecase.dart';
+import 'package:arabas_app/features/my_diploma/domain/usecases/get_my_diploma_usecase.dart';
+import 'package:arabas_app/features/my_diploma/domain/usecases/get_my_diploma_video_use_case.dart';
+import 'package:arabas_app/features/my_diploma/presentation/bloc/my_diploma_cubit.dart';
+import 'package:arabas_app/features/my_diploma/presentation/bloc/my_diploma_details_cubit.dart';
+import 'package:arabas_app/features/my_diploma/presentation/bloc/my_diploma_video_cubit.dart';
 import 'package:arabas_app/features/notifications/data/data_sources/notification_delete_remote_data_source.dart';
 import 'package:arabas_app/features/notifications/data/data_sources/notification_number_remote_data_source.dart';
 import 'package:arabas_app/features/notifications/data/data_sources/notification_read_remote_data_source.dart';
@@ -656,4 +671,72 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetActiveAnnouncementsUseCase(sl()));
 
   sl.registerFactory(() => AnnouncementCubit(sl()));
+
+  // ==============================
+  // My Diplomas
+  // ==============================
+
+  sl.registerLazySingleton<MyDiplomaRemoteDataSource>(
+    () => MyDiplomaRemoteDataSourceImpl(),
+  );
+
+  sl.registerLazySingleton<MyDiplomaRepository>(
+    () => MyDiplomaRepositoryImpl(
+      remoteDataSource: sl<MyDiplomaRemoteDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton(
+    () => GetMyDiplomasUseCase(repository: sl<MyDiplomaRepository>()),
+  );
+
+  sl.registerFactory(
+    () => MyDiplomaCubit(getMyDiplomasUseCase: sl<GetMyDiplomasUseCase>()),
+  );
+
+  // ===============================
+  // My Diploma Details
+  // ===============================
+
+  // Remote Data Source
+  sl.registerLazySingleton<MyDiplomaDetailsRemoteDataSource>(
+    () => MyDiplomaDetailsRemoteDataSourceImpl(),
+  );
+
+  // Repository
+  sl.registerLazySingleton<MyDiplomaDetailsRepository>(
+    () => MyDiplomaDetailsRepositoryImpl(
+      remoteDataSource: sl<MyDiplomaDetailsRemoteDataSource>(),
+    ),
+  );
+
+  // UseCase
+  sl.registerLazySingleton(
+    () => GetMyDiplomaDetailsUseCase(
+      repository: sl<MyDiplomaDetailsRepository>(),
+    ),
+  );
+
+  // Cubit
+  sl.registerFactory(
+    () => MyDiplomaDetailsCubit(
+      getMyDiplomaDetailsUseCase: sl<GetMyDiplomaDetailsUseCase>(),
+    ),
+  );
+
+  /// Remote Data Source
+  sl.registerLazySingleton<MyDiplomaVideoRemoteDataSource>(
+    () => MyDiplomaVideoRemoteDataSourceImpl(sl()),
+  );
+
+  /// Repository
+  sl.registerLazySingleton<MyDiplomaVideoRepository>(
+    () => MyDiplomaVideoRepositoryImpl(sl()),
+  );
+
+  /// UseCase
+  sl.registerLazySingleton(() => GetMyDiplomaVideoUseCase(sl()));
+
+  /// Cubit
+  sl.registerFactory(() => MyDiplomaVideoCubit(sl()));
 }

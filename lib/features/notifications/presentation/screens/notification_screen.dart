@@ -389,28 +389,40 @@ String timeAgo(String date) {
   }
 
   if (difference.inMinutes < 60) {
-    return "منذ ${difference.inMinutes} دقيقة";
+    final m = difference.inMinutes;
+    if (m == 1) return "منذ دقيقة";
+    if (m == 2) return "منذ دقيقتين";
+    if (m <= 10) return "منذ $m دقائق";
+    return "منذ $m دقيقة";
   }
 
   if (difference.inHours < 24) {
-    return "منذ ${difference.inHours} ساعة";
-  }
-
-  if (difference.inDays == 1) {
-    return "أمس";
-  }
-
-  if (difference.inDays < 7) {
-    return "منذ ${difference.inDays} أيام";
+    final h = difference.inHours;
+    if (h == 1) return "منذ ساعة";
+    if (h == 2) return "منذ ساعتين";
+    if (h <= 10) return "منذ $h ساعات";
+    return "منذ $h ساعة";
   }
 
   if (difference.inDays < 30) {
-    return "منذ ${(difference.inDays / 7).floor()} أسبوع";
+    final d = difference.inDays;
+    if (d == 1) return "منذ يوم";
+    if (d == 2) return "منذ يومين";
+    if (d <= 10) return "منذ $d أيام";
+    return "منذ $d يوم";
   }
 
-  if (difference.inDays < 365) {
-    return "منذ ${(difference.inDays / 30).floor()} شهر";
+  final months = (difference.inDays / 30).floor();
+  if (months < 12) {
+    if (months == 1) return "منذ شهر";
+    if (months == 2) return "منذ شهرين";
+    if (months <= 10) return "منذ $months أشهر";
+    return "منذ $months شهر";
   }
 
-  return "منذ ${(difference.inDays / 365).floor()} سنة";
+  final years = (difference.inDays / 365).floor();
+  if (years == 1) return "منذ سنة";
+  if (years == 2) return "منذ سنتين";
+  if (years <= 10) return "منذ $years سنوات";
+  return "منذ $years سنة";
 }
